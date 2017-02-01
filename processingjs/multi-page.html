@@ -1,0 +1,44 @@
+<!-- run in chrome from localhost:// ... -->
+
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+<script src="../lib/processing.js"></script>
+<script src="../lib/rita.js"></script>
+<script src="../lib/ritext.js"></script>
+<script src="../lib/socket.io.min.js"></script>
+
+<script src="../src/readers-app.js"></script>
+<script src="../src/mesostic-reader.js"></script>
+<script src="../src/perigram-reader.js"></script>
+
+<script src="multi-page.js"></script>
+<script src="../fonts/times17.js"></script>
+<script src="../data/image-perigrams.js"></script>
+
+<body>
+<div id='content'></div>
+<canvas id="canvas"></canvas>
+<br><font size=1>click for focus, then use left/right arrow-keys to change pages</font>
+<script type="text/processing" data-processing-target="canvas">
+
+/* @pjs preload="data/page.png"; */
+
+PImage bg;
+
+void setup() {
+	size(900, 480);
+	bg = loadImage('../data/page.png');
+	_setup();
+}
+
+void draw() {
+	background(bg);
+	_draw();
+}
+
+void keyPressed() {
+	_keyPressed(keyCode);
+}
+
+</script>
+</body>
