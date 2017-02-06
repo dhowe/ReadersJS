@@ -1,4 +1,4 @@
-var pManager, rdr, s, font;
+var pManager, rdr, font;
 
 function preload() {
 
@@ -10,6 +10,7 @@ function setup() {
 
   createCanvas(900, 480);
 
+  RiText.defaultFill(255);
   RiText.defaultFont(font, 17);
   RiText.defaults.paragraphIndent = 20;
 
@@ -32,6 +33,13 @@ function setup() {
 
 
 function draw() {
-  background(bg || 255);
+
+  background(0);
 	pManager && (pManager.draw());
+}
+
+function keyPressed() {
+
+	keyCode == 39 && (pManager.nextPage());
+	keyCode == 37 && (pManager.lastPage());
 }

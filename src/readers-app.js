@@ -887,10 +887,24 @@ Reader.prototype = {
 
     //console.log(this.type+'.onEnterCell('+curr+')');
     curr.showBounds(false);
+    this.fill = curr.fill();
     curr.fill(255, 0, 0);
+
     if (this.showNeighbors) {
       this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
       this.showBounds(this.neighborhood, true);
+    }
+  },
+
+  onExitCell: function (curr) {
+
+    if (this.neighborhood) {
+      this.showBounds(this.neighborhood, false);
+    }
+
+    if (curr) {
+      curr.showBounds(false);
+      curr.fill.call(curr, this.fill); // DCH: 2/2/2017
     }
   },
 
@@ -991,16 +1005,6 @@ Reader.prototype = {
 
   addToHistory: function (curr) {
     history.push(curr);
-  },
-
-  onExitCell: function (curr) {
-    if (this.neighborhood) {
-      this.showBounds(this.neighborhood, false);
-    }
-    if (curr) {
-      curr.showBounds(false);
-      curr.fill(0);
-    }
   }
 };
 
