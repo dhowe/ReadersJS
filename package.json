@@ -1,0 +1,19 @@
+{
+  "name": "readersjs",
+  "version": "1.0.0",
+  "description": "A JavaScript implementation of The Readers Project ",
+  "main": "simple.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dhowe/ReadersJS.git"
+  },
+  "author": "Daniel C. Howe",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/dhowe/ReadersJS/issues"
+  },
+  "homepage": "https://github.com/dhowe/ReadersJS#readme"
+}

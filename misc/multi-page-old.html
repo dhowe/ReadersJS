@@ -1,0 +1,46 @@
+<!-- run in chrome from localhost:// ... -->
+
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+<!--script src="lib/jquery-min.js"></script-->
+<script src="lib/p5.js"></script>
+<script src="lib/rita.js"></script>
+<script src="lib/ritext.js"></script>
+<script src="lib/socket.io.min.js"></script>
+
+<script src="src/readers-app.js"></script>
+<script src="src/mesostic-reader.js"></script>
+<script src="src/perigram-reader.js"></script>
+
+<script src="multi-page.js"></script>
+<script src="fonts/times17.js"></script>
+<script src="data/image-perigrams.js"></script>
+
+<script src="multi-page.js"></script>
+
+<script>
+  var bg, font;
+
+  function preload()
+  {
+    //bg = loadImage('data/page.png');
+    font = loadFont('fonts/perpetua.ttf');
+  }
+
+  function setup()
+  {
+    createCanvas(900, 480);
+    textFont(font, 17);
+    __setup();
+  }
+
+  function draw() {
+  	//background(bg);
+  	background(255);
+  	__draw();
+  }
+
+  function keyPressed() {
+  	__keyPressed(keyCode);
+  }
+</script>

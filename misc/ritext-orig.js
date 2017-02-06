@@ -875,7 +875,90 @@
 
   /* Returns the current graphics context, either a canvas 2d-context or ProcessingJS instance */
   RiText._graphics = function () {
-    throw new Error('unimplemented');
+
+    return RiText.renderer ? RiText.renderer._getGraphics() : null;
+  }
+
+  RiText.loop = function (callbackFun, fps) { // TODO: REMOVE?
+
+    var a = arguments,
+      type,
+      g = RiText.renderer,
+      an = RiText._animator,
+      callback = undef(window) ? null : window.draw;
+
+    if (g._type() === 'Processing') return; // let P5 do its own loop
+
+    if (an.loopStarted) return;
+
+    switch (a.length) {
+
+    case 1:
+
+      if (a[0]) {
+        type = Type.get(a[0]);
+        if (type == F) {
+          callback = a[0];
+        } else if (type == N) {
+          an.targetFPS = a[0];
+        }
+      }
+      break;
+
+    case 2:
+
+      if (a[0]) {
+
+        type = Type.get(a[0]);
+        if (type == F) {
+          callback = a[0];
+        }
+        type = Type.get(a[1])
+        if (type == N) {
+          an.targetFPS = a[1];
+        }
+      }
+      break;
+    }
+
+    an.timeSinceLastFPS = Date.now(), an.framesSinceLastFPS = 0, mps = 1E3 / an.targetFPS;
+
+    if (callback && !an.callbackDisabled && window) {
+
+      an.loopId = window.setInterval(function () {
+
+        try {
+
+          callback();
+
+          var sec = (Date.now() - an.timeSinceLastFPS) / 1E3;
+          var fps = ++an.framesSinceLastFPS / sec;
+
+          if (sec > 0.5) {
+
+            an.timeSinceLastFPS = Date.now();
+            an.framesSinceLastFPS = 0;
+            an.actualFPS = fps;
+          }
+          an.frameCount++;
+
+        } catch (ex) {
+
+          if (!an.callbackDisabled) {
+            warn("Unable to invoke callback: " + callback);
+            an.callbackDisabled = true;
+          }
+
+          window.clearInterval(an.loopId);
+          console.trace(this);
+          throw ex;
+        }
+
+      }, mps);
+
+      an.isLooping = true;
+      an.loopStarted = true;
+    }
   }
 
   RiText.randomColor = function (min, max, includeAlpha) {
@@ -1009,6 +1092,52 @@
 
     return RiText.defaults._font;
   }
+
+  /*
+   * Returns json-formatted string representing the font metrics for the default font,
+   *  with the following fields: { name, size, ascent, descent, widths }
+   *
+   * @param chars (optional) array or string, characters for which widths should be calculated
+   *
+  RiText._fontMetrics = function (chars) {
+
+    var i, j, c, gwidths = {},
+      pf = RiText.defaultFont();
+
+    if (!(chars && chars.length)) {
+      chars = [];
+      for (j = 33; j < 126; j++) {
+        chars.push(String.fromCharCode(j));
+      }
+    }
+
+    if (is(chars, S)) chars = chars.split(E); // split into array
+
+    for (i = 0; i < chars.length; i++) {
+      //log(c +" -> "+pf.measureTextWidth(c))
+      c = chars[i];
+      gwidths[c] = pf.measureTextWidth(c);
+    }
+
+    gwidths[SP] = pf.measureTextWidth(SP);
+
+    return {
+      name: pf.name,
+      size: pf.size,
+      ascent: pf.ascent,
+      descent: pf.descent,
+      widths: gwidths
+    };
+  }   */
+
+  /*RiText._createFont = function (fontName, fontSize) {
+
+    if (!fontName) err('RiText._createFont requires fontName');
+
+    fontSize = fontSize || RiText.defaults.fontSize;
+
+    return RiText.renderer._createFont(fontName, fontSize);
+  }*/
 
   RiText.drawAll = function (array) {
 
@@ -1302,7 +1431,7 @@
     if (wordIdx < 0 || wordIdx >= words.length)
       throw new Error("Bad wordIdx=" + wordIdx + " for " + words);
 
-    //rt.g._push();
+    rt.g._push();
 
     var xPos = rt.x;
 
@@ -1314,7 +1443,7 @@
         preStr += pre[i] + ' ';
       }
 
-      var tw = rt._font._textWidth(preStr, RiText.defaults.fontSize);
+      var tw = rt.g._textWidth(rt._font, preStr);
 
       //log("x="+xPos+" pre='"+preStr+"' tw=" + tw);
 
@@ -1331,8 +1460,7 @@
         break;
       }
     }
-
-    // rt.g._pop();
+    rt.g._pop();
 
     return xPos;
   }
@@ -1389,7 +1517,8 @@
 
       var bbs, screenH, args;
 
-      //if (!RiText.renderer) err("No graphics context, RiText unavailable");
+      if (!RiText.renderer)
+        err("No graphics context, RiText unavailable");
 
       this._color = {
         r: RiText.defaults.fill.r,
@@ -1423,8 +1552,8 @@
       this._scaleZ = 1;
 
       this._behaviors = [];
-      //
-      // this.g = RiText.renderer;
+
+      this.g = RiText.renderer;
 
       // handle the arguments
       args = this._initArgs.apply(this, arguments);
@@ -1518,71 +1647,63 @@
       return this;
     },
 
-    boundingBox: function () {
-
-      var bb = this._font.textBounds(this._rs.text(), this.x, this.y, this._font.size || RiText.defaults.fontSize);
-      return { x: bb.x, y: bb.y, width: bb.w, height: bb.h };
-    },
-
     _render: function () {
+
+      var g = this.g;
+
+      if (!g) err('no-renderer');
 
       if (this._rs && this._rs.length) {
 
-        push();
+        g._push();
 
-        //var bb = this._font.textBounds(this._rs.text(), this.x, this.y); // cache this!
-        var fontSize = this._font.size || RiText.defaults.fontSize,
-          ascent = this._font._textAscent(fontSize),
-          descent = this._font._textDescent(fontSize),
-          bb = this.boundingBox();
+        var bb = g._getBoundingBox(this); // cache this!
 
-        //console.log(bb.height, ascent + descent);
-
-        translate(this.x, this.y);
-        translate(bb.width / 2, bb.height / -4);
-        rotate(this._rotateZ);
-        translate(bb.width / -2, bb.height / 4);
-        scale(this._scaleX, this._scaleY, this._scaleZ);
+        g._translate(this.x, this.y);
+        g._translate(bb.width / 2, bb.height / -4);
+        g._rotate(this._rotateZ);
+        g._translate(bb.width / -2, bb.height / 4);
+        g._scale(this._scaleX, this._scaleY, this._scaleZ);
 
         // Set color
-        fill(this._color.r, this._color.g, this._color.b, this._color.a);
+        g._fill(this._color.r, this._color.g, this._color.b, this._color.a);
 
         // Set font params
-        textFont(this._font);
-        textSize(fontSize);
-        textAlign(this._alignment);
+        g._textFont(this._font);
+        g._textSize(this._font.size || RiText.defaults.fontSize);
+        g._textAlign(this._alignment);
 
         // Draw text
-        text(this._rs._text, 0, 0);
+        g._text(this._rs._text, 0, 0);
 
         // And the bounding box
         if (this._showBounds) {
 
           // push/popStyle
           if (!this._boundingFill) // &&this._boundingFill.r < 0 && this._boundingFill.g < 0 && this._boundingFill.b < 0)
-            noFill();
+            g._noFill();
           else
-            fill(this._boundingFill.r, this._boundingFill.g, this._boundingFill.b, this._color.a);
+            g._fill(this._boundingFill.r, this._boundingFill.g, this._boundingFill.b, this._color.a);
 
-          stroke(this._boundingStroke.r, this._boundingStroke.g,
+          g._stroke(this._boundingStroke.r, this._boundingStroke.g,
             this._boundingStroke.b, this._color.a);
 
-          strokeWeight(this._boundingStrokeWeight);
+          g._strokeWeight(this._boundingStrokeWeight);
 
-          /* shift bounds based on alignment
+          // shift bounds based on alignment
           switch (this._alignment) { // this should be part of updateBoundingBox() (see Java)
 
           case RiTa.RIGHT:
-            translate(-bb.width, 0);
+            g._translate(-bb.width, 0);
             break;
           case RiTa.CENTER:
-            translate(-bb.width / 2, 0);
+            g._translate(-bb.width / 2, 0);
             break;
-          }*/
-          rect(0, -ascent, bb.width, ascent + descent);
+          }
+          g._rect(0, bb.y, bb.width, bb.height); // what??
         }
 
-        pop();
+        g._pop();
       }
 
       return this;
@@ -2094,7 +2215,6 @@
     },
 
     align: function (align) {
-
       if (arguments.length) {
         this._alignment = align;
         return this;
@@ -2123,7 +2243,6 @@
 
         this._font = font || RiText._getDefaultFont();
         return this;
-
       } else if (a.length == 2) {
 
         this._font = RiText.renderer._createFont(a[0], a[1]);
@@ -2242,7 +2361,7 @@
       return RiText._wordOffsetFor(this, this.words(), wordIdx);
     },
 
-    /*boundingBox: function (noTransform) { // argument is not part of api
+    boundingBox: function (noTransform) { // argument is not part of api
 
       var g = this.g,
         bb = this.g._getBoundingBox(this);
@@ -2269,7 +2388,7 @@
       g._pop();
 
       return [bb.x, bb.y, bb.width, bb.height];
-    },*/
+    },
 
     textWidth: function () {
 
@@ -2390,15 +2509,568 @@
     }
   }
 
+  var RiText_P5js = makeClass();
+
+  RiText_P5js.prototype = { // for p5.js
+
+    init: function (p5) {
+      this.p = p5;
+    },
+
+    _getGraphics: function () {
+      return this.p;
+    },
+
+    _push: function () {
+      push();
+      return this;
+    },
+
+    _pop: function () {
+      pop();
+      return this;
+    },
+
+    _textAlign: function (align) {
+      textAlign(align);
+      return this;
+    },
+
+    _scale: function (sx, sy) {
+      scale(sx, sy);
+      return this;
+    },
+
+    _translate: function (tx, ty) {
+      translate(tx, ty);
+      return this;
+    },
+
+    _rotate: function (zRot) {
+      rotate(zRot);
+      return this;
+    },
+
+    _text: function (str, x, y) {
+      text(str, x, y);
+      return this;
+    },
+
+    _fill: function (r, g, b, a) {
+      fill(r, g, b, a);
+      return this;
+    },
+
+    _stroke: function (r, g, b, a) {
+      stroke(r, g, b, a);
+      return this;
+    },
+
+    _noFill: function () {
+      noFill();
+      return this;
+    },
+
+    _noStroke: function () {
+      noStroke();
+      return this;
+    },
+
+    _strokeWeight: function (sw) {
+      strokeWeight(sw);
+      return this;
+    },
+
+    // actual creation: only called from RiText.createDefaultFont();!
+    _createFont: function (fontName, fontSize) { // p5js
+
+      textFont(fontName);
+      textSize(fontSize);
+
+      this.font = {
+        "name": fontName,
+        "size": fontSize
+        // add textAscent,textDescent,widths?
+      }
+
+      return this.font;
+    },
+
+    _rect: function (x, y, w, h) {
+
+      rect(x, y, w, h);
+      return this;
+    },
+
+    _textFont: function (fontObj) {
+
+			//console.log('_textFont', fontObj);
+
+      if (!is(fontObj, O))
+        err("_textFont takes object!");
+
+      textFont(fontObj, fontObj.size);
+    },
+
+    _textSize: function (sz) {
+
+      textSize(sz);
+    },
+
+    _textWidth: function (fontObj, str) {
+
+      this._push();
+      textFont(fontObj, fontObj.size);
+      var tw = textWidth(str);
+      this._pop();
+      //log(str+" -> "+tw);
+      return tw;
+    },
+
+    _textHeight: function (rt) {
+
+      this._push();
+      var h = this._getBoundingBox(rt).height;
+      this._pop();
+      return h;
+    },
+
+    _textAscent: function (rt, ignoreContext) {
+
+      ignoreContext = ignoreContext || false;
+
+      if (!ignoreContext) {
+
+        this._push();
+        textFont(rt._font, rt._font.size);
+      }
+
+      var asc = textAscent();
+
+      if (!ignoreContext) {
+
+        this._pop();
+      }
+
+      return asc;
+    },
+
+    _textDescent: function (rt) {
+
+      this._push();
+      textFont(rt._font, rt._font.size);
+      var dsc = textDescent();
+      this._pop();
+      return dsc;
+    },
+
+    // TODO: what about scale?
+    _getBoundingBox: function (rt) {
+
+      this._push();
+      textFont(rt._font);
+      textSize(rt._font.size || RiText.defaults.fontSize);
+
+      var ascent = textAscent(),
+        descent = textDescent(),
+        width = textWidth(rt.text());
+
+      this._pop();
+
+      return {
+        x: 0,
+        y: -ascent - 1,
+        width: width,
+        height: (ascent + descent + 1)
+      };
+    },
+
+    _width: function () {
+
+			return this.p.width;
+    },
+
+    _type: function () {
+
+      return "p5js";
+    },
+
+    toString: function () {
+
+      return "RiText_" + this._type();
+    }
+  } // end P5js
+
+  var RiText_Node = makeClass();
+
+  RiText_Node.prototype = { // TODO: get rid of all no-op methods...
+
+    init: function (metrics) {
+
+      this.font = metrics;
+    },
+
+    _getGraphics: function () {
+
+      warn("NodeRenderer._getGraphics() returning null graphics context!");
+      return null;
+    },
+
+    _push: function () {
+      // no-op
+      return this;
+    },
+
+    _pop: function () {
+      // no-op
+      return this;
+    },
+
+    _textAlign: function (align) {
+      // no-op
+      return this;
+    },
+
+    _scale: function (sx, sy) {
+      //warn("scale("+sx+","+sy+") not yet implemented");
+    },
+
+    _translate: function (tx, ty) {
+      //warn("translate("+tx+","+ty+") not yet implemented");
+    },
+
+    _rotate: function (zRot) {
+      //warn("rotate() not yet implemented");
+    },
+
+    _text: function (str, x, y) {
+      // no-op
+    },
+
+    _fill: function (r, g, b, a) {
+      // no-op
+    },
+
+    _stroke: function (r, g, b, a) {
+      // no-op
+    },
+
+    _noFill: function () {
+      // no-op
+    },
+
+    _strokeWeight: function () {
+      // no-op
+    },
+
+    // actual creation: only called from RiText.createDefaultFont();!
+    _createFont: function (fontName, fontSize) {
+
+      return this.font;
+    },
+
+    _rect: function (x, y, w, h) {
+      // no-op
+    },
+
+    _textFont: function (fontObj) {
+
+      // TODO: apply one of the (cached?) fonts?
+      this.font = fontObj;
+    },
+
+    _textWidth: function (fontObj, str) {
+
+      var w = 0;
+      var def = this.font.widths.i;
+      if (str && str.length) {
+        for (var i = 0; i < str.length; i++) {
+          var c = str.charAt(i);
+          if (c == '\n' || c == '\r') continue;
+          var k = this.font.widths[c];
+          if (!k) {
+            warn("No glyph for \"" + c + "\"in word: " + str);
+            k = def;
+          }
+          w += k;
+        }
+      }
+      return w;
+    },
+
+    _textHeight: function (rt) {
+
+      return this._textAscent() + this._textDescent();
+    },
+
+    _textAscent: function (rt, ignoreContext) {
+
+      return this.font.ascent;
+    },
+
+    _textDescent: function (rt) {
+
+      return this.font.descent;
+    },
+
+    // TODO: what about scale/rotate?
+    _getBoundingBox: function (rt) {
+
+      // bc of no translate(), we use the actual x,y
+      return {
+        x: rt.x,
+        y: rt.y - this._textAscent() - 1,
+        width: this._textWidth(),
+        height: this._textAscent() + this._textDescent() + 1
+      };
+    },
+
+    _width: function () {
+
+      throw Error('no width in node');
+    },
+
+    _type: function () {
+
+      return "Node";
+    },
+
+    toString: function () {
+
+      return "RiText_" + this._type();
+    }
+  }
+
+  var RiText_P5 = makeClass(); // for processing.js
+
+  RiText_P5.prototype = {
+
+    init: function (p, ctx) {
+
+      this.p = p;
+      //console.log(p);
+      this.ctx = ctx;
+    },
+
+    _getGraphics: function () {
+
+      return this.p;
+    },
+
+    _push: function () {
+
+      if (this.ctx)
+        this.ctx.save();
+      else
+        push(); // injected by p5.js
+
+      return this;
+    },
+
+    _pop: function () {
+
+      if (this.ctx)
+        this.ctx.restore();
+      else
+        pop(); // injected by p5.js
+
+      return this;
+    },
+
+    _textAlign: function (align) {
+
+      this.p.textAlign.apply(this, arguments);
+      return this;
+    },
+
+    _scale: function (sx, sy) {
+
+      sy = sy || 1;
+      this.p.scale(sx, sy, 1);
+    },
+
+    _translate: function (tx, ty) {
+
+      ty = ty || 0;
+      this.p.translate(tx, ty, 0);
+    },
+
+    _rotate: function (zRot) {
+
+      this.p.rotate(zRot);
+    },
+
+    _text: function (str, x, y) {
+
+      this.p.text.apply(this, arguments);
+    },
+
+    _fill: function (r, g, b, a) {
+
+      this.p.fill.apply(this, arguments);
+    },
+
+    _stroke: function (r, g, b, a) {
+
+      this.p.stroke.apply(this, arguments);
+    },
+
+    _noFill: function () {
+
+      this.p.noFill();
+    },
+
+    _rect: function (x, y, w, h) {
+
+      this.p.rect.apply(this, arguments);
+    },
+
+    _strokeWeight: function (f) {
+
+      this.p.strokeWeight.apply(this, arguments);
+    },
+
+    _background: function (r, g, b, a) {
+
+      this.p.background.apply(this, arguments);
+    },
+
+    // actual creation: only called from RiText.defaultFont()!
+    _createFont: function (fontName, fontSize) {
+
+      //log("[P5] Creating font: "+fontName+"-"+fontSize);
+
+      return this.p.createFont && this.p.createFont(fontName, fontSize);
+    },
+
+    _textFont: function (fontObj) {
+
+      if (!is(fontObj, O))
+        err("_textFont takes object!");
+      this.p.textFont(fontObj, fontObj.size);
+    },
+
+    _textSize: function (sz) {
+
+      this.p.textSize(sz);
+    },
+
+    _textWidth: function (fontObj, str) {
+
+      this._push();
+      this.p.textFont(fontObj, fontObj.size); // was _textFont
+      var tw = this.p.textWidth(str);
+      this._pop();
+      //log(str+" -> "+tw);
+      return tw;
+    },
+
+    _textHeight: function (rt) {
+
+      this._push();
+      var h = this._getBoundingBox(rt).height;
+      this._pop();
+      return h;
+    },
+
+    _textAscent: function (rt, ignoreContext) {
+
+      ignoreContext = ignoreContext || false;
+
+      if (!ignoreContext) {
+
+        this._push();
+        this.p.textFont(rt._font, rt._font.size);
+      }
+
+      var asc = this.p.textAscent();
+
+      if (!ignoreContext) {
+
+        this._pop();
+      }
+
+      return asc;
+    },
+
+    _textDescent: function (rt) {
+
+      this._push();
+      this.p.textFont(rt._font, rt._font.size);
+      var dsc = this.p.textDescent();
+      this._pop();
+      return dsc;
+    },
+
+    // TODO: what about scale?
+    _getBoundingBox: function (rt) {
+
+      //console.log(this.ctx.measureText(rt.text()).height);
+
+      this._push();
+      this.p.textFont(rt._font, rt._font.size);
+
+      var ascent = this.p.textAscent(),
+        descent = this.p.textDescent(),
+        width = this.p.textWidth(rt.text());
+
+      this._pop();
+
+      return {
+        x: 0,
+        y: -ascent - 1,
+        width: width,
+        height: (ascent + descent + 1)
+      };
+    },
+
+    _width: function () {
+
+      return this.p.width;
+    },
+
+    _type: function () {
+
+      return "Processing";
+    },
+
+    toString: function () {
+
+      return "RiText_" + this._type();
+    }
+  }
+
   ////////////////////////////////////////////////////////////////////////////////
   // Renderer setup
   ////////////////////////////////////////////////////////////////////////////////
 
-  if (typeof p5 === 'undefined') { // not in p5.js
+  if (typeof Processing !== 'undefined') {
+
+    Processing.registerLibrary("RiTa", {
+
+      attach: function (p5) {
+
+        if (p5 && p5.externals && p5.externals.canvas)
+          var context2d = p5.externals.canvas.getContext("2d");
+
+        RiText.renderer = new RiText_P5(p5, context2d);
+      }
+    })
+  } else if (typeof p5 !== 'undefined') { // in p5.js
+
+    RiText.renderer = new RiText_P5js(new p5());
+
+  } else if (isNode()) {
+
+    RiText.renderer = RiText_Node(RiText.defaults.metrics);
+
+  } else {
 
     warn('Unknown Env: not Processing(JS), p5.js, Node, or Android; rendering unavailable');
     RiText.renderer = RiText_Node(RiText.defaults.metrics);
   }
+
+  log('[INFO] Render-mode: '+RiText.renderer._type());
 
   /*jshint -W069 */
 

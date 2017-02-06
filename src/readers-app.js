@@ -83,10 +83,6 @@ function Grid(c, x, y, w, h) {
 
   this.cells = c;
 
-  this.graphics = RiText.renderer;
-  if (!this.graphics) throw Error('No renderer!');
-
-  // DH: DO WE NEED THIS??
   this.x = x;
   this.y = y;
 
@@ -103,9 +99,9 @@ Grid.prototype = {
 
   draw: function (isRecto) { // not called in Node
 
-    this.graphics._push();
+    push();
 
-    isRecto && (this.graphics._translate(this.graphics._width() / 2, 0));
+    isRecto && (translate(width / 2, 0));
 
     for (var i = 0; i < this.cells.length; i++) {
       for (var j = 0; j < this.cells[i].length; j++)
@@ -115,7 +111,7 @@ Grid.prototype = {
     this.header && (this.header.draw());
     this.footer && (this.footer.draw());
 
-    this.graphics._pop();
+    pop();
   },
 
   /* Returns the RiText on the grid cell with the specified coords or undefined if it doesnt exist */
@@ -836,7 +832,8 @@ Reader.instances = [];
 
 Reader.modeName = function (mode) {
 
-  return mode == Reader.SERVER ? "Server" : (mode == Reader.CLIENT ? "Client" : "App") + '[' + RiText.renderer._type() + ']';
+  return mode == Reader.SERVER ? "Server" : (mode == Reader.CLIENT ? "Client" : "App");
+  // + '[' + RiText.renderer._type() + ']';
 }
 
 Reader.findById = function (id) {
@@ -1043,7 +1040,6 @@ var PageManager = function PageManager(host, port) {
       this.y = y;
       this.width = w;
       this.height = h;
-      this.focused = null;
       this._loadBigrams(txt);
 
       var pfont = RiText.defaultFont(),
@@ -1053,32 +1049,18 @@ var PageManager = function PageManager(host, port) {
 
       if (!pfont) throw new Error("No font set");
 
-      //console.log(pfont.widths['&']);
-
       if (!txt || !txt.length) throw Error("No text!");
 
       w = w || Number.MAX_VALUE - x, h = h || Number.MAX_VALUE,
-        leading = leading || pfont.size * RiText.defaults.leadingFactor;
+        leading = leading || ((pfont.size || RiText.defaults.fontSize) * RiText.defaults.leadingFactor);
 
-      var g = RiText.renderer,
-        ascent, descent, leading, startX = x,
-        currentX = 0,
-        yPos = 0,
-        currentY = y,
-        rlines = [],
-        sb = E,
-        maxW = x + w,
-        maxH = y + h,
-        words = [],
-        next, dbug = 0,
-        paraBreak = false,
-        pageBreak = false,
-        lineBreak = false,
-        firstLine = true,
-        rt;
+      var ascent, descent, leading, startX = x,
+        currentX = 0, yPos = 0, currentY = y, rlines = [],
+        sb = E, maxW = x + w, maxH = y + h, words = [], next, dbug = 0,
+        paraBreak = false, pageBreak = false, lineBreak = false, firstLine = true;
 
-      // for ascent/descent in canvas renderer
-      if (!g || !g.p) rt = RiText(SP, 0, 0, pfont);
+      var ascent = pfont._textAscent(RiText.defaults.fontSize),
+      descent = pfont._textDescent(RiText.defaults.fontSize);
 
       // remove line breaks & add spaces around html
       txt = txt.replace(/&gt;/g, '>').replace(/&lt;/g, '<');
@@ -1086,11 +1068,6 @@ var PageManager = function PageManager(host, port) {
 
       // split into reversed array of words
       RiText._addToStack(txt, words);
-
-      g._textFont(pfont); // for ascent & descent
-
-      ascent = g.p ? g.p.textAscent() : g._textAscent(rt, true);
-      descent = g.p ? g.p.textDescent() : g._textDescent(rt, true);
 
       if (RiText.defaults.indentFirstParagraph)
         startX += RiText.defaults.paragraphIndent;
@@ -1120,7 +1097,7 @@ var PageManager = function PageManager(host, port) {
         }
 
         // re-calculate our X position
-        currentX = startX + g._textWidth(pfont, sb + next);
+        currentX = startX + pfont._textWidth(sb + next, RiText.defaults.fontSize);
 
         //info(g._type()+" -> "+g._textWidth(pfont, sb + next)+" for "+(sb+next));
 
@@ -1128,6 +1105,7 @@ var PageManager = function PageManager(host, port) {
         if (!paraBreak && !lineBreak && !pageBreak && currentX < maxW) {
 
           sb += next + SP; // add-word
+
         } else {
 
           // check yPosition for line break
@@ -1182,6 +1160,7 @@ var PageManager = function PageManager(host, port) {
 
         if (dbug) info("add3: " + rt);
         sb = E;
+
       } else if (words.length) { // IF ADDED: (DCH) 12.4.13
 
         rlines.push(rt = RiText._newRiTextLine(words.join(SP).trim(), pfont, x, leading));
