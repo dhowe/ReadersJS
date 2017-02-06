@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/dhowe/ReadersJS/issues"
   },
-  "homepage": "https://github.com/dhowe/ReadersJS#readme"
+  "homepage": "https://github.com/dhowe/ReadersJS#readme",
+  "dependencies": {
+    "p5": "^0.5.6",
+    "rita": "^1.1.51"
+  }
 }
