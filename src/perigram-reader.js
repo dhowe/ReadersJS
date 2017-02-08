@@ -10,10 +10,13 @@ function PerigramReader(g, rx, ry, speed) {
 	this.consoleString = '';
 	this.downWeighting = .6;
 	this.upWeighting = .12;
-	this.col = [255, 0, 0, 255]; // red
+	
 	this.fill = RiText.defaultFill(); // or another color?
 	console.log("START: ",this.fill);
-	this.neighborCol = [127, 0, 0, 255];
+
+  //Perigram Reader Color
+  this.col = [220, 20, 60, 255]; // red
+	this.neighborCol = [127, 10, 30, 255];
 }
 
 PerigramReader.prototype.selectNext = function () {

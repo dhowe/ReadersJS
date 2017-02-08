@@ -14,7 +14,8 @@ function MesosticReader(g, rx, ry, speed) {
 		this.letterIdx = 0;
 		this.letter = null;
 
-		this.color = [255,0,0,255];
+        //Mesostic Reader color
+		this.col = [216, 129, 0,255];
 }
 
 var M = MesosticReader.prototype;
@@ -71,12 +72,12 @@ M.selectNext = function() {
 M.onEnterCell = function(curr) {
 
 	this.fill = curr.fill();
-	curr.fill(0, 0, 255);
+	curr.fill(this.col);
 }
 
 M.onExitCell = function(curr) {
-
-	curr.fill.call(curr, this.fill); // DCH: 2/2/2017
+    curr.fill.call(curr, this.fill.r,this.fill.g,this.fill.b,this.fill.a); 
+	// curr.fill.call(curr, this.fill); // DCH: 2/2/2017
 	Grid.resetCell(curr);
 }
 
