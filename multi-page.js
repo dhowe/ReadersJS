@@ -3,15 +3,15 @@ var pManager, rdr, font;
 function preload() {
 
   bg = loadImage('data/page.png');
-  font = loadFont('fonts/times.ttf');
+  font = loadFont('fonts/Baskerville.ttf');
 }
 
 function setup() {
 
-  createCanvas(900, 480);
+  createCanvas(1280, 720);
 
   RiText.defaultFill(255);
-  RiText.defaultFont(font, 17);
+  RiText.defaultFont(font, 25);
   RiText.defaults.paragraphIndent = 20;
 
   RiTa.loadString('data/image.txt', function (txt) {
@@ -19,9 +19,15 @@ function setup() {
     // do the layout
     pManager = PageManager.getInstance(Reader.APP);
     pManager.storePerigrams(3, trigrams);
-    pManager.layout(txt, 25, 40, 400, 400); // grid-rect
+    pManager.layout(txt, 25, 40, 580, 650); // grid-rect
 
     // add some readers
+    //White
+    //Brown 79, 34, 0
+    //Ochre 216, 129, 0
+    //Orange 0xFFB01C
+    //Yellow 0xFFD000
+
     rdr = new Reader(pManager.recto, 1, 8, .4);
     rdr = new PerigramReader(pManager.recto);
     rdr = new MesosticReader(pManager.verso, 1.1);

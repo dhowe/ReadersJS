@@ -3,7 +3,7 @@ var pManager, rdr, bg, font;
 function preload() {
 
   bg = loadImage('data/page.png');
-  font = loadFont('fonts/times.ttf');
+  font = loadFont('fonts/Baskerville.ttf');
 }
 
 function setup() {
