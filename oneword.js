@@ -2,7 +2,7 @@ var rt, font, bb;
 
 function preload() {
 
-  font = loadFont('fonts/Baskerville.ttf');
+  font = loadFont('fonts/times.ttf');
 }
 
 function setup() {
