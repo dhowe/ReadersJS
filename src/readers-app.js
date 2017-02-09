@@ -103,9 +103,13 @@ Grid.prototype = {
 
     isRecto && (translate(width / 2, 0));
 
+
+
     for (var i = 0; i < this.cells.length; i++) {
       for (var j = 0; j < this.cells[i].length; j++)
-        if (this.cells[i][j]) this.cells[i][j].draw();
+        if (this.cells[i][j]) {
+          this.cells[i][j].draw();
+        }
     }
 
     this.header && (this.header.draw());
@@ -888,7 +892,7 @@ Reader.prototype = {
     //console.log(this.type+'.onEnterCell('+curr+')');
     curr.showBounds(false);
     this.fill = curr.fill();
-    curr.fill(255, 0, 0);
+    curr.fill(255, 0, 0, 255);
 
     if (this.showNeighbors) {
       this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
@@ -904,7 +908,9 @@ Reader.prototype = {
 
     if (curr) {
       curr.showBounds(false);
-      curr.fill.call(curr, this.fill); // DCH: 2/2/2017
+      //curr.fill.call(curr, this.fill); // DCH: 2/2/2017
+      curr.fill.call(curr, this.fill.r,this.fill.g,this.fill.b,this.fill.a);
+    
     }
   },
 
@@ -1303,7 +1309,6 @@ var PageManager = function PageManager(host, port) {
     },
 
     this.draw = function () {
-
       this.verso && (this.verso.draw(0));
       this.recto && (this.recto.draw(1));
 
