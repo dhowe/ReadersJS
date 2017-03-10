@@ -941,7 +941,15 @@ Reader.prototype = {
 
     pMan.notifyServer && (pMan.sendUpdate(this, msg));
 
-    this.hasFocus() && (console.log(msg)); // log the focused-reader
+    this.hasFocus() && (function(){
+
+      console.log(msg);
+
+      msg = msg.replace(/ /g, "&nbsp;");
+      var myP = createP(msg);
+      myP.parent('focusDisplay');
+
+    }()); // log the focused-reader
 
     this.onEnterCell(this.current);
 
