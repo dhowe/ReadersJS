@@ -5,6 +5,8 @@
     <title>Multiple Readers</title>
 
     <script src="node_modules/p5/lib/p5.js"></script>
+    <script src="node_modules/p5/lib/addons/p5.dom.js"></script>
+    <script src="js/jquery-1.10.2.min.js"></script>
     <script src="node_modules/rita/lib/rita-tiny.js "></script>
 
     <script src="lib/ritext.js"></script>
@@ -12,10 +14,21 @@
     <script src="src/mesostic-reader.js"></script>
     <script src="src/perigram-reader.js"></script>
     <script src="data/image-perigrams.js"></script>
+    
 
     <script src="multi-page.js"></script>
+     <script src="js/main.js"></script>
+
+    <link rel="stylesheet" href="fonts/webfont/font.css">
+    <link rel="stylesheet" href="style.css">
+
   </head>
   <body>
-    <font size=1>click for focus, then use left/right arrow-keys to change pages</font>  <br>
+
+    <font size=1>Use left/right arrow-keys to change pages</font>  <br>
+    <div id="options">Readers <span>Options</span></div>
+    <div id="interface"></div>
+    <div id="focusDisplay"></div>
+
   </body>
 </html>
