@@ -12,6 +12,12 @@ canvas {
     border: 1px solid #333;
 }
 
+#hint {
+    color:#DDD;
+    margin-left: 120px;
+    margin-top: 60px;
+}
+
 #options {
     position: absolute;
     left: 10px;
