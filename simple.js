@@ -21,7 +21,9 @@ function setup() {
     pManager.layout(txt, 25, 40, 400, 400);
 
     // add some readers
-    rdr = new Reader(pManager.verso, 1, 8, .4);
+    rdr = new Reader(pManager.recto, 1, 8, .4);
+    rdr = new PerigramReader(pManager.recto);
+    rdr = new MesosticReader(pManager.verso, 1.1);
 
     // set page-turner/logger
     pManager.focus(rdr);

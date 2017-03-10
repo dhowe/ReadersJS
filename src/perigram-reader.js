@@ -10,9 +10,8 @@ function PerigramReader(g, rx, ry, speed) {
 	this.consoleString = '';
 	this.downWeighting = .6;
 	this.upWeighting = .12;
-	
+
 	this.fill = RiText.defaultFill(); // or another color?
-	console.log("START: ",this.fill);
 
   //Perigram Reader Color
   this.col = [220, 20, 60, 255]; // red
