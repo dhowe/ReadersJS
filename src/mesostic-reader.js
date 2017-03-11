@@ -15,7 +15,7 @@ function MesosticReader(g, rx, ry, speed) {
 		this.letter = null;
 
         //Mesostic Reader color
-		this.col = [216, 129, 0,255];
+		this.col = [20, 100, 219,255];
 }
 
 var M = MesosticReader.prototype;

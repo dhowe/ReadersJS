@@ -6,7 +6,14 @@ $(document).ready(function() {
 
     $('#go').click(function() {
       console.log("click");
-              $('#interface').hide();
+      $('#interface').hide();
     });
-
+    
+    //hide interface when clicking elsewhere
+    $('body').click(function(event) {
+        if (event.pageX > 520 || event.pageY > 524) {
+          $("#interface").hide();
+        }
+    });
+    
 });
