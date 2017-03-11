@@ -103,8 +103,6 @@ Grid.prototype = {
 
     isRecto && (translate(width / 2, 0));
 
-
-
     for (var i = 0; i < this.cells.length; i++) {
       for (var j = 0; j < this.cells[i].length; j++)
         if (this.cells[i][j]) {
@@ -859,6 +857,7 @@ function Reader(g, cx, cy, speed) { // constructor
   this.steps = 0;
   this.history = [];
   this.socket = null;
+  this.hidden = false;
   this.type = 'Reader';
   this.neighborhood = [];
   this.waitForNetwork = false;
@@ -909,7 +908,7 @@ Reader.prototype = {
       curr.showBounds(false);
       //curr.fill.call(curr, this.fill); // DCH: 2/2/2017
       curr.fill.call(curr, this.fill.r,this.fill.g,this.fill.b,this.fill.a);
-    
+
     }
   },
 
@@ -940,15 +939,13 @@ Reader.prototype = {
 
     pMan.notifyServer && (pMan.sendUpdate(this, msg));
 
-    this.hasFocus() && (function(){
+    if (!this.hidden && this.hasFocus()) {
 
-      console.log(msg);
-
+      //console.log(msg);
       msg = msg.replace(/ /g, "&nbsp;");
       var myP = createP(msg);
       myP.parent('focusDisplay');
-
-    }()); // log the focused-reader
+    }
 
     this.onEnterCell(this.current);
 
@@ -1310,12 +1307,14 @@ var PageManager = function PageManager(host, port) {
 
       if (arguments.length) {
         this.focused = reader;
+        //console.log("Focus:"+this.focused.type);
         return this;
       }
       return this.focused;
     },
 
     this.draw = function () {
+
       this.verso && (this.verso.draw(0));
       this.recto && (this.recto.draw(1));
 
