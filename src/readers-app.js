@@ -136,7 +136,6 @@ Grid.prototype = {
         s += this.cells[i][j].text() + " "; //  "("+j+","+i+ ") ";
       s += "\n";
     }
-    console.log(s);
 
   },
 
@@ -1195,7 +1194,7 @@ var PageManager = function PageManager(host, port) {
       this.verso = Grid.instances[0];
       this.recto = Grid.instances[1];
 
-      //Grid.dumpPages(); // print the layout to console(s)
+      Grid.dumpPages(); // print the layout to console(s)
 
       return this;
     },

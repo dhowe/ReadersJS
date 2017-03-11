@@ -14,7 +14,7 @@ function PerigramReader(g, rx, ry, speed) {
 	this.fill = RiText.defaultFill(); // or another color?
 
   //Perigram Reader Color
-  this.col = [220, 20, 60, 255]; // red
+  this.col = [189, 5, 4, 255]; // red
 	this.neighborCol = [127, 10, 30, 255];
 }
 

@@ -1,10 +1,20 @@
 html {
     font-family: 'Proxima Nova Rgular', sans-serif;
-    background-color: black;
 }
 
 body {
-	min-width: 1300px;
+    min-width: 1300px;
+    background-color: black;
+    color: #DDD;
+}
+
+body.light {
+    background-color: rgb(232, 232, 232);
+    color: #333;
+}
+
+body.light #focusDisplay {
+    background-color: rgba(0,0,0,.1);
 }
 
 canvas {
@@ -13,7 +23,6 @@ canvas {
 }
 
 #hint {
-    color:#DDD;
     margin-left: 120px;
     margin-top: 60px;
 }
@@ -29,6 +38,7 @@ canvas {
     text-align: center;
     vertical-align: middle;
     line-height: 60px;
+    color:#333;
 }
 
 #options span {
@@ -65,7 +75,6 @@ canvas {
 	height:100%;
 	background-color: rgba(255,255,255,.1);
 	overflow: scroll;
-	color:#DDD;
 	font-family:monospace;
 }
 
@@ -85,6 +94,7 @@ select {
     margin: 5px 10px;
     color: #DDD;
     border-radius: 0px;
+    cursor: pointer;
 }
 
 select:active {
@@ -165,8 +175,31 @@ button:hover {
 
 .reader input:checked + label:before {
     border-color: rgba(0, 0, 0, 0);
-    background-color: red;
 }
+.reader input:checked + label:hover:before {
+    border-color: gray;
+    opacity: .8;
+}
+/*Reader Color Scheme*/
+.reader#MesosticReader label:hover:before, .reader#MesosticReader input:checked + label:before{
+     background-color: #1464DB;
+}
+.reader#PerigramReader label:hover:before, .reader#PerigramReader input:checked + label:before{
+     background-color: #BD0504;
+}
+.reader#LessDirectedPerigramReader label:hover:before, .reader#LessDirectedPerigramReader input:checked + label:before{
+     background-color: #FA0007;
+}
+.reader#SimpleSpawnerReader label:hover:before, .reader#SimpleSpawnerReader input:checked + label:before{
+     background-color: #FFB017;
+}
+.reader#PerigramSpawnerReader label:hover:before, .reader#PerigramSpawnerReader input:checked + label:before{
+     background-color: #D88100;
+}
+.reader#LessDirectedSpawnerReader label:hover:before, .reader#LessDirectedSpawnerReader input:checked + label:before{
+     background-color: #FFD000;
+}
+
 
 .reader input:checked ~ select {
     display: inline-block;
