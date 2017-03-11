@@ -44,7 +44,7 @@ function setup() {
     };
 
     // set page-turner/logger
-    pManager.focus(readers['Mesostic Reader']);
+    pManager.focus(readers['Mesostic Reader'].reader);
 
     createInterface();
   });
@@ -66,9 +66,9 @@ function keyPressed() {
 
 function loadTexts(callback) {
 
-  var count = 0,
-    total = TEXTS.length;
-  TEXTS.forEach(function (text) {
+  var count = 0;
+  var total = texts.length;
+  texts.forEach(function (text) {
     RiTa.loadString(text.file, function (txt) {
       text.contents = txt;
       if (++count === total)
@@ -78,6 +78,14 @@ function loadTexts(callback) {
 }
 
 ///////////////////////////////////////////////////////////////////////
+
+function toSafeName(name) {
+  return name.replace(' ','_');
+}
+
+function fromSafeName(name) {
+  return name.replace('_',' ');
+}
 
 function createInterface() {
 
@@ -94,10 +102,7 @@ function createInterface() {
 
     readerDef.active = true;
     readerDef.radioButton = rb;
-
-    var ss = initializeSelect("speedSelect", speeds, speedChanged);
-    readerDef.speedSelect = ss;
-    ss.parent(rb);
+    readerDef.speedSelect = initializeSelect("speedSelect", speeds, speedChanged).parent(rb);
   });
 
   var interfaceElements = [
@@ -127,7 +132,11 @@ function createInterface() {
   }
 
   // set initial value for focusSelect
-  $('#focusSelect').val(nameFromReader(pManager.focus()));
+  var fr = nameFromReader(pManager.focus());
+  console.log(pManager.focus());
+
+  console.log(fr);
+  $('#focusSelect').val(fr);
 }
 
 // function toSafeName(name) {
@@ -140,11 +149,13 @@ function createInterface() {
 
 function nameFromReader(reader) {
 
+  var result;
   Object.keys(readers).forEach(function (name) {
-    var rdr = readers[name];
+    var rdr = readers[name].reader;
     if (rdr === reader)
-      return name;
+      result = name;
   });
+  return result;
 }
 
 function readerFromName(name) {
