@@ -136,7 +136,6 @@ Grid.prototype = {
         s += this.cells[i][j].text() + " "; //  "("+j+","+i+ ") ";
       s += "\n";
     }
-    console.log(s);
 
   },
 
@@ -941,7 +940,15 @@ Reader.prototype = {
 
     pMan.notifyServer && (pMan.sendUpdate(this, msg));
 
-    this.hasFocus() && (console.log(msg)); // log the focused-reader
+    this.hasFocus() && (function(){
+
+      console.log(msg);
+
+      msg = msg.replace(/ /g, "&nbsp;");
+      var myP = createP(msg);
+      myP.parent('focusDisplay');
+
+    }()); // log the focused-reader
 
     this.onEnterCell(this.current);
 
@@ -1187,7 +1194,7 @@ var PageManager = function PageManager(host, port) {
       this.verso = Grid.instances[0];
       this.recto = Grid.instances[1];
 
-      //Grid.dumpPages(); // print the layout to console(s)
+      Grid.dumpPages(); // print the layout to console(s)
 
       return this;
     },
