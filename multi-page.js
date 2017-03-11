@@ -1,16 +1,22 @@
-var pManager, rdr, font, bgColor = 0;
-var texts= {}, activeReaders = [];
-var mr,pr,ldpr,ssr,psr,ldsr;
-var TEXTS = ["data/image.txt", "data/poeticCaption.txt", "data/misspeltLandings.txt"],
-    READER_NAMES = ["Mesostic Reader", "Perigram Reader", "Less Directed Perigram Reader", "Simple Spawner Reader", "Perigram Spawner Reader", "Less Directed Spawner Reader"],
-    TEXT_NAMES = [ "THE IMAGE", "POETIC CAPTION", "MISSPELT LANDINGS"],
-    TEXT_STYLES = [ "Faint", "Grey", "Dark"],
-    COLOR_THEMES = ["Dark", "Light"],
-    SPEED_MODES = ["Fluent", "Steady", "Slow", "Slower", "Slowest", "Fast"];
+var texts = [{
+    title: 'The Image',
+    file: 'data/image.txt'
+  }, {
+    title: 'Poetic Caption',
+    file: 'data/poeticCaption.txt'
+  }, {
+    title: 'Misspelt Landings',
+    file: 'data/misspeltLandings.txt'
+  }];
+
+var speeds = ["Fluent", "Steady", "Slow", "Slower", "Slowest", "Fast"];
+var pManager, font, bgColor = 0;
+var readers = {};
+
+///////////////////////////////////////////////////////////////////////
 
 function preload() {
 
-  bg = loadImage('data/page.png');
   font = loadFont('fonts/Baskerville.ttf');
 }
 
@@ -18,245 +24,226 @@ function setup() {
 
   createCanvas(1280, 720);
 
-  RiText.defaultFill(255,60);
+  RiText.defaultFill(255, 60);
   RiText.defaultFont(font, 24);
   RiText.defaults.paragraphIndent = 20;
 
-  //Load other two text as well
-  loadTexts();
-
-  RiTa.loadString('data/image.txt', function (txt) {
+  loadTexts(function () {
 
     // do the layout
     pManager = PageManager.getInstance(Reader.APP);
     pManager.storePerigrams(3, trigrams);
-    pManager.layout(txt, 25, 40, 580, 650); // grid-rect
+    pManager.layout(texts[0].contents, 25, 40, 580, 650);
 
     // add some readers
-
-    // rdr = new Reader(pManager.recto, 1, 8, .4);
-    pr = new PerigramReader(pManager.recto);
-    mr = new MesosticReader(pManager.verso, 1.1);
-    
-    activeReaders.push(pr);
-    activeReaders.push(mr);
+    readers['Perigram Reader'] = {
+      reader: new PerigramReader(pManager.recto)
+    };
+    readers['Mesostic Reader'] = {
+      reader: new MesosticReader(pManager.verso, 1.1)
+    };
 
     // set page-turner/logger
-    pManager.focus(mr);
+    pManager.focus(readers['Mesostic Reader']);
 
-    //Interface
-    
-    // 6 Readers
-    // checkbox + select
-    var readersOptions = {};
-    console.log(activeReaders);
-
-    for( var i = 0; i < READER_NAMES.length; i++ ) {
-      
-      var idName = READER_NAMES[i].replace(/ /g, "");
-      var status = isReaderActive(READER_NAMES[i]);
-      console.log(idName, status);
-
-      rb = createCheckbox(READER_NAMES[i], status);
-      rb.changed(readerOnOffEvent);
-      rb.id(idName);
-      select = initializeSelect("speedSelect", SPEED_MODES, speedChanged);
-
-      
-
-      readersOptions[READER_NAMES[i]] = {
-        active : status,
-        radioButton : rb,
-        speedSelect : select
-      }
-      
-      select.parent(rb);
-      rb.class("reader");
-      rb.parent('interface');
-     
-    }
-
-
-    focusSelect = initializeSelect("focusSelect", getActiveReadersName(), focusChanged);
-    textSelect = initializeSelect("textSelect", TEXT_NAMES, textChanged);
-    styleSelect = initializeSelect("styleSelect", TEXT_STYLES, styleChanged);
-    themeSelect = initializeSelect("themeSelect", COLOR_THEMES, themeChanged);
-
-
-    styleSelect.addClass("half");
-    themeSelect.addClass("half");
-     
-    button = createButton('go');
-    button.mousePressed(selectionDone);
-    button.id('go');
-    
-    //Append all elements to interface
-    var interfaceElements = [focusSelect, textSelect, styleSelect, themeSelect, button];
-    var discriptText = ["Focus","Text", "Style", "Theme"]
-    for ( var i = 0; i < interfaceElements.length; i++ ) {
-      if (i != interfaceElements.length -1) {
-        wrapper = createDiv("");
-        wrapper.addClass("item");
-        wrapper.parent('interface');
-        discription = createP(discriptText[i]);
-        discription.parent(wrapper);
-        interfaceElements[i].parent(wrapper);
-
-      } else 
-        interfaceElements[i].parent('interface');
-    }
-
-    //set Initial Value of focus
-    console.log("FOCUS:",pManager.focus().type);
-    $('#focusSelect').val(getReadersNameFromId(pManager.focus().type));
-
-
+    createInterface();
   });
-}
-
+};
 
 function draw() {
 
   background(bgColor);
-	pManager && (pManager.draw());
-
+  pManager && (pManager.draw());
 }
 
 function keyPressed() {
 
-	keyCode == 39 && (pManager.nextPage());
-	keyCode == 37 && (pManager.lastPage());
+  keyCode == 39 && (pManager.nextPage());
+  keyCode == 37 && (pManager.lastPage());
 }
 
-function loadTexts() {
+///////////////////////////////////////////////////////////////////////
 
-    TEXTS.forEach(function(text, index) {
-        RiTa.loadString(text, function(txt) {
-           var key = TEXT_NAMES[index].replace(" ", "");
-           texts[key] = txt;
-        });
+function loadTexts(callback) {
+
+  var count = 0,
+    total = TEXTS.length;
+  TEXTS.forEach(function (text) {
+    RiTa.loadString(text.file, function (txt) {
+      text.contents = txt;
+      if (++count === total)
+        callback();
     });
-
+  });
 }
 
-function isReaderActive(name) {
-  for(var i = 0; i < activeReaders.length; i++) {
-     var withoutSpace = name.replace(/ /g, "");
-     if( withoutSpace === activeReaders[i].type ) return true;
+///////////////////////////////////////////////////////////////////////
+
+function createInterface() {
+
+  Object.keys(readers).forEach(function (name) {
+
+    var readerDef = readers[name],
+      reader = readerDef.reader,
+      rb = createCheckbox(name, status);
+
+    rb.changed(readerOnOffEvent);
+    rb.parent('interface');
+    rb.class("reader");
+    rb.id(toSafeName(name));
+
+    readerDef.active = true;
+    readerDef.radioButton = rb;
+
+    var ss = initializeSelect("speedSelect", speeds, speedChanged);
+    readerDef.speedSelect = ss;
+    ss.parent(rb);
+  });
+
+  var interfaceElements = [
+
+    initializeSelect("focusSelect", Object.keys(readers), focusChanged),
+    initializeSelect("textSelect", textNames(), textChanged),
+    initializeSelect("styleSelect", ["Faint", "Grey", "Dark"], styleChanged).addClass("half"),
+    initializeSelect("themeSelect", ["Dark", "Light"], themeChanged).addClass("half"),
+    createButton('go').mousePressed(selectionDone).id('go')
+  ];
+
+  // Append elements to interface
+  var descText = ["Focus", "Text", "Style", "Theme"];
+  for (var i = 0; i < interfaceElements.length; i++) {
+
+    if (i != interfaceElements.length - 1) {
+
+      var wrapper = createDiv('');
+      wrapper.addClass('item').parent('interface');
+      createP(descText[i]).parent(wrapper);
+      interfaceElements[i].parent(wrapper);
+
+    } else {
+
+      interfaceElements[i].parent('interface');
+    }
   }
-  return false;
+
+  // set initial value for focusSelect
+  $('#focusSelect').val(nameFromReader(pManager.focus()));
 }
 
-function getActiveReadersName() {
-  var list = [];
-  for(var i = 0; i < activeReaders.length; i++) {
-    var name = activeReaders[i].type;
-    name = name.replace(/([A-Z])/g, ' $1').trim();
-    list.push(name);
-  }
-  return list;
+// function toSafeName(name) {
+//   return name.replace(" ")
+// }
+//
+// function fromSafeName(name) {
+//   return name.replace(" ")
+// }
+
+function nameFromReader(reader) {
+
+  Object.keys(readers).forEach(function (name) {
+    var rdr = readers[name];
+    if (rdr === reader)
+      return name;
+  });
 }
 
-function getReadersNameFromId(name) {
-  for (var i = 0; i < READER_NAMES.length; i++) {
-    var withoutSpace = READER_NAMES[i].replace(/ /g, "");
-    if( withoutSpace === name) return READER_NAMES[i];
-  }
+function readerFromName(name) {
+
+  Object.keys(readers).forEach(function (n) {
+    if (n === name)
+      return readers[name].reader;
+  });
 }
 
-function getReadersFromName(name) {
-  switch (name) {
-    case "Mesostic Reader":
-        return mr;
-    case "Perigram Reader":
-        return pr;
-    case "Less Directed Perigram Reader":
-        return ldpr;
-    case "Simple Spawner Reader":
-        return ssr;
-    case "Perigram Spawner Reader":
-        return psr;
-    case "Less Directed Spawner Reader":
-        return ldsr;
-  }
+function textContentsFromName(name) {
+
+  texts.forEach(function (text) {
+    if (text.title == name)
+      return text.contents;
+  });
 }
-/***************** INTERFACE ***********************/
 
-function initializeSelect(id, options, event) {
+function textNames() {
 
-    var sel = createSelect();
+  var names = [];
+  texts.forEach(function (text) {
+    names.push(text.title);
+  });
+  return names;
+}
 
-    for (var i = 0; i < options.length; i++)
-        sel.option(options[i]);
+function initializeSelect(id, options, onChanged) {
 
-    sel.changed(event);
-    sel.id(id);
-
-    return sel;
-
+  console.log('initializeSelect:', id, options, typeof onChanged);
+  var sel = createSelect();
+  for (var i = 0; i < options.length; i++)
+    sel.option(options[i]);
+  return sel.id(id).changed(onChanged);
 }
 
 function focusChanged() {
-   console.log("CHANGE FOCUS TO:" + focusSelect.value());
-    var focus = getReadersFromName(focusSelect.value());
-    pManager.focus(focus);
-    //clear focusDisplay
-     $('#focusDisplay').html("");
+
+  console.log("CHANGE FOCUS TO:" + focusSelect.value());
+  var focus = getReadersFromName(focusSelect.value());
+  pManager.focus(focus);
+  //clear focusDisplay
+  $('#focusDisplay').html("");
 }
 
 function textChanged() {
-  
-    var textName = textSelect.value().replace(" ", "");
-    console.log("CHANGE TEXT TO:" + textName);
-    // pManager.sendUpdate(activeReaders,texts[textName]);
+
+  //var textName = textSelect.value().replace(" ", "");
+  var textName = textSelect.value();
+  console.log("CHANGE TEXT TO:" + textName);
+  // pManager.sendUpdate(readers,texts[textName]);
 }
 
 function styleChanged() {
-  
-    var style = styleSelect.value();
-  
-    var alpha;
-    switch (style) {
-        case "Faint":
-           alpha = 40;
-        case "Grey":
-           alpha = 70;
-        case "Dark":
-           alpha = 0;
-    }
-    console.log(style, alpha);
-    
-    //TODO: change text alpha - Grid?
+
+  var style = styleSelect.value();
+
+  var alpha;
+  switch (style) {
+  case "Faint":
+    alpha = 40;
+  case "Grey":
+    alpha = 70;
+  case "Dark":
+    alpha = 0;
+  }
+  console.log(style, alpha);
+
+  //TODO: change text alpha - Grid?
 }
 
 function themeChanged() {
 
-   var theme = themeSelect.value();
-   if (theme === "Dark") {
-       bgColor = 0;
-       $('body').addClass("dark");
-       $('body').removeClass("light");
-       //TODO: change default font color to white
+  var theme = themeSelect.value();
+  if (theme === "Dark") {
+    bgColor = 0;
+    $('body').addClass("dark");
+    $('body').removeClass("light");
+    //TODO: change default font color to white
 
-   } else {
-       bgColor = 232;
-      $('body').addClass("light");
-      $('body').removeClass("dark");
-      //TODO: change default font color to black
-   }
+  } else {
+    bgColor = 232;
+    $('body').addClass("light");
+    $('body').removeClass("dark");
+    //TODO: change default font color to black
+  }
 
 }
 
 function readerOnOffEvent() {
-    console.log(this.parent().id, this.checked());
-    //TODO: remove/add to activeReaders
+  console.log(this.parent().id, this.checked());
+  //TODO: remove/add to readers
 }
 
 function speedChanged() {
-   console.log(this.parent().id);
-   //TODO: change the speed of corresponding reader
+  console.log(this.parent().id);
+  //TODO: change the speed of corresponding reader
 }
 
-function selectionDone(){
-   $('#interface').hide();
+function selectionDone() {
+  $('#interface').hide();
 }
