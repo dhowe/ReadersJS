@@ -76,7 +76,7 @@ M.onEnterCell = function(curr) {
 }
 
 M.onExitCell = function(curr) {
-    curr.fill.call(curr, this.fill.r,this.fill.g,this.fill.b,this.fill.a); 
+    curr.fill.call(curr, this.fill.r,this.fill.g,this.fill.b,this.fill.a);
 	// curr.fill.call(curr, this.fill); // DCH: 2/2/2017
 	Grid.resetCell(curr);
 }

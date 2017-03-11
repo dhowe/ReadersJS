@@ -1,34 +1,62 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Multiple Readers</title>
 
-    <script src="node_modules/p5/lib/p5.js"></script>
-    <script src="node_modules/p5/lib/addons/p5.dom.js"></script>
-    <script src="js/jquery-1.10.2.min.js"></script>
-    <script src="node_modules/rita/lib/rita-tiny.js "></script>
+<head>
+  <meta charset="UTF-8">
+  <title>The Readers Project</title>
 
-    <script src="lib/ritext.js"></script>
-    <script src="src/readers-app.js"></script>
-    <script src="src/mesostic-reader.js"></script>
-    <script src="src/perigram-reader.js"></script>
-    <script src="data/image-perigrams.js"></script>
-    
+  <script src="node_modules/p5/lib/p5.js"></script>
+  <script src="node_modules/p5/lib/addons/p5.dom.js"></script>
+  <script src="node_modules/jquery/dist/jquery.slim.min.js"></script>
+  <script src="node_modules/rita/lib/rita-tiny.js"></script>
 
-    <script src="multi-page.js"></script>
-     <script src="js/main.js"></script>
+  <script src="lib/ritext.js"></script>
+  <script src="src/readers-app.js"></script>
+  <script src="src/mesostic-reader.js"></script>
+  <script src="src/perigram-reader.js"></script>
+  <script src="data/image-perigrams.js"></script>
 
-    <link rel="stylesheet" href="fonts/webfont/font.css">
-    <link rel="stylesheet" href="style.css">
+  <script src="multi-page-ui.js"></script>
+  <script src="multi-page.js"></script>
 
-  </head>
-  <body>
+  <script>
+    $(document).ready(function ()
+    {
+      $('#options').click(function ()
+      {
+        $('#interface').show();
+        $('#hint').hide();
+      });
 
-    <p id="hint">Use left/right arrow-keys to change pages</p>
-    <div id="options">Readers <span>Options</span></div>
-    <div id="interface"></div>
-    <div id="focusDisplay"></div>
+      /* $('#go').click(function ()
+      // {
+      //   $('#interface').hide();
+      }); */
 
-  </body>
+      // hide interface when clicking elsewhere
+      $('body').click(function (event)
+      {
+        if (event.pageX > 520 || event.pageY > 524)
+        {
+          $("#interface").hide();
+          $("#hint").show();
+        }
+      });
+    });
+  </script>
+
+  <link rel="stylesheet" href="fonts/webfont/font.css">
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+  <p id="hint">Use left/right arrow-keys to change pages</p>
+  <div id="options">Readers <span>Options</span></div>
+  <div id="interface"></div>
+  <div id="focusDisplay"></div>
+
+</body>
+
 </html>
