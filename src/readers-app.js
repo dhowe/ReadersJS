@@ -973,12 +973,9 @@ Reader.prototype = {
 
       pMan.notifyServer && (pMan.sendUpdate(this, msg));
 
-      if (!this.hidden && this.hasFocus()) {
-
+      if (!this.hidden && this.hasFocus() && typeof createP === 'function') {
         //console.log(msg);
-        msg = msg.replace(/ /g, "&nbsp;");
-        var myP = createP(msg);
-        myP.parent('focusDisplay');
+        createP(msg.replace(/ /g, "&nbsp;")).parent('focusDisplay');
       }
 
       this.onEnterCell(this.current);
@@ -1072,6 +1069,8 @@ var PageManager = function PageManager(host, port) {
   // instance functions
 
   this.layout = function (txt, x, y, w, h, leading) {
+
+      this.clear();
 
       if (typeof txt === 'object') {
 

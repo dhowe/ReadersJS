@@ -68,12 +68,16 @@ function loadTexts(callback) {
 function resetText(textName) {
 
   Reader.pauseAll(true);
-  pManager.clear();
+  
   pManager.layout(textFromName(textName), 25, 40, 580, 650);
+
   allReaders().forEach(function(r) {
+
+    // focused reader on verso, others distributed across pages
     var idx = (r.hasFocus()) ? 0 : (r.id % Grid.instances.length);
     r.position(Grid.instances[idx], 0, 0);
   });
+
   Reader.pauseAll(false);
 }
 
