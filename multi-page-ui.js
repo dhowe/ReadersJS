@@ -25,6 +25,8 @@ var styles = {
   Dark: 0
 };
 
+var uiLogging = true;
+
 function createInterface() {
 
   Object.keys(readers).forEach(function (name) {
@@ -93,35 +95,31 @@ function createInterface() {
 
   function focusChanged() {
     var focus = readerFromName(focusSelect.value());
-    console.log("[UI] FOCUS: " + focusSelect.value());
+    log("[UI] FOCUS: " + focusSelect.value());
     focus && pManager.focus(focus);
     $('#focusDisplay').html("");
   }
 
   function textChanged() {
     var textName = textSelect.value();
-
-    console.log("[UI] TEXT: " + textName);
-
+    log("[UI] TEXT: " + textName);
     // pManager.sendUpdate(readers,texts[textName]);
   }
 
   function styleChanged() {
-    var name = styleSelect.value(),
-      alpha = styles[name];
-
-    console.log("[UI] STYLE: " + name + "/" + alpha);
-
-    //TODO: change text alpha - Grid?
+    var name = styleSelect.value();
+    log("[UI] STYLE: " + name + "/" + styles[name]);
+    RiText.defaultFill(styles[name]);
+    RiText.instances.forEach(function(rt){
+      rt.fill(styles[name]);
+    });
   }
 
   function themeChanged() {
     var theme = themeSelect.value(),
       dark = (theme === "Dark"),
       bgColor = dark ? 0 : 232;
-
-    console.log("[UI] THEME: " + theme);
-
+    log("[UI] THEME: " + theme);
     $('body').toggleClass("light", !dark);
     $('body').toggleClass("dark", dark);
   }
@@ -133,7 +131,7 @@ function createInterface() {
     var actives = activeReaders();
     reader.hide(!this.checked());
 
-    console.log("[UI] READER: " + name + (reader.hidden ? ' off' : ' on'));
+    log("[UI] READER: " + name + (reader.hidden ? ' off' : ' on'));
 
     resetFocus();
   }
@@ -149,7 +147,8 @@ function createInterface() {
       assignFocus(actives[0]);
 
     // if focused reader is hidden, pick a random visible
-    if (pManager.focus().hidden)
+    var focused = pManager.focus();
+    if (focused && focused.hidden)
       assignFocus();
   }
 
@@ -198,7 +197,7 @@ function createInterface() {
   function speedChanged() {
     var spd = this.value();
     this.source.speed = speedFromName(spd);
-    console.log("[UI] SPEED: "+nameFromReader(this.source)+'/'+this.source.speed);
+    log("[UI] SPEED: "+nameFromReader(this.source)+'/'+this.source.speed);
   }
 
   function toSafeName(name) {
@@ -207,6 +206,10 @@ function createInterface() {
 
   function fromSafeName(name) {
     return name.replace('_', ' ');
+  }
+
+  function log() {
+    uiLogging && console.log.apply(console, arguments);
   }
 
   // function selectionDone() { $('#interface').hide(); } // not used

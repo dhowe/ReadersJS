@@ -12,7 +12,7 @@ function setup() {
 
   createCanvas(1280, 720);
 
-  RiText.defaultFill(255, 60);
+  RiText.defaultFill(styles.Faint);
   RiText.defaultFont(font, 24);
   RiText.defaults.paragraphIndent = 20;
 
@@ -24,12 +24,10 @@ function setup() {
     pManager.layout(textContents('The Image'), 25, 40, 580, 650);
 
     // add some readers
-    readers['Reader'] = {
-      reader: new Reader(pManager.recto)
-    }
-    // readers['Perigram Reader'] = {
-    //   reader: new PerigramReader(pManager.recto)
-    // };
+    readers['Perigram Reader'] = {
+      reader: new PerigramReader(pManager.recto)
+    };
+
     readers['Mesostic Reader'] = {
       reader: new MesosticReader(pManager.verso, 1.1)
     };
