@@ -103,7 +103,7 @@ function createInterface() {
   function textChanged() {
     var textName = textSelect.value();
     log("[UI] TEXT: " + textName);
-    // pManager.sendUpdate(readers,texts[textName]);
+    resetText(textName);
   }
 
   function styleChanged() {
@@ -120,19 +120,19 @@ function createInterface() {
       dark = (theme === "Dark"),
       bgColor = dark ? 0 : 232;
     log("[UI] THEME: " + theme);
+
     $('body').toggleClass("light", !dark);
     $('body').toggleClass("dark", dark);
+
+    // TODO: need to change reader colors ?
   }
 
   function readerOnOffEvent() {
-
     var name = fromSafeName(this.id());
     var reader = readerFromName(name);
     var actives = activeReaders();
     reader.hide(!this.checked());
-
     log("[UI] READER: " + name + (reader.hidden ? ' off' : ' on'));
-
     resetFocus();
   }
 
@@ -178,12 +178,12 @@ function createInterface() {
   }
 
   function activeReaders() {
-    var active = [];
-    Object.keys(readers).forEach(function (name) {
-      var rdr = readers[name].reader;
-      if (!rdr.hidden) active.push(rdr);
-    });
-    return active;
+    // var active = [];
+    // Object.keys(readers).forEach(function (name) {
+    //   var rdr = readers[name].reader;
+    //   if (!rdr.hidden) active.push(rdr);
+    // });
+    return allReaders(true);
   }
 
   function speedFromName(name) {
@@ -198,14 +198,6 @@ function createInterface() {
     var spd = this.value();
     this.source.speed = speedFromName(spd);
     log("[UI] SPEED: "+nameFromReader(this.source)+'/'+this.source.speed);
-  }
-
-  function toSafeName(name) {
-    return name.replace(' ', '_');
-  }
-
-  function fromSafeName(name) {
-    return name.replace('_', ' ');
   }
 
   function log() {

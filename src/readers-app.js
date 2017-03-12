@@ -96,6 +96,12 @@ function Grid(c, x, y, w, h) {
 
 Grid.prototype = {
 
+  dispose: function () {
+
+    RiText.disposeAll(this.allRiTexts);
+    RiText.disposeAll([this.header, this.footer]);
+  },
+
   draw: function (isRecto) { // not called in Node
 
     push();
@@ -789,8 +795,10 @@ Grid.resetCell = function (rt) {
 
 /** Prints all pages to the console */
 Grid.dumpPages = function (rt) {
+  var s = '';
   for (var i = 0; i < Grid.instances.length; i++)
-    Grid.instances[i].dump();
+    s += Grid.instances[i].dump();
+  console.log(s)
 }
 
 Grid.direction = function (dirConst) {
@@ -836,6 +844,13 @@ Reader.modeName = function (mode) {
   // + '[' + RiText.renderer._type() + ']';
 }
 
+Reader.pauseAll = function (b) {
+  if (typeof b === 'undefined') throw Error('Reader.pauseAll() needs an argument');
+  for (var i = 0, j = Reader.instances.length; i < j; i++) {
+    Reader.instances[i].pause(b);
+  }
+}
+
 Reader.findById = function (id) {
 
   for (var i = 0, j = Reader.instances.length; i < j; i++) {
@@ -852,11 +867,12 @@ function Reader(g, cx, cy, speed) { // constructor
 
   if (!g) error("No grid for Reader() ...");
 
-  this.id = Reader.instances.length;
+  this.id = 1 + Reader.instances.length;
   this.steps = 0;
   this.history = [];
   this.socket = null;
   this.hidden = false;
+  this.paused = false;
   this.type = 'Reader';
   this.neighborhood = [];
   this.waitForNetwork = false;
@@ -870,16 +886,16 @@ function Reader(g, cx, cy, speed) { // constructor
     cx = cy = 0;
   }
 
-  this.current = g.cellAt(cx || 0, cy || 0);
+  this.position(g, cx, cy);
 
   Reader.instances.push(this);
 
   var reader = this;
-
-  if (this.pman.mode != Reader.CLIENT)
+  if (this.pman.mode != Reader.CLIENT) {
     setTimeout(function () {
       reader.step();
     }, 1);
+  }
 }
 
 Reader.prototype = {
@@ -910,23 +926,34 @@ Reader.prototype = {
     }
   },
 
-  hide: function (v) {
-    this.hidden = v;
+  position: function (g, cx, cy) {
+
+    this.current = g.cellAt(cx || 0, cy || 0);
+  },
+
+  hide: function (b) {
+
+    this.hidden = b;
     if (this.hidden)
       this.onExitCell(this.current);
+  },
+
+  pause: function (b) {
+
+    this.paused = b;
+    if (b) this.steps = 0;
   },
 
   step: function () {
 
     var msg, pMan = PageManager.getInstance();
 
-    if (!this.hidden) {
+    if (!this.paused && !this.hidden) {
 
       if (this.steps) {
 
         this.onExitCell(this.current);
 
-        var grid = Grid.gridFor(this.current);
         this.current = this.selectNext();
 
         this.history.push(this.current); // or .text()?
@@ -934,6 +961,7 @@ Reader.prototype = {
           this.history.splice(0, 1);
 
         // page-turn with focused-reader
+        var grid = Grid.gridFor(this.current);
         if (this.hasFocus() && grid != Grid.gridFor(this.current)) {
 
           // info('\n'+this.type+'.pageTurn()\n');
@@ -967,18 +995,6 @@ Reader.prototype = {
   hasFocus: function () {
 
     return this === PageManager.getInstance().focused;
-  },
-
-  injectJS: function (libname) { // not used?
-
-    info(this.type + '.injectJS()');
-
-    //if (!libname.match(/.*.js/)) libname += ".js";
-    var fileref = document.createElement('script');
-    fileref.setAttribute("type", "text/javascript");
-    fileref.setAttribute("src", libname);
-    if (typeof fileref != "undefined")
-      document.getElementsByTagName("head")[0].appendChild(fileref);
   },
 
   textForServer: function () {
@@ -1057,11 +1073,18 @@ var PageManager = function PageManager(host, port) {
 
   this.layout = function (txt, x, y, w, h, leading) {
 
+      if (typeof txt === 'object') {
+
+        this.perigrams[3] = Trigrams[toSafeName(txt.title)];
+        console.log('[PMAN] Stored ' + Object.keys(this.perigrams[3]).length + ' 3-grams');
+        txt = txt.contents;
+      }
+
       this.x = x;
       this.y = y;
       this.width = w;
       this.height = h;
-      this._loadBigrams(txt);
+      this._loadBigrams(txt); // add cache for multiple texts
 
       var pfont = RiText.defaultFont(),
         PAGE_BREAK = '<pb/>',
@@ -1158,6 +1181,7 @@ var PageManager = function PageManager(host, port) {
 
             // reset with next word
             paraBreak = lineBreak = firstLine = false;
+
           } else {
 
             if (pageBreak) {
@@ -1208,9 +1232,15 @@ var PageManager = function PageManager(host, port) {
       this.verso = Grid.instances[0];
       this.recto = Grid.instances[1];
 
-      Grid.dumpPages(); // print the layout to console(s)
+      //Grid.dumpPages(); // print the layout to console(s)
 
       return this;
+    },
+
+    this.clear = function () {
+      while (Grid.instances.length) {
+        Grid.instances.pop().dispose();
+      }
     },
 
     this.storePerigrams = function (n, obj) {
@@ -1488,6 +1518,16 @@ PageManager.getInstance = function (a, b, c) {
   if (this.instance === null)
     this.instance = new PageManager(a, b, c);
   return this.instance;
+}
+
+///////////////// GLOBALS (no node) ///////////////////
+
+function toSafeName(name) {
+  return name.replace(' ', '_');
+}
+
+function fromSafeName(name) {
+  return name.replace('_', ' ');
 }
 
 /////////////////// EXPORTS /////////////////////

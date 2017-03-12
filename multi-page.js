@@ -1,4 +1,4 @@
-
+var DOSWITCH = false;
 var pManager, font, bgColor, readers = {};
 
 ///////////////////////////////////////////////////////////////////////
@@ -20,8 +20,7 @@ function setup() {
 
     // do the layout
     pManager = PageManager.getInstance(Reader.APP);
-    pManager.storePerigrams(3, trigrams);
-    pManager.layout(textContents('The Image'), 25, 40, 580, 650);
+    pManager.layout(texts[0], 25, 40, 580, 650);
 
     // add some readers
     readers['Perigram Reader'] = {
@@ -66,12 +65,34 @@ function loadTexts(callback) {
 
 ///////////////////////////////////////////////////////////////////////
 
-function textContents(textName) {
+function resetText(textName) {
+
+  Reader.pauseAll(true);
+  pManager.clear();
+  pManager.layout(textFromName(textName), 25, 40, 580, 650);
+  allReaders().forEach(function(r) {
+    var idx = (r.hasFocus()) ? 0 : (r.id % Grid.instances.length);
+    r.position(Grid.instances[idx], 0, 0);
+  });
+  Reader.pauseAll(false);
+}
+
+function allReaders(activeOnly) {
+  var all = [];
+  Object.keys(readers).forEach(function(name) {
+    var reader = readerFromName(name);
+    if (!activeOnly || !reader.hidden)
+      all.push(reader);
+  })
+  return all;
+}
+
+function textFromName(textName) {
 
   var result;
   texts.forEach(function (text) {
     if (text.title == textName)
-      result = text.contents;
+      result = text;
   });
   return result;
 }
