@@ -3,7 +3,6 @@
 /* BUG: *********  !!!!!!!!
  * 	 Font-measurement is not accurate between FF and Chrome, so layout is different,
  * 	 and thus (in FF) node grids do not match browser grids
-
  */
 
 /////////////////////// GLOBALS /////////////////////////

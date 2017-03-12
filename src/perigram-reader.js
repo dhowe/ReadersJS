@@ -32,7 +32,7 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   // curr.showBounds(1); // DEBUG
 
   // fade in current
-  curr.colorTo(this.col, this.speed * .8);
+  fid = curr.colorTo(this.col, this.speed * .8);
 
   // get and fade in neighborhood
   this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
@@ -48,6 +48,16 @@ PerigramReader.prototype.onExitCell = function (curr) {
   // console.log('onExit: '+curr);
   //curr.colorTo(this.neighborCol, this.speed * .8, this.speed); // DCH: 2/2/2017
   //curr.showBounds(0);
+}
+
+PerigramReader.prototype.hide = function (v) {
+	this.hidden = v;
+	if (this.hidden) {
+		var c = RiText.defaultFill();
+		//setTimeout(function(){},100);
+		this.current.stopBehaviors();
+	  this.current.fill(c);
+	}
 }
 
 PerigramReader.prototype.textForServer = function () {
