@@ -907,51 +907,59 @@ Reader.prototype = {
     if (curr) {
       curr.showBounds(false);
       //curr.fill.call(curr, this.fill); // DCH: 2/2/2017
-      curr.fill.call(curr, this.fill.r,this.fill.g,this.fill.b,this.fill.a);
-
+      curr.fill.call(curr, this.fill.r, this.fill.g, this.fill.b, this.fill.a);
     }
+  },
+
+  hide: function (v) {
+    this.hidden = v;
+    if (this.hidden)
+      this.onExitCell(this.current);
   },
 
   step: function () {
 
-    var reader, grid, msg, pMan = PageManager.getInstance();
+    var msg, pMan = PageManager.getInstance();
 
-    if (this.steps) {
+    if (!this.hidden) {
 
-      this.onExitCell(this.current);
+      if (this.steps) {
 
-      grid = Grid.gridFor(this.current);
-      this.current = this.selectNext();
+        this.onExitCell(this.current);
 
-      this.history.push(this.current); // or .text()?
-      while (this.history.length > Reader.HISTORY_SIZE)
-        this.history.splice(0, 1);
+        var grid = Grid.gridFor(this.current);
+        this.current = this.selectNext();
 
-      // page-turn with focused-reader
-      if (this.hasFocus() && grid != Grid.gridFor(this.current)) {
+        this.history.push(this.current); // or .text()?
+        while (this.history.length > Reader.HISTORY_SIZE)
+          this.history.splice(0, 1);
 
-        // info('\n'+this.type+'.pageTurn()\n');
-        pMan.nextPage();
+        // page-turn with focused-reader
+        if (this.hasFocus() && grid != Grid.gridFor(this.current)) {
+
+          // info('\n'+this.type+'.pageTurn()\n');
+          pMan.nextPage();
+        }
       }
+
+      msg = this.textForServer();
+
+      pMan.notifyServer && (pMan.sendUpdate(this, msg));
+
+      if (!this.hidden && this.hasFocus()) {
+
+        //console.log(msg);
+        msg = msg.replace(/ /g, "&nbsp;");
+        var myP = createP(msg);
+        myP.parent('focusDisplay');
+      }
+
+      this.onEnterCell(this.current);
+
+      this.steps++;
     }
 
-    msg = this.textForServer();
-
-    pMan.notifyServer && (pMan.sendUpdate(this, msg));
-
-    if (!this.hidden && this.hasFocus()) {
-
-      //console.log(msg);
-      msg = msg.replace(/ /g, "&nbsp;");
-      var myP = createP(msg);
-      myP.parent('focusDisplay');
-    }
-
-    this.onEnterCell(this.current);
-
-    this.steps++;
-
-    reader = this; // schedule the next step
+    var reader = this; // schedule the next step
     setTimeout(function () {
       reader.step();
     }, reader.speed * 1000);
@@ -1069,12 +1077,22 @@ var PageManager = function PageManager(host, port) {
         leading = leading || ((pfont.size || RiText.defaults.fontSize) * RiText.defaults.leadingFactor);
 
       var ascent, descent, leading, startX = x,
-        currentX = 0, yPos = 0, currentY = y, rlines = [],
-        sb = E, maxW = x + w, maxH = y + h, words = [], next, dbug = 0,
-        paraBreak = false, pageBreak = false, lineBreak = false, firstLine = true;
+        currentX = 0,
+        yPos = 0,
+        currentY = y,
+        rlines = [],
+        sb = E,
+        maxW = x + w,
+        maxH = y + h,
+        words = [],
+        next, dbug = 0,
+        paraBreak = false,
+        pageBreak = false,
+        lineBreak = false,
+        firstLine = true;
 
       var ascent = pfont._textAscent(RiText.defaults.fontSize),
-      descent = pfont._textDescent(RiText.defaults.fontSize);
+        descent = pfont._textDescent(RiText.defaults.fontSize);
 
       // remove line breaks & add spaces around html
       txt = txt.replace(/&gt;/g, '>').replace(/&lt;/g, '<');
@@ -1362,8 +1380,7 @@ var PageManager = function PageManager(host, port) {
 
     this.listenForUpdates = function () {
 
-      var grid, lastGrid, reader, pman = this,
-        lastCell;
+      var grid, lastGrid, reader, lastCell, pman = this;
 
       if (!this.socket)
         this.socket = io.connect('http://' + this.host + ':' + this.port);

@@ -127,10 +127,11 @@ function createInterface() {
   }
 
   function readerOnOffEvent() {
+
     var name = fromSafeName(this.id());
     var reader = readerFromName(name);
     var actives = activeReaders();
-    reader.hidden = !this.checked();
+    reader.hide(!this.checked());
 
     console.log("[UI] READER: " + name + (reader.hidden ? ' off' : ' on'));
 

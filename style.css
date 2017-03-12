@@ -179,22 +179,22 @@ button:hover {
 }
 
 /* Reader Color Scheme */
-.reader#Mesostic_Reader label:before, .reader#MesosticReader input:checked + label:before {
+.reader#Mesostic_Reader label:hover:before, .reader#Mesostic_Reader input:checked + label:before {
      background-color: #1464DB;
 }
-.reader#Perigram_Reader label:before, .reader#PerigramReader input:checked + label:before {
+.reader#Perigram_Reader label:hover:before, .reader#Perigram_Reader input:checked + label:before {
      background-color: #BD0504;
 }
-.reader#Oblique_PerigramR_eader label:before, .reader#LessDirectedPerigramReader input:checked + label:before {
+.reader#Oblique_Perigram_Reader label:hover:before, .reader#Oblique_Perigram_Reader input:checked + label:before {
      background-color: #FA0007;
 }
-.reader#Simple_Spawner label:before, .reader#SimpleSpawnerReader input:checked + label:before {
+.reader#Spawning_Reader label:hover:before, .reader#Spawning_Reader input:checked + label:before {
      background-color: #FFB017;
 }
-.reader#Perigram_Spawner label:before, .reader#PerigramSpawnerReader input:checked + label:before {
+.reader#Perigram_Spawner label:hover:before, .reader#Perigram_Spawner input:checked + label:before {
      background-color: #D88100;
 }
-.reader#Oblique_Spawner label:before, .reader#LessDirectedSpawnerReader input:checked + label:before {
+.reader#Oblique_Spawner label:hover:before, .reader#Oblique_Spawner input:checked + label:before {
      background-color: #FFD000;
 }
 
