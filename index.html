@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>The Readers Project</title>
+
+  <script src="node_modules/p5/lib/p5.js"></script>
+  <script src="node_modules/p5/lib/addons/p5.dom.js"></script>
+  <script src="node_modules/jquery/dist/jquery.slim.min.js"></script>
+  <script src="node_modules/rita/lib/rita-tiny.js"></script>
+
+  <script src="lib/ritext.js"></script>
+  <script src="src/readers-app.js"></script>
+  <script src="src/mesostic-reader.js"></script>
+  <script src="src/perigram-reader.js"></script>
+  <script src="data/all-trigrams.js"></script>
+
+  <script src="multi-page-ui.js"></script>
+  <script src="multi-page.js"></script>
+
+  <link rel="stylesheet" href="fonts/webfont/font.css">
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+  <p id="hint">Use left/right arrow-keys to change pages</p>
+  <div id="options">Readers <span>Options</span></div>
+  <div id="interface"></div>
+  <div id="focusDisplay"></div>
+
+</body>
+
+  <script>
+    //Interface hide & show
+    var options = document.getElementById('options');
+    options.addEventListener('click', function() {
+      document.getElementById("interface").style.display = 'block';
+    }, false);
+
+    var body = document.getElementsByTagName('body')[0];
+    body.addEventListener('click', function() {
+      if (event.pageX > 520 || event.pageY > 524) {
+          document.getElementById("interface").style.display = 'none';
+      }
+    }, false);
+
+    //customized select list
+
+    // var ul = document.getElementsByClassName('ul');
+    //   console.log(ul);
+     
+    // var onSelectClicked = function () {
+    //   console.log("click");
+
+    // }
+    // for (var i = 0; i < ul.length; i++) {
+    //    ul[i].addEventListener('click', onSelectClicked, false);
+    // }
+
+    $(document).ready(function ()
+    {
+     
+      $("body").on("click", "ul.select li.init", function() {
+      
+        //hide other select list if opened
+        $('ul').children('li:not(.init)').hide();
+        $('ul').children('li.init').show();
+        $(this).closest("ul").children('li').toggle();
+      });
+
+
+      $("body").on("click", "ul.select li:not(.init)", function() {
+          var allOptions = $("ul").children('li:not(.init)');
+          allOptions.removeClass('selected');
+          $(this).addClass('selected');
+          $(this).closest("ul").children('.init').html($(this).html());
+          $(this).closest("ul").children('li').toggle();
+      });
+
+    });
+
+  </script>
+
+</html>
