@@ -19,33 +19,6 @@
   <script src="multi-page-ui.js"></script>
   <script src="multi-page.js"></script>
 
-  <script>
-    $(document).ready(function ()
-    {
-      $('#options').click(function ()
-      {
-        $('#interface').show();
-        $("#hint").hide();
-      });
-
-      /* $('#go').click(function ()
-      // {
-      //   $('#interface').hide();
-      }); */
-
-      // hide interface when clicking elsewhere
-      $('body').click(function (event)
-      {
-        if (event.pageX > 520 || event.pageY > 524)
-        {
-          $("#interface").hide();
-          $("#hint").show();
-        }
-      });
-
-    });
-  </script>
-
   <link rel="stylesheet" href="fonts/webfont/font.css">
   <link rel="stylesheet" href="style.css">
 
@@ -59,4 +32,56 @@
   <div id="focusDisplay"></div>
 
 </body>
+
+  <script>
+    //Interface hide & show
+    var options = document.getElementById('options');
+    options.addEventListener('click', function() {
+      document.getElementById("interface").style.display = 'block';
+    }, false);
+
+    var body = document.getElementsByTagName('body')[0];
+    body.addEventListener('click', function() {
+      if (event.pageX > 520 || event.pageY > 524) {
+          document.getElementById("interface").style.display = 'none';
+      }
+    }, false);
+
+    //customized select list
+
+    // var ul = document.getElementsByClassName('ul');
+    //   console.log(ul);
+     
+    // var onSelectClicked = function () {
+    //   console.log("click");
+
+    // }
+    // for (var i = 0; i < ul.length; i++) {
+    //    ul[i].addEventListener('click', onSelectClicked, false);
+    // }
+
+    $(document).ready(function ()
+    {
+     
+      $("body").on("click", "ul.select li.init", function() {
+      
+        //hide other select list if opened
+        $('ul').children('li:not(.init)').hide();
+        $('ul').children('li.init').show();
+        $(this).closest("ul").children('li').toggle();
+      });
+
+
+      $("body").on("click", "ul.select li:not(.init)", function() {
+          var allOptions = $("ul").children('li:not(.init)');
+          allOptions.removeClass('selected');
+          $(this).addClass('selected');
+          $(this).closest("ul").children('.init').html($(this).html());
+          $(this).closest("ul").children('li').toggle();
+      });
+
+    });
+
+  </script>
+
 </html>
