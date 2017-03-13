@@ -129,7 +129,7 @@ button:hover {
     width: 320px;
 }
 
-.item select.half {
+.item select.half,.item .select.half {
     width: 120px;
 }
 
@@ -228,4 +228,48 @@ button:hover {
     text-transform: uppercase;
     letter-spacing: 0.06em;
     font-size: 16px;
+}
+
+/*customized select with ul li */
+.item {
+    height: 40px;
+    margin:5px 0;
+}
+ul.select {
+    list-style-type: none;
+    height: 30px;
+    width:320px;
+    -webkit-padding-start:0px;
+    display: inline-block;
+    cursor: default;
+    margin-right: 20px;
+}
+ul.select li {
+    padding: 7px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 0.06em;
+    color:#DDD;
+    border:none;
+    width: 300px;
+}
+ul.select.half li {
+    width:100px;
+}
+ul.select li.init{
+    z-index: 0;
+    background-color: #3D3D3D;
+}
+ul.select li:not(.init) {
+    z-index: 100;
+    float: left;
+    display: none;
+    background-color: #AAA;
+    color:black;
+}
+ul.select li:not(.init).selected{
+    color:white;
+}
+ul.select li:not(.init):hover{
+    background: gray;
 }

@@ -41,21 +41,21 @@ function createInterface() {
     rb.id(toSafeName(name));
 
     readerDef.radioButton = rb;
-    readerDef.speedSelect = initSelect("speedSelect", Object.keys(speeds), speedChanged, rb);
+    readerDef.speedSelect = initSelect("speedSelect", "full", Object.keys(speeds), speedChanged, rb);
     readerDef.speedSelect.source = reader;
   });
 
   var focusSelect, textSelect, styleSelect, themeSelect, uiElements = [
 
-    focusSelect = initSelect("focusSelect", activeReaderNames(), focusChanged),
-    textSelect = initSelect("textSelect", textNames(), textChanged),
-    styleSelect = initSelect("styleSelect", Object.keys(styles), styleChanged).addClass("half"),
-    themeSelect = initSelect("themeSelect", ["Dark", "Light"], themeChanged).addClass("half"),
+    focusSelect = initSelect("focusSelect", "full", activeReaderNames(), focusChanged),
+    textSelect = initSelect("textSelect", "full",textNames(), textChanged),
+    styleSelect = initSelect("styleSelect", "half", Object.keys(styles), styleChanged),
+    themeSelect = initSelect("themeSelect", "half", ["Dark", "Light"], themeChanged),
     //createButton('go').mousePressed(selectionDone).id('go')
   ];
 
   // set initial value for focusSelect
-  focusSelect.value(nameFromReader(pManager.focus()));
+  // focusSelect.value(nameFromReader(pManager.focus()));
 
   // Append elements to interface
   var descText = ["Focus", "Text", "Style", "Theme"];
@@ -63,7 +63,8 @@ function createInterface() {
     var wrapper = createDiv('');
     wrapper.addClass('item').parent('interface');
     createP(descText[i]).parent(wrapper);
-    uiElements[i].parent(wrapper);
+    wrapper.child(uiElements[i])
+    // uiElements[i].parent(wrapper);
   }
 
   ////////////////////////////////////////////////////////////////////
@@ -76,12 +77,42 @@ function createInterface() {
     return names;
   }
 
-  function initSelect(id, options, onChanged, parent) {
+  function initSelect(id, style, options, onChanged, parent) {
     var sel = createSelect();
     for (var i = 0; i < options.length; i++)
       sel.option(options[i]);
     parent && sel.parent(parent);
+    if (style === "half") sel.addClass("half");
     return sel.id(id).changed(onChanged);
+  }
+
+  function initStylizedSelect(id, style, options, onChanged, parent) {
+    var ul = document.createElement('ul');
+        ul.setAttribute('id',id);
+        ul.setAttribute('class',"select");
+        
+        //init
+        var li = document.createElement('li');
+            li.setAttribute('class',"init");
+            ul.appendChild(li);
+            li.innerHTML=li.innerHTML + options[0];
+
+        function renderList(element, index, arr) {
+            var li = document.createElement('li');
+            ul.appendChild(li);
+            if(index === 0) li.setAttribute('class',"selected");
+            li.innerHTML=li.innerHTML + element;
+        }
+
+        if (style === "half") {
+          ul.className += " half";
+        };
+
+        parent && ul.parent(parent);
+        options.forEach(renderList);
+        ul.addEventListener("change", onChanged);
+
+    return ul;
   }
 
   function nameFromReader(reader) {
@@ -205,5 +236,4 @@ function createInterface() {
     uiLogging && console.log.apply(console, arguments);
   }
 
-  // function selectionDone() { $('#interface').hide(); } // not used
 }
