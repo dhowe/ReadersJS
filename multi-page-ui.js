@@ -55,7 +55,10 @@ function createInterface() {
   ];
 
   // set initial value for focusSelect
-  // focusSelect.value(nameFromReader(pManager.focus()));
+  focusSelect.value(nameFromReader(pManager.focus()));
+  var focusedReaderSelection = document.getElementById(nameFromReader(pManager.focus()).replace(/ /g, "_"));
+  focusedReaderSelection.className += " focused";
+
 
   // Append elements to interface
   var descText = ["Focus", "Text", "Style", "Theme"];
