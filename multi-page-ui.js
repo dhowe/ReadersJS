@@ -117,9 +117,10 @@ function createInterface() {
 
   function themeChanged() {
     var theme = themeSelect.value(),
-      dark = (theme === "Dark"),
-      bgColor = dark ? 0 : 232;
-    log("[UI] THEME: " + theme);
+      dark = (theme === "Dark");
+    
+    bgColor = dark ? 0 : 232;
+    log("[UI] THEME: " + theme, bgColor);
 
     $('body').toggleClass("light", !dark);
     $('body').toggleClass("dark", dark);
