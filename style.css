@@ -56,7 +56,7 @@ canvas {
     top: 10px;
     left: 0px;
     position: absolute;
-    background: rgba(0, 0, 0, .8);
+    background: rgba(0, 0, 0, .7);
     color: #EEE;
     padding: 30px 20px 20px 120px;
     width: 400px;
@@ -92,7 +92,6 @@ select {
     margin: 5px 10px;
     color: #DDD;
     border-radius: 0px;
-    cursor: pointer;
 }
 
 select:active {
@@ -154,7 +153,6 @@ button:hover {
 }
 
 .reader label {
-    cursor: pointer;
     display: inline-block;
     margin-top: 5px;
 }
@@ -171,30 +169,50 @@ button:hover {
     border: 2px solid gray;
 }
 
-
 .reader input:checked + label:hover:before {
-    border-color: gray;
-    opacity: .8;
+    border-color: gray !important;
+}
+.reader input:checked + label:before{
+   border-color: rgba(0,0,0,0);
 }
 
 /* Reader Color Scheme */
-.reader#Mesostic_Reader label:hover:before, .reader#Mesostic_Reader input:checked + label:before {
+.reader#Mesostic_Reader input:checked + label:before {
      background-color: #1464DB;
 }
-.reader#Perigram_Reader label:hover:before, .reader#Perigram_Reader input:checked + label:before {
+.reader#Perigram_Reader input:checked + label:before {
      background-color: #BD0504;
 }
-.reader#Oblique_Perigram_Reader label:hover:before, .reader#Oblique_Perigram_Reader input:checked + label:before {
+.reader#Oblique_Perigram_Reader input:checked + label:before {
      background-color: #FA0007;
 }
-.reader#Spawning_Reader label:hover:before, .reader#Spawning_Reader input:checked + label:before {
+.reader#Spawning_Reader input:checked + label:before {
      background-color: #FFB017;
 }
-.reader#Perigram_Spawner label:hover:before, .reader#Perigram_Spawner input:checked + label:before {
+.reader#Perigram_Spawner input:checked + label:before {
      background-color: #D88100;
 }
-.reader#Oblique_Spawner label:hover:before, .reader#Oblique_Spawner input:checked + label:before {
+.reader#Oblique_Spawner input:checked + label:before {
      background-color: #FFD000;
+}
+
+.reader#Mesostic_Reader input + label:hover:before{
+     border-color: #1464DB;
+}
+.reader#Perigram_Reader input + label:hover:before{
+     border-color: #BD0504;
+}
+.reader#Oblique_Perigram_Reader input + label:hover:before{
+     border-color: #FA0007;
+}
+.reader#Spawning_Reader input + label:hover:before{
+     border-color: #FFB017;
+}
+.reader#Perigram_Spawner input + label:hover:before{
+     border-color: #D88100;
+}
+.reade, .reader#Oblique_Spawner input + label:hover:before{
+     border-color: #FFD000;
 }
 
 .reader input:checked ~ select {
