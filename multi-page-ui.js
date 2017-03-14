@@ -136,7 +136,38 @@ function createInterface() {
   function textChanged() {
     var textName = textSelect.value();
     log("[UI] TEXT: " + textName);
-    resetText(textName);
+    if ( ifTrigramReady(textName) )
+       resetText(textName);
+    else {
+      notify = textName;
+      overlay.classList.toggle('fade');
+     
+    }
+  }
+
+  this.textChanged = function() {
+    var textName = textSelect.value();
+    log("[UI] TEXT: " + textName);
+    if ( ifTrigramReady(textName) )
+       resetText(textName);
+    else {
+      notify = textName;
+      overlay.classList.toggle('fade');
+     
+    }
+  }
+
+  function ifTrigramReady(textName) {
+     
+     if (textLoaded.indexOf(textName) != -1) {
+      log("[Check Trigram] true", textName);
+      return true;
+     }
+     else {
+      log("[Check Trigram] false");
+      notify = textName;
+      return false;
+    }
   }
 
   function styleChanged() {
