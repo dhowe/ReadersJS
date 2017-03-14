@@ -965,7 +965,7 @@ Reader.prototype = {
         // if focused-reader and moving to a new grid, do page-turn
         if (this.hasFocus() && grid != Grid.gridFor(this.current)) {
 
-          info('\n'+this.type+'.pageTurn()\n');
+          // info('\n'+this.type+'.pageTurn()\n');
           pMan.nextPage();
         }
       }

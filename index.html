@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html>
-
 <head>
+
   <meta charset="UTF-8">
   <title>The Readers Project</title>
 
-  <script src="node_modules/p5/lib/p5.js"></script>
-  <script src="node_modules/p5/lib/addons/p5.dom.js"></script>
-  <script src="node_modules/jquery/dist/jquery.slim.min.js"></script>
-  <script src="node_modules/rita/lib/rita-tiny.js"></script>
+  <script type="text/javascript">
+      var timerStart = Date.now();
+  </script>
 
   <link rel="stylesheet" href="fonts/webfont/font.css">
   <link rel="stylesheet" href="style.css">
@@ -54,12 +53,49 @@
       {
         // fadeout overlay
         overlay.classList.toggle('fade', setTimeout(function ()
-        {
-          overlay.outerHTML = "";
-          delete overlay;
+        { 
+          // overlay.style.display = "none";
+          var time = Date.now() - timerStart - 2000;
+          console.log("[Status] Finish Initial Loading " + time );
+          reloadTheRest();
+
         }, 2000));
       });
     }
+
+    var textLoaded = ["Misspelt Landings"], notify;
+
+    function finishLoading (text) {
+
+      textLoaded.push(text);
+      var time = Date.now() - timerStart;
+      console.log("[TRIGRAM] Finish Loading: " + text + " " + time);
+
+      if (overlay.classList.value === "" && notify === text) {
+          overlay.classList.toggle('fade');
+        // TODO: call textChanged here
+       }
+
+    }
+
+    function reloadTheRest() {
+
+      var trigramScripts = {
+          'Poetic Caption': "data/poeticCaption-trigrams.js",
+          'The Image': "data/theImage-trigrams.js"
+      }
+
+      for (key in trigramScripts) {
+          var script = document.createElement("script"),
+              html = document.getElementsByTagName("html")[0];
+          
+          script.src = trigramScripts[key];
+          html.appendChild(script);
+          script.onload = script.onreadystatechange = finishLoading(key);
+      }
+
+    }
+       
   </script>
 
 </head>
@@ -78,20 +114,23 @@
 
 </body>
 
+<script src="node_modules/p5/lib/p5.js"></script>
+<script src="node_modules/p5/lib/addons/p5.dom.js"></script>
+<script src="node_modules/jquery/dist/jquery.slim.min.js"></script>
+<script src="node_modules/rita/lib/rita-tiny.js"></script>
+
 <script src="lib/ritext.js"></script>
 <script src="src/readers-app.js"></script>
 <script src="src/mesostic-reader.js"></script>
 <script src="src/perigram-reader.js"></script>
 <script src="src/oblique-perigram-reader.js"></script>
 <script src="data/misspeltLandings-trigrams.js"></script>
-<script src="data/poeticCaption-trigrams.js" async></script>
-<script src="data/theImage-trigrams.js" async></script>
-
-<script src="multi-page-ui.js"></script>
 <script src="multi-page.js"></script>
-
+<script src="multi-page-ui.js"></script>
 <script>
   // Interface hide & show
+
+  
   var options = document.getElementById('options');
   options.addEventListener('click', function ()
   {
@@ -99,7 +138,7 @@
   }, false);
 
   var body = document.getElementsByTagName('body')[0];
-  body.addEventListener('click', function ()
+  body.addEventListener('click', function (event)
   {
     if (event.pageX > 520 || event.pageY > 524)
     {
@@ -107,6 +146,7 @@
     }
   }, false);
 
+ 
   // Customized select list
   // var ul = document.getElementsByClassName('ul');
   //   console.log(ul);
@@ -134,5 +174,10 @@
     });
   });
 </script>
+<script>
+  
 
+</script>
+<!-- <script src="data/poeticCaption-trigrams.js"  defer onload="finishLoading('poeticCaption')"></script>
+<script src="data/theImage-trigrams.js"  defer onload="finishLoading('theImage')"></script> -->
 </html>

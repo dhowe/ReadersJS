@@ -292,10 +292,12 @@ ul.select li:not(.init):hover{
     top:0;
     z-index: 100;
     opacity: 1;
+    display: block;
     transition: opacity 2s; 
 }
 #overlay.fade{
     opacity: 0;
+    height: 0;
 }
 #loader {
     border: 12px solid #333; /* Light grey */
