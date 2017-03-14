@@ -875,9 +875,9 @@ function Reader(g, cx, cy, speed) { // constructor
   this.paused = false;
   this.type = 'Reader';
   this.neighborhood = [];
-  this.waitForNetwork = false;
-  this.speed = speed || 1.5;
   this.showNeighbors = true;
+  this.waitForNetwork = false;
+  this.speed = speed || SPEED.Slow;
   this.pman = PageManager.getInstance();
 
   if (cx && !cy && !speed) { // 2-arg version
@@ -1523,11 +1523,11 @@ PageManager.getInstance = function (a, b, c) {
 ///////////////// GLOBALS (no node) ///////////////////
 
 function toSafeName(name) {
-  return name.replace(' ', '_');
+  return name.replace(/ /g, '_');
 }
 
 function fromSafeName(name) {
-  return name.replace('_', ' ');
+  return name.replace(/_/g, ' ');
 }
 
 /////////////////// EXPORTS /////////////////////

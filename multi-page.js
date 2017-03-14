@@ -1,4 +1,3 @@
-var DOSWITCH = false;
 var pManager, font, bgColor, readers = {};
 
 ///////////////////////////////////////////////////////////////////////
@@ -12,15 +11,15 @@ function setup() {
 
   createCanvas(1280, 720);
 
-  RiText.defaultFill(styles.Faint);
   RiText.defaultFont(font, 24);
+  RiText.defaultFill(STYLE.Faint);
   RiText.defaults.paragraphIndent = 20;
 
   loadTexts(function () {
 
     // do the layout
     pManager = PageManager.getInstance(Reader.APP);
-    pManager.layout(texts[0], 25, 40, 580, 650);
+    pManager.layout(TEXTS[0], 25, 40, 580, 650);
 
     // add some readers
     readers['Perigram Reader'] = {
@@ -28,11 +27,15 @@ function setup() {
     };
 
     readers['Mesostic Reader'] = {
-      reader: new MesosticReader(pManager.verso, 1.1)
+      reader: new MesosticReader(pManager.verso, SPEED.Fluent)
+    };
+
+    readers['Oblique Perigram Reader'] = {
+      reader: new ObliquePerigramReader(pManager.verso, SPEED.Steady)
     };
 
     // set page-turner/logger
-    pManager.focus(readerFromName('Mesostic Reader'));
+    pManager.focus(randomReader());
 
     createInterface();
   });
@@ -51,10 +54,9 @@ function keyPressed() {
 }
 
 function loadTexts(callback) {
-
   var count = 0;
-  var total = texts.length;
-  texts.forEach(function (text) {
+  var total = TEXTS.length;
+  TEXTS.forEach(function (text) {
     RiTa.loadString(text.file, function (txt) {
       text.contents = txt;
       if (++count === total)
@@ -68,7 +70,7 @@ function loadTexts(callback) {
 function resetText(textName) {
 
   Reader.pauseAll(true);
-  
+
   pManager.layout(textFromName(textName), 25, 40, 580, 650);
 
   allReaders().forEach(function(r) {
@@ -82,6 +84,7 @@ function resetText(textName) {
 }
 
 function allReaders(activeOnly) {
+
   var all = [];
   Object.keys(readers).forEach(function(name) {
     var reader = readerFromName(name);
@@ -91,10 +94,18 @@ function allReaders(activeOnly) {
   return all;
 }
 
+function randomReader(activeOnly) {
+
+  var rdrs = allReaders(activeOnly);
+  if (rdrs && rdrs.length) {
+    return rdrs[Math.floor(random(rdrs.length))];
+  }
+}
+
 function textFromName(textName) {
 
   var result;
-  texts.forEach(function (text) {
+  TEXTS.forEach(function (text) {
     if (text.title == textName)
       result = text;
   });

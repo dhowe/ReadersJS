@@ -1,4 +1,4 @@
-var texts = [{
+var TEXTS = [{
   title: 'Misspelt Landings',
   file: 'data/misspeltLandings.txt'
 }, {
@@ -9,7 +9,7 @@ var texts = [{
   file: 'data/image.txt'
 }];
 
-var speeds = {
+var SPEED = {
   Fluent: 1.1,
   Steady: 1.2,
   Slow: 1.5,
@@ -18,7 +18,7 @@ var speeds = {
   Fast: .6,
 };
 
-var styles = {
+var STYLE = {
   Faint: 40,
   Grey: 70,
   Dark: 0
@@ -40,23 +40,24 @@ function createInterface() {
     rb.id(toSafeName(name));
 
     readerDef.radioButton = rb;
-    readerDef.speedSelect = initSelect("speedSelect", "full", Object.keys(speeds), speedChanged, rb);
+    readerDef.speedSelect = initSelect("speedSelect", "full", Object.keys(SPEED), speedChanged, rb);
     readerDef.speedSelect.source = reader;
+    readerDef.speedSelect.value(speedToName(reader.speed));
   });
 
   var focusSelect, textSelect, styleSelect, themeSelect, uiElements = [
 
     focusSelect = initSelect("focusSelect", "full", activeReaderNames(), focusChanged),
-    textSelect = initSelect("textSelect", "full", textNames(), textChanged),
-    styleSelect = initSelect("styleSelect", "half", Object.keys(styles), styleChanged),
+    textSelect = initSelect("textSelect",   "full", textNames(), textChanged),
+    styleSelect = initSelect("styleSelect", "half", Object.keys(STYLE), styleChanged),
     themeSelect = initSelect("themeSelect", "half", ["Dark", "Light"], themeChanged),
     //createButton('go').mousePressed(selectionDone).id('go')
   ];
 
   // set initial value for focusSelect
-  focusSelect.value(nameFromReader(pManager.focus()));
-  var focusedReaderSelection = document.getElementById(nameFromReader(pManager.focus()).replace(/ /g, "_"));
-  focusedReaderSelection.className += " focused";
+  var focusedName = nameFromReader(pManager.focus()) || '';
+  focusSelect.value(focusedName);
+  document.getElementById(toSafeName(focusedName)).className += " focused";
 
   // Append elements to interface
   var descText = ["Focus", "Text", "Style", "Theme"];
@@ -72,7 +73,7 @@ function createInterface() {
 
   function textNames() {
     var names = [];
-    texts.forEach(function (text) {
+    TEXTS.forEach(function (text) {
       names.push(text.title);
     });
     return names;
@@ -140,10 +141,10 @@ function createInterface() {
 
   function styleChanged() {
     var name = styleSelect.value();
-    log("[UI] STYLE: " + name + "/" + styles[name]);
-    RiText.defaultFill(styles[name]);
+    log("[UI] STYLE: " + name + "/" + STYLE[name]);
+    RiText.defaultFill(STYLE[name]);
     RiText.instances.forEach(function (rt) {
-      rt.fill(styles[name]);
+      rt.fill(STYLE[name]);
     });
   }
 
@@ -211,25 +212,22 @@ function createInterface() {
   }
 
   function activeReaders() {
-    // var active = [];
-    // Object.keys(readers).forEach(function (name) {
-    //   var rdr = readers[name].reader;
-    //   if (!rdr.hidden) active.push(rdr);
-    // });
     return allReaders(true);
   }
 
-  function speedFromName(name) {
+  function speedToName(spd) {
     var result;
-    Object.keys(speeds).forEach(function (s) {
-      if (s === name) result = speeds[name];
+    Object.keys(SPEED).forEach(function (name) {
+      if (SPEED[name] === spd)
+        result = name;
     });
+    if (!result) throw Error('unknown speed: '+spd);
     return result;
   }
 
   function speedChanged() {
     var spd = this.value();
-    this.source.speed = speedFromName(spd);
+    this.source.speed = SPEED[spd];
     log("[UI] SPEED: " + nameFromReader(this.source) + '/' + this.source.speed);
   }
 
