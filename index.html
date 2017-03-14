@@ -10,49 +10,12 @@
   <script src="node_modules/jquery/dist/jquery.slim.min.js"></script>
   <script src="node_modules/rita/lib/rita-tiny.js"></script>
 
-  <script src="lib/ritext.js"></script>
-  <script src="src/readers-app.js"></script>
-  <script src="src/mesostic-reader.js"></script>
-  <script src="src/perigram-reader.js"></script>
-  <script src="data/all-trigrams.js"></script>
-
-  <script src="multi-page-ui.js"></script>
-  <script src="multi-page.js"></script>
-
   <link rel="stylesheet" href="fonts/webfont/font.css">
   <link rel="stylesheet" href="style.css">
 
-</head>
-
-<body>
-
-  <p id="hint">Use left/right arrow-keys to change pages</p>
-  <div id="options">Readers <span>Options</span></div>
-  <div class="tag">In Progress</div>
-  <div id="interface"></div>
-  <div id="overlay">
-     <div id="loader"></div>
-     <p>Loading</p>
-  </div>
-  <div id="focusDisplay"></div>
-
-</body>
-
   <script>
-    //Interface hide & show
-    var options = document.getElementById('options');
-    options.addEventListener('click', function() {
-      document.getElementById("interface").style.display = 'block';
-    }, false);
-
-    var body = document.getElementsByTagName('body')[0];
-    body.addEventListener('click', function() {
-      if (event.pageX > 520 || event.pageY > 524) {
-          document.getElementById("interface").style.display = 'none';
-      }
-    }, false);
-
-     var menu = document.getElementById('interface'),
+  window.onload = function () {
+    var menu = document.getElementById('interface'),
         overlay = document.getElementById('overlay');
 
       function monitor(element,callback){
@@ -82,13 +45,53 @@
       
     monitor( menu, function() {
       //fadeout overlay
-      overlay.classList.toggle ('fade', setTimeout( function() {
-        // overlay.outerHTML = "";
-        // delete overlay;
+       overlay.classList.toggle ('fade', setTimeout( function() {
+        overlay.outerHTML = "";
+        delete overlay;
       }, 2000));
-      
     });
+  }
+    
+    </script>
 
+</head>
+
+<body>
+
+  <p id="hint">Use left/right arrow-keys to change pages</p>
+  <div id="options">Readers <span>Options</span></div>
+  <div class="tag">In Progress</div>
+  <div id="overlay">
+     <div id="loader"></div>
+     <p>Loading</p>
+  </div>
+  <div id="interface"></div>
+  <div id="focusDisplay"></div>
+
+</body>
+
+  <script src="lib/ritext.js"></script>
+  <script src="src/readers-app.js"></script>
+  <script src="src/mesostic-reader.js"></script>
+  <script src="src/perigram-reader.js"></script>
+  <script src="data/all-trigrams.js"></script>
+
+  <script src="multi-page-ui.js"></script>
+  <script src="multi-page.js"></script>
+
+  <script>
+    //Interface hide & show
+    var options = document.getElementById('options');
+    options.addEventListener('click', function() {
+      document.getElementById("interface").style.display = 'block';
+    }, false);
+
+    var body = document.getElementsByTagName('body')[0];
+    body.addEventListener('click', function() {
+      if (event.pageX > 520 || event.pageY > 524) {
+          document.getElementById("interface").style.display = 'none';
+      }
+    }, false);
 
     //customized select list
 
