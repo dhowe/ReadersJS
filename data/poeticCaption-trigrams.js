@@ -1,4 +1,4 @@
-Trigrams = Trigrams || {};
+if (typeof Trigrams === 'undefined') var Trigrams = {};
 Trigrams.Poetic_Caption = {
 'there because echoing': 1,
 'but then so': 1960,
