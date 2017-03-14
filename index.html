@@ -15,44 +15,43 @@
 
   <script>
   window.onload = function () {
-  overlay.classList.toggle ('fade', setTimeout( function() {
-        // overlay.outerHTML = "";
-        // delete overlay;
+    var menu = document.getElementById('interface'),
+        overlay = document.getElementById('overlay');
+
+      function monitor(element,callback){
+         var self = element;
+         var h = self.clientHeight;
+         var w = self.clientWidth;
+         var txt = self.innerText;
+         var html = self.innerHTML;
+         (function flux() {
+            setTimeout ( function() {
+                var done = h === self.clientHeight &&
+                  w === self.clientWidth &&
+                  txt === self.innerText &&
+                  html === self.innerHTML;
+                if ( done ) {
+                 callback();
+                } else {
+                 h = self.clientHeight;
+                 w = self.clientWidth;
+                 txt = self.innerText;
+                 html = self.innerHTML;
+                 flux();
+                }
+            },250);
+         })()
+      };
+      
+    monitor( menu, function() {
+      //fadeout overlay
+       overlay.classList.toggle ('fade', setTimeout( function() {
+        overlay.outerHTML = "";
+        delete overlay;
       }, 2000));
+    });
   }
-    //   var menu = document.getElementsByTagName('canvas')[0],
-    //     overlay = document.getElementById('overlay');
-
-    //   function monitor(element,callback){
-    //      var self = element;
-    //      var h = self.clientHeight;
-    //      var w = self.clientWidth;
-    //      var txt = self.innerText;
-    //      var html = self.innerHTML;
-    //      (function flux() {
-    //         setTimeout ( function() {
-    //             var done = h === self.clientHeight &&
-    //               w === self.clientWidth &&
-    //               txt === self.innerText &&
-    //               html === self.innerHTML;
-    //             if ( done ) {
-    //              callback();
-    //             } else {
-    //              h = self.clientHeight;
-    //              w = self.clientWidth;
-    //              txt = self.innerText;
-    //              html = self.innerHTML;
-    //              flux();
-    //             }
-    //         },250);
-    //      })()
-    //   };
-      
-    // monitor( menu, function() {
-    //   //fadeout overlay
-
-      
-    // });
+    
     </script>
 
 </head>
