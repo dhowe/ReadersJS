@@ -10,17 +10,50 @@
   <script src="node_modules/jquery/dist/jquery.slim.min.js"></script>
   <script src="node_modules/rita/lib/rita-tiny.js"></script>
 
-  <script src="lib/ritext.js"></script>
-  <script src="src/readers-app.js"></script>
-  <script src="src/mesostic-reader.js"></script>
-  <script src="src/perigram-reader.js"></script>
-  <script src="data/all-trigrams.js"></script>
-
-  <script src="multi-page-ui.js"></script>
-  <script src="multi-page.js"></script>
-
   <link rel="stylesheet" href="fonts/webfont/font.css">
   <link rel="stylesheet" href="style.css">
+
+  <script>
+  window.onload = function () {
+  overlay.classList.toggle ('fade', setTimeout( function() {
+        // overlay.outerHTML = "";
+        // delete overlay;
+      }, 2000));
+  }
+    //   var menu = document.getElementsByTagName('canvas')[0],
+    //     overlay = document.getElementById('overlay');
+
+    //   function monitor(element,callback){
+    //      var self = element;
+    //      var h = self.clientHeight;
+    //      var w = self.clientWidth;
+    //      var txt = self.innerText;
+    //      var html = self.innerHTML;
+    //      (function flux() {
+    //         setTimeout ( function() {
+    //             var done = h === self.clientHeight &&
+    //               w === self.clientWidth &&
+    //               txt === self.innerText &&
+    //               html === self.innerHTML;
+    //             if ( done ) {
+    //              callback();
+    //             } else {
+    //              h = self.clientHeight;
+    //              w = self.clientWidth;
+    //              txt = self.innerText;
+    //              html = self.innerHTML;
+    //              flux();
+    //             }
+    //         },250);
+    //      })()
+    //   };
+      
+    // monitor( menu, function() {
+    //   //fadeout overlay
+
+      
+    // });
+    </script>
 
 </head>
 
@@ -29,14 +62,23 @@
   <p id="hint">Use left/right arrow-keys to change pages</p>
   <div id="options">Readers <span>Options</span></div>
   <div class="tag">In Progress</div>
-  <div id="interface"></div>
   <div id="overlay">
      <div id="loader"></div>
      <p>Loading</p>
   </div>
+  <div id="interface"></div>
   <div id="focusDisplay"></div>
 
 </body>
+
+  <script src="lib/ritext.js"></script>
+  <script src="src/readers-app.js"></script>
+  <script src="src/mesostic-reader.js"></script>
+  <script src="src/perigram-reader.js"></script>
+  <script src="data/all-trigrams.js"></script>
+
+  <script src="multi-page-ui.js"></script>
+  <script src="multi-page.js"></script>
 
   <script>
     //Interface hide & show
@@ -51,44 +93,6 @@
           document.getElementById("interface").style.display = 'none';
       }
     }, false);
-
-     var menu = document.getElementById('interface'),
-        overlay = document.getElementById('overlay');
-
-      function monitor(element,callback){
-         var self = element;
-         var h = self.clientHeight;
-         var w = self.clientWidth;
-         var txt = self.innerText;
-         var html = self.innerHTML;
-         (function flux() {
-            setTimeout ( function() {
-                var done = h === self.clientHeight &&
-                  w === self.clientWidth &&
-                  txt === self.innerText &&
-                  html === self.innerHTML;
-                if ( done ) {
-                 callback();
-                } else {
-                 h = self.clientHeight;
-                 w = self.clientWidth;
-                 txt = self.innerText;
-                 html = self.innerHTML;
-                 flux();
-                }
-            },250);
-         })()
-      };
-      
-    monitor( menu, function() {
-      //fadeout overlay
-      overlay.classList.toggle ('fade', setTimeout( function() {
-        // overlay.outerHTML = "";
-        // delete overlay;
-      }, 2000));
-      
-    });
-
 
     //customized select list
 
