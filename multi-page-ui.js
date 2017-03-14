@@ -12,10 +12,10 @@ var texts = [{
 var speeds = {
   Fluent: 1.1,
   Steady: 1.2,
-  Slow: .8,
-  Slower: .7,
-  Slowest: .6,
-  Fast: 1.4
+  Slow: 1.5,
+  Slower: 1.8,
+  Slowest: 2.2,
+  Fast: .6,
 };
 
 var styles = {

@@ -946,25 +946,26 @@ Reader.prototype = {
 
   step: function () {
 
-    var msg, pMan = PageManager.getInstance();
+    var grid, msg, pMan = PageManager.getInstance();
 
     if (!this.paused && !this.hidden) {
 
       if (this.steps) {
 
+        grid = Grid.gridFor(this.current);
         this.onExitCell(this.current);
-
         this.current = this.selectNext();
 
         this.history.push(this.current); // or .text()?
-        while (this.history.length > Reader.HISTORY_SIZE)
-          this.history.splice(0, 1);
+        while (this.history.length > Reader.HISTORY_SIZE) {
 
-        // page-turn with focused-reader
-        var grid = Grid.gridFor(this.current);
+          this.history.splice(0, 1);
+        }
+
+        // if focused-reader and moving to a new grid, do page-turn
         if (this.hasFocus() && grid != Grid.gridFor(this.current)) {
 
-          // info('\n'+this.type+'.pageTurn()\n');
+          info('\n'+this.type+'.pageTurn()\n');
           pMan.nextPage();
         }
       }
