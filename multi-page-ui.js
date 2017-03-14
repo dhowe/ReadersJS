@@ -1,13 +1,12 @@
-
 var texts = [{
-  title: 'The Image',
-  file: 'data/image.txt'
+  title: 'Misspelt Landings',
+  file: 'data/misspeltLandings.txt'
 }, {
   title: 'Poetic Caption',
   file: 'data/poeticCaption.txt'
 }, {
-  title: 'Misspelt Landings',
-  file: 'data/misspeltLandings.txt'
+  title: 'The Image',
+  file: 'data/image.txt'
 }];
 
 var speeds = {
@@ -48,7 +47,7 @@ function createInterface() {
   var focusSelect, textSelect, styleSelect, themeSelect, uiElements = [
 
     focusSelect = initSelect("focusSelect", "full", activeReaderNames(), focusChanged),
-    textSelect = initSelect("textSelect", "full",textNames(), textChanged),
+    textSelect = initSelect("textSelect", "full", textNames(), textChanged),
     styleSelect = initSelect("styleSelect", "half", Object.keys(styles), styleChanged),
     themeSelect = initSelect("themeSelect", "half", ["Dark", "Light"], themeChanged),
     //createButton('go').mousePressed(selectionDone).id('go')
@@ -59,7 +58,6 @@ function createInterface() {
   var focusedReaderSelection = document.getElementById(nameFromReader(pManager.focus()).replace(/ /g, "_"));
   focusedReaderSelection.className += " focused";
 
-
   // Append elements to interface
   var descText = ["Focus", "Text", "Style", "Theme"];
   for (var i = 0; i < uiElements.length; i++) {
@@ -67,7 +65,7 @@ function createInterface() {
     wrapper.addClass('item').parent('interface');
     createP(descText[i]).parent(wrapper);
     wrapper.child(uiElements[i])
-    // uiElements[i].parent(wrapper);
+      // uiElements[i].parent(wrapper);
   }
 
   ////////////////////////////////////////////////////////////////////
@@ -91,29 +89,29 @@ function createInterface() {
 
   function initStylizedSelect(id, style, options, onChanged, parent) {
     var ul = document.createElement('ul');
-        ul.setAttribute('id',id);
-        ul.setAttribute('class',"select");
-        
-        //init
-        var li = document.createElement('li');
-            li.setAttribute('class',"init");
-            ul.appendChild(li);
-            li.innerHTML=li.innerHTML + options[0];
+    ul.setAttribute('id', id);
+    ul.setAttribute('class', "select");
 
-        function renderList(element, index, arr) {
-            var li = document.createElement('li');
-            ul.appendChild(li);
-            if(index === 0) li.setAttribute('class',"selected");
-            li.innerHTML=li.innerHTML + element;
-        }
+    //init
+    var li = document.createElement('li');
+    li.setAttribute('class', "init");
+    ul.appendChild(li);
+    li.innerHTML = li.innerHTML + options[0];
 
-        if (style === "half") {
-          ul.className += " half";
-        };
+    function renderList(element, index, arr) {
+      var li = document.createElement('li');
+      ul.appendChild(li);
+      if (index === 0) li.setAttribute('class', "selected");
+      li.innerHTML = li.innerHTML + element;
+    }
 
-        parent && ul.parent(parent);
-        options.forEach(renderList);
-        ul.addEventListener("change", onChanged);
+    if (style === "half") {
+      ul.className += " half";
+    };
+
+    parent && ul.parent(parent);
+    options.forEach(renderList);
+    ul.addEventListener("change", onChanged);
 
     return ul;
   }
@@ -144,7 +142,7 @@ function createInterface() {
     var name = styleSelect.value();
     log("[UI] STYLE: " + name + "/" + styles[name]);
     RiText.defaultFill(styles[name]);
-    RiText.instances.forEach(function(rt){
+    RiText.instances.forEach(function (rt) {
       rt.fill(styles[name]);
     });
   }
@@ -152,7 +150,7 @@ function createInterface() {
   function themeChanged() {
     var theme = themeSelect.value(),
       dark = (theme === "Dark");
-    
+
     bgColor = dark ? 0 : 232;
     log("[UI] THEME: " + theme, bgColor);
 
@@ -232,7 +230,7 @@ function createInterface() {
   function speedChanged() {
     var spd = this.value();
     this.source.speed = speedFromName(spd);
-    log("[UI] SPEED: "+nameFromReader(this.source)+'/'+this.source.speed);
+    log("[UI] SPEED: " + nameFromReader(this.source) + '/' + this.source.speed);
   }
 
   function log() {

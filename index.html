@@ -14,45 +14,53 @@
   <link rel="stylesheet" href="style.css">
 
   <script>
-  window.onload = function () {
-    var menu = document.getElementById('interface'),
+    window.onload = function ()
+    {
+      var menu = document.getElementById('interface'),
         overlay = document.getElementById('overlay');
 
-      function monitor(element,callback){
-         var self = element;
-         var h = self.clientHeight;
-         var w = self.clientWidth;
-         var txt = self.innerText;
-         var html = self.innerHTML;
-         (function flux() {
-            setTimeout ( function() {
-                var done = h === self.clientHeight &&
-                  w === self.clientWidth &&
-                  txt === self.innerText &&
-                  html === self.innerHTML;
-                if ( done ) {
-                 callback();
-                } else {
-                 h = self.clientHeight;
-                 w = self.clientWidth;
-                 txt = self.innerText;
-                 html = self.innerHTML;
-                 flux();
-                }
-            },250);
-         })()
+      function monitor(element, callback)
+      {
+        var self = element;
+        var h = self.clientHeight;
+        var w = self.clientWidth;
+        var txt = self.innerText;
+        var html = self.innerHTML;
+        (function flux()
+        {
+          setTimeout(function ()
+          {
+            var done = h === self.clientHeight &&
+              w === self.clientWidth &&
+              txt === self.innerText &&
+              html === self.innerHTML;
+            if (done)
+            {
+              callback();
+            }
+            else
+            {
+              h = self.clientHeight;
+              w = self.clientWidth;
+              txt = self.innerText;
+              html = self.innerHTML;
+              flux();
+            }
+          }, 250);
+        })()
       };
-      
-    monitor( menu, function() {
-      //fadeout overlay
-       overlay.classList.toggle ('fade', setTimeout( function() {
-        overlay.outerHTML = "";
-        delete overlay;
-      }, 2000));
-    });
-  }
-    
-    </script>
+
+      monitor(menu, function ()
+      {
+        // fadeout overlay
+        overlay.classList.toggle('fade', setTimeout(function ()
+        {
+          overlay.outerHTML = "";
+          delete overlay;
+        }, 2000));
+      });
+    }
+  </script>
 
 </head>
 
@@ -62,72 +70,68 @@
   <div id="options">Readers <span>Options</span></div>
   <div class="tag">In Progress</div>
   <div id="overlay">
-     <div id="loader"></div>
-     <p>Loading</p>
+    <div id="loader"></div>
+    <p>Loading</p>
   </div>
   <div id="interface"></div>
   <div id="focusDisplay"></div>
 
 </body>
 
-  <script src="lib/ritext.js"></script>
-  <script src="src/readers-app.js"></script>
-  <script src="src/mesostic-reader.js"></script>
-  <script src="src/perigram-reader.js"></script>
-  <script src="data/all-trigrams.js"></script>
+<script src="lib/ritext.js"></script>
+<script src="src/readers-app.js"></script>
+<script src="src/mesostic-reader.js"></script>
+<script src="src/perigram-reader.js"></script>
+<script src="data/misspeltLandings-trigrams.js"></script>
+<script src="data/poeticCaption-trigrams.js" async></script>
+<script src="data/theImage-trigrams.js" async></script>
 
-  <script src="multi-page-ui.js"></script>
-  <script src="multi-page.js"></script>
+<script src="multi-page-ui.js"></script>
+<script src="multi-page.js"></script>
 
-  <script>
-    //Interface hide & show
-    var options = document.getElementById('options');
-    options.addEventListener('click', function() {
-      document.getElementById("interface").style.display = 'block';
-    }, false);
+<script>
+  // Interface hide & show
+  var options = document.getElementById('options');
+  options.addEventListener('click', function ()
+  {
+    document.getElementById("interface").style.display = 'block';
+  }, false);
 
-    var body = document.getElementsByTagName('body')[0];
-    body.addEventListener('click', function() {
-      if (event.pageX > 520 || event.pageY > 524) {
-          document.getElementById("interface").style.display = 'none';
-      }
-    }, false);
-
-    //customized select list
-
-    // var ul = document.getElementsByClassName('ul');
-    //   console.log(ul);
-     
-    // var onSelectClicked = function () {
-    //   console.log("click");
-
-    // }
-    // for (var i = 0; i < ul.length; i++) {
-    //    ul[i].addEventListener('click', onSelectClicked, false);
-    // }
-
-    $(document).ready(function ()
+  var body = document.getElementsByTagName('body')[0];
+  body.addEventListener('click', function ()
+  {
+    if (event.pageX > 520 || event.pageY > 524)
     {
-     
-      $("body").on("click", "ul.select li.init", function() {
-      
-        //hide other select list if opened
-        $('ul').children('li:not(.init)').hide();
-        $('ul').children('li.init').show();
-        $(this).closest("ul").children('li').toggle();
-      });
+      document.getElementById("interface").style.display = 'none';
+    }
+  }, false);
 
+  // Customized select list
+  // var ul = document.getElementsByClassName('ul');
+  //   console.log(ul);
+  // var onSelectClicked = function () {console.log("click");}
+  // for (var i = 0; i < ul.length; i++)
+  //    ul[i].addEventListener('click', onSelectClicked, false);
 
-      $("body").on("click", "ul.select li:not(.init)", function() {
-          var allOptions = $("ul").children('li:not(.init)');
-          allOptions.removeClass('selected');
-          $(this).addClass('selected');
-          $(this).closest("ul").children('.init').html($(this).html());
-          $(this).closest("ul").children('li').toggle();
-      });
-
+  $(document).ready(function ()
+  {
+    $("body").on("click", "ul.select li.init", function ()
+    {
+      //hide other select list if opened
+      $('ul').children('li:not(.init)').hide();
+      $('ul').children('li.init').show();
+      $(this).closest("ul").children('li').toggle();
     });
 
-  </script>
+    $("body").on("click", "ul.select li:not(.init)", function ()
+    {
+      var allOptions = $("ul").children('li:not(.init)');
+      allOptions.removeClass('selected');
+      $(this).addClass('selected');
+      $(this).closest("ul").children('.init').html($(this).html());
+      $(this).closest("ul").children('li').toggle();
+    });
+  });
+</script>
 
 </html>
