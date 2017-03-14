@@ -261,7 +261,7 @@ ul.select li.init{
     background-color: #3D3D3D;
 }
 ul.select li:not(.init) {
-    z-index: 100;
+    z-index: 50;
     float: left;
     display: none;
     background-color: #AAA;
@@ -272,4 +272,55 @@ ul.select li:not(.init).selected{
 }
 ul.select li:not(.init):hover{
     background: gray;
+}
+.tag{
+    position:absolute;
+    width:100px;
+    text-align: center;
+    text-transform: uppercase;
+    margin: -30px auto 0;
+    left: 0;
+    right: 0;
+    opacity: .8;
+
+}
+#overlay{
+    position:fixed;
+    background-color: rgba(0,0,0,.7);
+    width:100%;
+    height: 100%;
+    top:0;
+    z-index: 100;
+    opacity: 1;
+    transition: opacity 2s; 
+}
+#overlay.fade{
+    opacity: 0;
+}
+#loader {
+    border: 12px solid #333; /* Light grey */
+    border-top: 12px solid #f3f3f3; /* Blue */
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    margin: 300px auto 0;
+    left: 0;
+    right: 0;
+    animation: spin 2s linear infinite;
+    opacity: .7;
+}
+#overlay p{
+    position: absolute;
+    margin: 370px auto 0;
+    width:100px;
+    height:20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
