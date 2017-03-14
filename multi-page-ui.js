@@ -145,18 +145,6 @@ function createInterface() {
     }
   }
 
-  this.textChanged = function() {
-    var textName = textSelect.value();
-    log("[UI] TEXT: " + textName);
-    if ( ifTrigramReady(textName) )
-       resetText(textName);
-    else {
-      notify = textName;
-      overlay.classList.toggle('fade');
-     
-    }
-  }
-
   function ifTrigramReady(textName) {
      
      if (textLoaded.indexOf(textName) != -1) {

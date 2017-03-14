@@ -117,3 +117,15 @@ function readerFromName(name) {
   if (name && readers[name])
     return readers[name].reader;
 }
+
+function textChanged() {
+    var textName = textSelect.value();
+    log("[UI] TEXT: " + textName);
+    if ( ifTrigramReady(textName) )
+       resetText(textName);
+    else {
+      notify = textName;
+      overlay.classList.toggle('fade');
+     
+    }
+}
