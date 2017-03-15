@@ -977,7 +977,7 @@ Reader.prototype = {
 
       if (!this.hidden && this.hasFocus() && typeof createP === 'function') {
         //console.log(msg);
-        createP(msg.replace(/ /g, "&nbsp;")).parent('focusDisplay');
+        logToDisplay(msg.replace(/ /g, "&nbsp;"));
       }
 
       this.onEnterCell(this.current);
