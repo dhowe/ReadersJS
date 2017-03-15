@@ -53,7 +53,7 @@
       {
         // fadeout overlay
         overlay.classList.toggle('fade', setTimeout(function ()
-        { 
+        {
           // overlay.style.display = "none";
           var time = Date.now() - timerStart - 2000;
           console.log("[Status] Finish Initial Loading " + time );
@@ -89,14 +89,14 @@
       for (key in trigramScripts) {
           var script = document.createElement("script"),
               html = document.getElementsByTagName("html")[0];
-          
+
           script.src = trigramScripts[key];
           html.appendChild(script);
           script.onload = script.onreadystatechange = finishLoading(key);
       }
 
     }
-       
+
   </script>
 
 </head>
@@ -105,7 +105,7 @@
 
   <p id="hint">Use left/right arrow-keys to change pages</p>
   <div id="options">Readers <span>Options</span></div>
-  <div class="tag">In Progress</div>
+  <div class="tag">Under Construction</div>
   <div id="overlay">
     <div id="loader"></div>
     <p>Loading</p>
@@ -131,7 +131,7 @@
 <script>
   // Interface hide & show
 
-  
+
   var options = document.getElementById('options');
   options.addEventListener('click', function ()
   {
@@ -147,7 +147,7 @@
     }
   }, false);
 
- 
+
   // Customized select list
   // var ul = document.getElementsByClassName('ul');
   //   console.log(ul);
@@ -176,7 +176,7 @@
   });
 </script>
 <script>
-  
+
 
 </script>
 <!-- <script src="data/poeticCaption-trigrams.js"  defer onload="finishLoading('poeticCaption')"></script>
