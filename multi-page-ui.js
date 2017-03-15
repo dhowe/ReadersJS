@@ -255,11 +255,8 @@ function logToDisplay(msg) {
     var display = document.getElementById("focusDisplay");
     var logEntries = display.childNodes.length;
 
-    console.log(logEntries, maxFocusLog);
     if ( logEntries > maxFocusLog) {
-        
         while(logEntries > maxFocusLog) {
-          console.log("remove", display.childNodes[1]);
            display.removeChild(display.childNodes[1]);
            logEntries --;
         }  
