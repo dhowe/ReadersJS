@@ -40,6 +40,7 @@ M.selectNext = function () {
 
       letter = letter.toLowerCase();
       break;
+      
     } else { // for punct, just send line-break
 
       this.sendLinebreak = true; // a space

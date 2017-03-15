@@ -977,7 +977,7 @@ Reader.prototype = {
 
       if (!this.hidden && this.hasFocus() && typeof createP === 'function') {
         //console.log(msg);
-        logToDisplay(msg.replace(/ /g, "&nbsp;"));
+        logToDisplay(msg.replace(/ /g, "&nbsp;").replace(/\n/g,"<br>"));
       }
 
       this.onEnterCell(this.current);
