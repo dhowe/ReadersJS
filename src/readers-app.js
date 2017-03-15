@@ -831,6 +831,7 @@ Grid.direction = function (dirConst) {
 Reader.SERVER = 3, Reader.CLIENT = 2, Reader.APP = 1; // modes
 Reader.HISTORY_SIZE = 10, Reader.NETWORK_PAUSE = 5000;
 Reader.WAIT_FOR_NETWORK = false, Reader.PORT = 8088;
+Reader.VARY_SPEED_BY_SYLLABLE_COUNT = true; // flag for this enhancement
 
 // punctuation not included. "’" (right curly quote is part of the character set
 Reader.CLOSED_CLASS_WORDS = ["the", "and", "a", "of", "in", "i", "you", "is", "to", "that", "it", "for", "on", "have", "with", "this", "be", "not", "are", "as", "was", "but", "or", "from", "my", "at", "if", "they", "your", "all", "he", "by", "one", "me", "what", "so", "can", "will", "do", "an", "about", "we", "just", "would", "there", "no", "like", "out", "his", "has", "up", "more", "who", "when", "don’t", "some", "had", "them", "any", "their", "it’s", "only", "which", "i’m", "been", "other", "were", "how", "then", "now", "her", "than", "she", "well", "also", "us", "very", "because", "am", "here", "could", "even", "him", "into", "our", "much", "too", "did", "should", "over", "want", "these", "may", "where", "most", "many", "those", "does", "why", "please", "off", "going", "its", "i’ve", "down", "that’s", "can’t", "you’re", "didn’t", "another", "around", "must", "few", "doesn’t", "every", "yes", "each", "maybe", "i’ll", "away", "doing", "oh", "else", "isn’t", "he’s", "there’s", "hi", "won’t", "ok", "they’re", "yeah", "mine", "we’re", "what’s", "shall", "she’s", "hello", "okay", "here’s", "less"];
@@ -877,12 +878,12 @@ function Reader(g, cx, cy, speed) { // constructor
   this.neighborhood = [];
   this.showNeighbors = true;
   this.waitForNetwork = false;
-  this.speed = speed || SPEED.Slow;
+  this.speed = speed || SPEED.Steady; // default to Steady
   this.pman = PageManager.getInstance();
 
   if (cx && !cy && !speed) { // 2-arg version
 
-    this.speed = arguments[1] || 1.5;
+    this.speed = arguments[1] || SPEED.Steady; // default to Steady
     cx = cy = 0;
   }
 
@@ -985,9 +986,14 @@ Reader.prototype = {
     }
 
     var reader = this; // schedule the next step
+    var stepTime = reader.speed * 1000;
+    if (Reader.VARY_SPEED_BY_SYLLABLE_COUNT) {
+      var syllables = reader.current.text().length - 1;
+      stepTime = stepTime * (1 + syllables * .1);
+    }
     setTimeout(function () {
       reader.step();
-    }, reader.speed * 1000);
+    }, stepTime);
   },
 
   hasFocus: function () {

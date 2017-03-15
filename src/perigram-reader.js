@@ -12,6 +12,7 @@ function PerigramReader(g, rx, ry, speed) {
   this.upWeighting = .12;
 
   this.fill = RiText.defaultFill(); // or another color?
+  if (!speed) this.speed = SPEED.Fluent; // default speed for PerigramReaders
 
   //Perigram Reader Color
   this.col = [189, 5, 4, 255]; // red
@@ -33,6 +34,7 @@ PerigramReader.prototype.onEnterCell = function (curr) {
 
   // fade in current
   fid = curr.colorTo(this.col, this.speed * .8);
+  curr.colorTo(this.fill, this.speed * .8, this.speed);
 
   // get and fade in neighborhood
   this.neighborhood = Grid.gridFor(curr).neighborhood(curr);

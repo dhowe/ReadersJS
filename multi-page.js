@@ -23,11 +23,11 @@ function setup() {
 
     // add some readers
     readers['Perigram Reader'] = {
-      reader: new PerigramReader(pManager.recto)
+      reader: new PerigramReader(pManager.recto, SPEED.Fluent)
     };
 
     readers['Mesostic Reader'] = {
-      reader: new MesosticReader(pManager.verso, SPEED.Fluent)
+      reader: new MesosticReader(pManager.verso, SPEED.Steady)
     };
 
     readers['Oblique Perigram Reader'] = {
