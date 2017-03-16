@@ -880,6 +880,7 @@ function Reader(g, cx, cy, speed) { // constructor
   this.waitForNetwork = false;
   this.speed = speed || SPEED.Steady; // default to Steady
   this.pman = PageManager.getInstance();
+  this.stepTime = speed * 1000; // in milliseconds
 
   if (cx && !cy && !speed) { // 2-arg version
 
@@ -948,6 +949,7 @@ Reader.prototype = {
   step: function () {
 
     var grid, msg, pMan = PageManager.getInstance();
+    var reader = this; // for anonymous function
 
     if (!this.paused && !this.hidden) {
 
@@ -980,20 +982,20 @@ Reader.prototype = {
         logToDisplay(msg.replace(/ /g, "&nbsp;").replace(/\n/g,"<br>"));
       }
 
+      reader.stepTime = this.speed * 1000; // to milliseconds
+	  if (Reader.VARY_SPEED_BY_SYLLABLE_COUNT) {
+	    var letters = this.current.text().length - 1;
+	    reader.stepTime = Math.trunc(reader.stepTime * (1 + letters * .1));
+	  }
+
       this.onEnterCell(this.current);
 
       this.steps++;
     }
 
-    var reader = this; // schedule the next step
-    var stepTime = reader.speed * 1000;
-    if (Reader.VARY_SPEED_BY_SYLLABLE_COUNT) {
-      var syllables = reader.current.text().length - 1;
-      stepTime = stepTime * (1 + syllables * .1);
-    }
     setTimeout(function () {
       reader.step();
-    }, stepTime);
+    }, reader.stepTime);
   },
 
   hasFocus: function () {

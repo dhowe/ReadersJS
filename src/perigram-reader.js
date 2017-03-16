@@ -16,7 +16,7 @@ function PerigramReader(g, rx, ry, speed) {
 
   //Perigram Reader Color
   this.col = [189, 5, 4, 255]; // red
-  this.neighborCol = [127, 10, 30, 255];
+  // this.neighborCol = [127, 10, 30, 255];
 }
 
 PerigramReader.prototype.selectNext = function () {
@@ -29,19 +29,44 @@ PerigramReader.prototype.selectNext = function () {
 
 PerigramReader.prototype.onEnterCell = function (curr) {
 
-  // console.log('onEnter: '+curr);
+  console.log('onEnter: '+ curr.text() + " " + this.speed + " " + this.stepTime);
   // curr.showBounds(1); // DEBUG
+  
+  // ---- based on Java VB NeighborFadingVisual ---- //
+  var FADEINFACTOR = .8, FADEOUTFACTOR = 10, DELAYFACTOR = 2.5;
+  var actualStepTime = this.stepTime / 1000;
+  var fadeInTime = actualStepTime * FADEINFACTOR;
+  var fadeOutTime = actualStepTime * FADEOUTFACTOR;
+  var delayBeforeFadeBack = actualStepTime * DELAYFACTOR;
+  var gridColor = RiText.defaultFill(); // DCH: is this interface-responsive enough?
+  var leadingFadeToColor = gridColor.slice(0);
+  var trailingFadeToColor = gridColor.slice(0);
+  // DCH: may not work with the other 'theme' can we use alphas instead?
+  leadingFadeToColor = leadingFadeToColor.fill(gridColor[0] + (255 - gridColor[0]) / 4, 0, 3);
+  trailingFadeToColor = trailingFadeToColor.fill(gridColor[0] + (255 - gridColor[0]) / 6, 0, 3);
 
-  // fade in current
-  fid = curr.colorTo(this.col, this.speed * .8);
-  curr.colorTo(this.fill, this.speed * .8, this.speed);
+  var last = this.lastRead(0);
+  
+  // fading current in and out
+  fid = curr.colorTo(this.col, fadeInTime);
+  curr.colorTo(gridColor, fadeOutTime, delayBeforeFadeBack + fadeInTime); // 1st arg: this.fill
 
   // get and fade in neighborhood
   this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
+  console.log(this.neighborhood);
+  var neighborsToFade = [];
+  console.log('X ' + this.lastRead(2));
+  for  (var i = 0; i < this.neighborhood.length; i++) {
+    // console.log(this.neighborhood[i]);
+    // if (this.neighborhood[i] != this.lastRead(2) && this.neighborhood[i] != this.lastRead(3)) {
+      neighborsToFade.push(this.neighborhood[i]);
+    // }
+  }
+  console.log(neighborsToFade);
 
-  for (var i = 0; i < this.neighborhood.length; i++) {
-    this.neighborhood[i] && this.neighborhood[i].colorTo(this.neighborCol, this.speed * .8);
-    this.neighborhood[i] && this.neighborhood[i].colorTo(this.fill, this.speed * .8, this.speed);
+  for (var i = 0; i < neighborsToFade; i++) {
+    neighborsToFade[i] && neighborsToFade[i].colorTo(leadingFadeToColor, fadeInTime);
+    neighborsToFade[i] && neighborsToFade[i].colorTo(gridColor, fadeOutTime, delayBeforeFadeBack);
   }
 }
 
