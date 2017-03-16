@@ -1,6 +1,8 @@
 ///////////////////// PerigramReader /////////////////////
 
 subclass(PerigramReader, Reader);
+// these apply to all perigram readers:
+var FADEINFACTOR = .8, FADEOUTFACTOR = 10, DELAYFACTOR = 2.5;
 
 function PerigramReader(g, rx, ry, speed) {
 
@@ -17,6 +19,7 @@ function PerigramReader(g, rx, ry, speed) {
   //Perigram Reader Color
   this.col = [189, 5, 4, 255]; // red
   // this.neighborCol = [127, 10, 30, 255];
+
 }
 
 PerigramReader.prototype.selectNext = function () {
@@ -33,40 +36,39 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   // curr.showBounds(1); // DEBUG
   
   // ---- based on Java VB NeighborFadingVisual ---- //
-  var FADEINFACTOR = .8, FADEOUTFACTOR = 10, DELAYFACTOR = 2.5;
-  var actualStepTime = this.stepTime / 1000;
-  var fadeInTime = actualStepTime * FADEINFACTOR;
-  var fadeOutTime = actualStepTime * FADEOUTFACTOR;
-  var delayBeforeFadeBack = actualStepTime * DELAYFACTOR;
-  var gridColor = RiText.defaultFill(); // DCH: is this interface-responsive enough?
-  var leadingFadeToColor = gridColor.slice(0);
-  var trailingFadeToColor = gridColor.slice(0);
+  // variables needed individually for instances of perigram readers:
+  this.actualStepTime = this.stepTime / 1000;
+  this.fadeInTime = this.actualStepTime * FADEINFACTOR;
+  this.fadeOutTime = this.actualStepTime * FADEOUTFACTOR;
+  this.delayBeforeFadeBack = this.actualStepTime * DELAYFACTOR;
+  this.gridColor = RiText.defaultFill(); // DCH: is this interface-responsive enough?
+  this.leadingFadeToColor = this.gridColor.slice(0);
+  this.trailingFadeToColor = this.gridColor.slice(0);
   // DCH: may not work with the other 'theme' can we use alphas instead?
-  leadingFadeToColor = leadingFadeToColor.fill(gridColor[0] + (255 - gridColor[0]) / 4, 0, 3);
-  trailingFadeToColor = trailingFadeToColor.fill(gridColor[0] + (255 - gridColor[0]) / 6, 0, 3);
+  this.leadingFadeToColor = this.leadingFadeToColor.fill(this.gridColor[0] + (255 - this.gridColor[0]) / 4, 0, 3);
+  this.trailingFadeToColor = this.trailingFadeToColor.fill(this.gridColor[0] + (255 - this.gridColor[0]) / 6, 0, 3);
 
-  var last = this.lastRead(0);
-  
   // fading current in and out
-  fid = curr.colorTo(this.col, fadeInTime);
-  curr.colorTo(gridColor, fadeOutTime, delayBeforeFadeBack + fadeInTime); // 1st arg: this.fill
-
+  fid = curr.colorTo(this.col, this.fadeInTime);
+  curr.colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime); // 1st arg: this.fill
+  
   // get and fade in neighborhood
   this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
-  console.log(this.neighborhood);
-  var neighborsToFade = [];
-  console.log('X ' + this.lastRead(2));
+  console.log('X ' + this.neighborhood);
+  // filter recently read words out of the neighborhood
+  this.neighborsToFade = [];
   for  (var i = 0; i < this.neighborhood.length; i++) {
     // console.log(this.neighborhood[i]);
-    // if (this.neighborhood[i] != this.lastRead(2) && this.neighborhood[i] != this.lastRead(3)) {
-      neighborsToFade.push(this.neighborhood[i]);
-    // }
+    if (this.neighborhood[i] && (this.neighborhood[i] != this.lastRead(2)) && (this.neighborhood[i] != this.lastRead(3))) {
+      this.neighborsToFade.push(this.neighborhood[i]);
+    }
   }
-  console.log(neighborsToFade);
-
-  for (var i = 0; i < neighborsToFade; i++) {
-    neighborsToFade[i] && neighborsToFade[i].colorTo(leadingFadeToColor, fadeInTime);
-    neighborsToFade[i] && neighborsToFade[i].colorTo(gridColor, fadeOutTime, delayBeforeFadeBack);
+  console.log('Y ' + this.neighborsToFade);
+  
+  // do the fading
+  for (var i = 0; i < this.neighborsToFade.length; i++) {
+    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.leadingFadeToColor, this.fadeInTime);
+    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack);
   }
 }
 
