@@ -46,7 +46,6 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
   // console.log('Oblique onEnter: '+ curr.text() + " " + this.speed + " " + this.stepTime);
   // curr.showBounds(1); // DEBUG
   
-  // ---- based on Java VB NeighborFadingVisual ---- //
   // variables needed individually for instances of perigram readers:
   this.actualStepTime = this.stepTime / 1000;
   this.fadeInTime = this.actualStepTime * this.fadeInFactor;
@@ -69,8 +68,8 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
     // console.log(this.neighborhood[i]);
     if (this.neighborhood[i]) {
       this.neighborsToFade.push(this.neighborhood[i]);
-    }
-  }
+  	}
+	}
   
   this.outerNeighborsToFade = [];
   // get outerNeighborhood
@@ -90,16 +89,16 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
       this.outerNeighborsToFade.splice(i, 1);
       continue;
     }
-      for (var j = 0; j < this.neighborsToFade.length; j++) {
-        if (this.neighborsToFade[j] == this.outerNeighborsToFade[i]) {
-          this.outerNeighborsToFade.splice(i, 1);
-          break;
-        }
-      }
+		for (var j = 0; j < this.neighborsToFade.length; j++) {
+			if (this.neighborsToFade[j] == this.outerNeighborsToFade[i]) {
+				this.outerNeighborsToFade.splice(i, 1);
+				break;
+			}
+		}
   }
   
-  // also remove the last read word from inner neighbors
-  // so that it display as a faded in the color of the reader
+  // also remove the lastRead word from inner neighbors
+  // so that it displays as faded in the color of the reader
   i = this.neighborsToFade.indexOf(this.lastRead(2));
   this.neighborsToFade.splice(i, 1);
   
