@@ -44,6 +44,10 @@ function createInterface() {
     readerDef.speedSelect = initSelect("speedSelect", "full", Object.keys(SPEED), speedChanged, rb);
     readerDef.speedSelect.source = reader;
     readerDef.speedSelect.value(speedToName(reader.speed));
+
+    //onhover message
+    var hint = document.getElementById("hoverTextWrapper").cloneNode(true);
+    rb.child(hint);
   });
 
   var focusSelect, textSelect, styleSelect, themeSelect, uiElements = [
@@ -131,6 +135,13 @@ function createInterface() {
     var focus = readerFromName(focusSelect.value());
     log("[UI] FOCUS: " + focusSelect.value());
     focus && pManager.focus(focus);
+    //change classname
+    var readers = document.getElementsByClassName("reader");
+    for (var i = 0; i < readers.length; i++)
+      readers[i].className = "reader";
+    var focusElement = document.getElementById(focusSelect.value().replace(/ /g, "_"));
+    focusElement.className += " focused";
+    //clear focusDisplay
     $('#focusDisplay').html("");
   }
 

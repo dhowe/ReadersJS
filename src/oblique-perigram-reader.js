@@ -37,7 +37,7 @@ function ObliquePerigramReader(g, rx, ry, speed) {
 
 ObliquePerigramReader.prototype.onEnterCell = function (curr) {
 
-  console.log('Oblique onEnter: '+ curr.text() + " " + this.speed + " " + this.stepTime);
+  // console.log('Oblique onEnter: '+ curr.text() + " " + this.speed + " " + this.stepTime);
   // curr.showBounds(1); // DEBUG
   
   // ---- based on Java VB NeighborFadingVisual ---- //
