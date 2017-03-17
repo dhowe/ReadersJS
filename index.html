@@ -102,15 +102,28 @@
 </head>
 
 <body>
-
+  <!-- Top Text Section -->
   <p id="hint">Use left/right arrow-keys to change pages</p>
   <div id="options">Readers <span>Options</span></div>
   <div class="tag">Under Construction</div>
+
+ <!-- Overlay -->
   <div id="overlay">
     <div id="loader"></div>
     <p>Loading</p>
   </div>
+
+  <!-- Interface -->
   <div id="interface"></div>
+  <div id="hoverTextWrapper">
+    <!-- <div id="hoverText-unchecked" class="hoverText">click to enable</div> -->
+    <div id="hoverText-checked" class="hoverText">
+      click to disable/enable<span>, double-click for focus <a class="help">[?]</a></span>
+      <span  class="helpInfo">The 'focused' reader is always visible and able to display the text that it is reading. The words it has read recently are monitored separately on the right.</span>
+    </div>
+  </div>
+  
+  <!-- Focused Reader Display -->
   <div id="focusDisplay"></div>
 
 </body>
@@ -130,23 +143,61 @@
 <script src="multi-page-ui.js"></script>
 <script>
   // Interface hide & show
+  var body = document.getElementsByTagName('body')[0],
+      options = document.getElementById('options');
 
-
-  var options = document.getElementById('options');
-  options.addEventListener('click', function ()
+   options.addEventListener('click', function ()
   {
     document.getElementById("interface").style.display = 'block';
   }, false);
 
-  var body = document.getElementsByTagName('body')[0];
   body.addEventListener('click', function (event)
   {
     if (event.pageX > 520 || event.pageY > 524)
-    {
       document.getElementById("interface").style.display = 'none';
-    }
   }, false);
 
+  /************Interface focused Reader Hover Text ***************/
+  var menu = document.getElementById("interface");
+
+    menu.addEventListener('click', function(event) { 
+    var ele = event.target;
+     if (ele.matches('.hoverText a.help')) {
+
+        var display = ele.parentNode.parentNode.getElementsByClassName("helpInfo")[0].style.display;
+        display = display === "block" ? "none" : "block";
+        ele.parentNode.parentNode.getElementsByClassName("helpInfo")[0].style.display = display;
+     }
+  })
+
+  var timeoutId;
+
+  menu.addEventListener('mouseover', function(event) { 
+    var ele = event.target;
+     if (ele.matches('.reader label') && !timeoutId) {
+        timeoutId = window.setTimeout(function() {
+          timeoutId = null;
+          ele.parentNode.querySelector("#hoverTextWrapper").classList = "hover";
+         }, 1000);
+     }
+  })
+
+  menu.addEventListener('mouseout', function(event) { 
+     if (timeoutId) {
+          window.clearTimeout(timeoutId);
+          timeoutId = null;
+      }
+      var helpInfos = document.getElementsByClassName("helpInfo");
+      for(var i = 0; i < helpInfos.length; i++)
+        helpInfos[i].style.display = "none";
+  })
+
+  // //on input changed display none
+
+  // function hideAllInfoTag () {
+  //     document.getElementById('hoverTextWrapper').style.display = "none";
+  // }
+   /*****************************************************************************/
 
   // Customized select list
   // var ul = document.getElementsByClassName('ul');

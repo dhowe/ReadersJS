@@ -32,7 +32,7 @@ PerigramReader.prototype.selectNext = function () {
 
 PerigramReader.prototype.onEnterCell = function (curr) {
 
-  console.log('onEnter: '+ curr.text() + " " + this.speed + " " + this.stepTime);
+  // console.log('onEnter: '+ curr.text() + " " + this.speed + " " + this.stepTime);
   // curr.showBounds(1); // DEBUG
   
   // ---- based on Java VB NeighborFadingVisual ---- //
@@ -54,7 +54,7 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   
   // get and fade in neighborhood
   this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
-  console.log('X ' + this.neighborhood);
+  // console.log('X ' + this.neighborhood);
   // filter recently read words out of the neighborhood
   this.neighborsToFade = [];
   for  (var i = 0; i < this.neighborhood.length; i++) {
@@ -63,7 +63,7 @@ PerigramReader.prototype.onEnterCell = function (curr) {
       this.neighborsToFade.push(this.neighborhood[i]);
     }
   }
-  console.log('Y ' + this.neighborsToFade);
+  // console.log('Y ' + this.neighborsToFade);
   
   // do the fading
   for (var i = 0; i < this.neighborsToFade.length; i++) {
