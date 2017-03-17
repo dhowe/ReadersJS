@@ -172,10 +172,42 @@ button:hover {
 .reader input:checked + label:hover:before {
     border-color: gray !important;
 }
+.reader input:checked + label:hover:before {
+
+}
+.reader:hover #hoverTextWrapper.hover {
+    display: block;
+}
+
 .reader input:checked + label:before{
    border-color: rgba(0,0,0,0);
 }
+.hoverText a:hover {
+    color:black;
+}
+.hoverText span.helpInfo {
+  display:none;
+  margin-top: .5em;
+  font-size: 12px;
+}
+.hoverText-unchecked {
+    display:none;
+}
+#hoverTextWrapper {
+    background-color: rgba(130,130,130,.95);
+    position: absolute;
+    display: none;
+    margin-left: -1em;
+    padding:.5em;
+}
 
+#hoverTextWrapper.hover:hover {
+    display: block;
+}
+.hoverText{
+  display: none;
+  font-size: 14px;
+}
 /* Reader Color Scheme */
 .reader#Mesostic_Reader input:checked + label:before {
      background-color: #1464DB;
@@ -211,10 +243,39 @@ button:hover {
 .reader#Perigram_Spawner input + label:hover:before{
      border-color: #D88100;
 }
-.reade, .reader#Oblique_Spawner input + label:hover:before{
+.reader#Oblique_Spawner input + label:hover:before{
      border-color: #FFD000;
 }
-
+.reader.focused#Mesostic_Reader input:checked + label:before {
+    -webkit-box-shadow: 0px 0px 15px 5px #1464DB;
+    -moz-box-shadow: 0px 0px 15px 5px #1464DB;
+    box-shadow: 0px 0px 15px 5px #1464DB;
+}
+.reader.focused#Perigram_Reader input:checked + label:before {
+    -webkit-box-shadow: 0px 0px 15px 5px #BD0504;
+    -moz-box-shadow: 0px 0px 15px 5px #BD0504;
+    box-shadow: 0px 0px 15px 5px #BD0504;
+}
+.reader.focused#Oblique_Perigram_Reader input:checked + label:before {
+    -webkit-box-shadow: 0px 0px 15px 5px #FA0007;
+    -moz-box-shadow: 0px 0px 15px 5px #FA0007;
+    box-shadow: 0px 0px 15px 5px #FA0007;
+}
+.reader.focused#Spawning_Reader input:checked + label:before {
+    -webkit-box-shadow: 0px 0px 15px 5px #FFB017;
+    -moz-box-shadow: 0px 0px 15px 5px #FFB017;
+    box-shadow: 0px 0px 15px 5px #FFB017;
+}
+.reader.focused#Perigram_Spawner input:checked + label:before {
+    -webkit-box-shadow: 0px 0px 15px 5px #D88100;
+    -moz-box-shadow: 0px 0px 15px 5px #D88100;
+    box-shadow: 0px 0px 15px 5px #D88100;
+}
+.reader.focused#Oblique_Spawner input:checked + label:before {
+    -webkit-box-shadow: 0px 0px 15px 5px #FFD000;
+    -moz-box-shadow: 0px 0px 15px 5px #FFD000;
+    box-shadow: 0px 0px 15px 5px #FFD000;
+}
 .reader input:checked ~ select {
     display: inline-block;
 }
