@@ -64,29 +64,29 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
   
   // get neighborhood
   this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
-  // filter the last read word out of the neighborhood
-  // so that it will display in a faded color of the curr word
   this.neighborsToFade = [];
   for  (var i = 0; i < this.neighborhood.length; i++) {
     // console.log(this.neighborhood[i]);
-    if (this.neighborhood[i] && (this.neighborhood[i] != this.lastRead(2))) {
+    if (this.neighborhood[i]) {
       this.neighborsToFade.push(this.neighborhood[i]);
     }
   }
   
   this.outerNeighborsToFade = [];
-  // get outerNeighborhood including the last read word's neighborhood
-  this.neighborsToFade.push(this.lastRead(2));
+  // get outerNeighborhood
   for (var i = 0; i < this.neighborsToFade.length; i++) {
     this.neighborhood = Grid.gridFor(curr).neighborhood(this.neighborsToFade[i]);
     for (var j = 0; j < this.neighborhood.length; j++) {
-      this.outerNeighborsToFade.push(this.neighborhood[j])
+      // only add unique instances
+      if (this.outerNeighborsToFade.indexOf(this.neighborhood[j]) < 0) {
+        this.outerNeighborsToFade.push(this.neighborhood[j]);
+      }
     }
   }
   // filtering for any already active neighbors
   var i = this.outerNeighborsToFade.length;
   while (i--) {
-    if (!this.outerNeighborsToFade[i] || (this.outerNeighborsToFade[i] == curr) || this.outerNeighborsToFade[i] == this.lastRead(2)) {
+    if (!this.outerNeighborsToFade[i] || (this.outerNeighborsToFade[i] == curr) || (this.outerNeighborsToFade[i] == this.lastRead(2))) {
       this.outerNeighborsToFade.splice(i, 1);
       continue;
     }
@@ -97,6 +97,11 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
         }
       }
   }
+  
+  // also remove the last read word from inner neighbors
+  // so that it display as a faded in the color of the reader
+  i = this.neighborsToFade.indexOf(this.lastRead(2));
+  this.neighborsToFade.splice(i, 1);
   
   // do the fading
   for (var i = 0; i < this.neighborsToFade.length; i++) {
