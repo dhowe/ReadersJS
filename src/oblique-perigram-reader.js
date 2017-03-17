@@ -54,7 +54,7 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
 
   // fading current in and out
   fid = curr.colorTo(this.col, this.fadeInTime);
-  curr.colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime); // 1st arg: this.fill
+  curr.colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime);
   
   // get and fade in neighborhood
   this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
