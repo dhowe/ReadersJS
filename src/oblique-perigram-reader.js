@@ -26,6 +26,52 @@ function ObliquePerigramReader(g, rx, ry, speed) {
 
   PerigramReader.call(this, g, rx, ry, speed); // superclass constructor
   this.type = 'ObliquePerigramReader'; //  superclass variable(s)
+  
+  this.fill = RiText.defaultFill(); // or another color?
+  if (!speed) this.speed = SPEED.Steady; // default speed for ObliquePerigramReaders
+
+  //Perigram Reader Color
+  this.col = [189, 5, 4, 255]; // red
+
+}
+
+ObliquePerigramReader.prototype.onEnterCell = function (curr) {
+
+  console.log('Oblique onEnter: '+ curr.text() + " " + this.speed + " " + this.stepTime);
+  // curr.showBounds(1); // DEBUG
+  
+  // ---- based on Java VB NeighborFadingVisual ---- //
+  // variables needed individually for instances of perigram readers:
+  this.actualStepTime = this.stepTime / 1000;
+  this.fadeInTime = this.actualStepTime * FADEINFACTOR;
+  this.fadeOutTime = this.actualStepTime * FADEOUTFACTOR;
+  this.delayBeforeFadeBack = this.actualStepTime * DELAYFACTOR;
+  this.gridColor = RiText.defaultFill(); // DCH: is this interface-responsive enough?
+  this.innerFadeToColor = this.gridColor.slice(0);
+  this.outerFadeToColor = this.gridColor.slice(0);
+  this.innerFadeToColor[3] = this.innerFadeToColor[3] / 2; // halve the alpha of the grid for inner circle
+  this.outerFadeToColor[3] = 0; // and make outer circle transparent (here: black against black background)
+
+  // fading current in and out
+  fid = curr.colorTo(this.col, this.fadeInTime);
+  curr.colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime); // 1st arg: this.fill
+  
+  // get and fade in neighborhood
+  this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
+  // filter recently read words out of the neighborhood
+  this.neighborsToFade = [];
+  for  (var i = 0; i < this.neighborhood.length; i++) {
+    // console.log(this.neighborhood[i]);
+    if (this.neighborhood[i] && (this.neighborhood[i] != this.lastRead(2)) && (this.neighborhood[i] != this.lastRead(3))) {
+      this.neighborsToFade.push(this.neighborhood[i]);
+    }
+  }
+  
+  // do the fading
+  for (var i = 0; i < this.neighborsToFade.length; i++) {
+    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.innerFadeToColor, this.fadeInTime);
+    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack);
+  }
 }
 
 ObliquePerigramReader.prototype.determineReadingPath = function (neighbors) {
