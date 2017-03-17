@@ -197,7 +197,7 @@ button:hover {
     background-color: rgba(130,130,130,.95);
     position: absolute;
     display: none;
-    margin-left: -1em;
+    margin-left: 1.5em;
     padding:.5em;
     width:370px;
 }
