@@ -2,7 +2,6 @@
 
 subclass(PerigramReader, Reader);
 // these apply to all perigram readers:
-var FADEINFACTOR = .8, FADEOUTFACTOR = 10, DELAYFACTOR = 2.5;
 
 function PerigramReader(g, rx, ry, speed) {
 
@@ -19,7 +18,12 @@ function PerigramReader(g, rx, ry, speed) {
   //Perigram Reader Color
   this.col = [189, 5, 4, 255]; // red
   // this.neighborCol = [127, 10, 30, 255];
-
+  
+  // factors
+  this.fadeInFactor = .8;
+  this.fadeOutFactor = 10;
+  this.delayFactor = 2.5;
+  
 }
 
 PerigramReader.prototype.selectNext = function () {
@@ -38,9 +42,9 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   // ---- based on Java VB NeighborFadingVisual ---- //
   // variables needed individually for instances of perigram readers:
   this.actualStepTime = this.stepTime / 1000;
-  this.fadeInTime = this.actualStepTime * FADEINFACTOR;
-  this.fadeOutTime = this.actualStepTime * FADEOUTFACTOR;
-  this.delayBeforeFadeBack = this.actualStepTime * DELAYFACTOR;
+  this.fadeInTime = this.actualStepTime * this.fadeInFactor;
+  this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
+  this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
   this.gridColor = RiText.defaultFill(); // DCH: is this interface-responsive enough?
   this.leadingFadeToColor = this.gridColor.slice(0);
   this.trailingFadeToColor = this.gridColor.slice(0);
