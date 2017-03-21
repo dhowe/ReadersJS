@@ -144,11 +144,19 @@
 <script>
   // Interface hide & show
   var body = document.getElementsByTagName('body')[0],
-      options = document.getElementById('options');
+      options = document.getElementById('options'),
+      menu = document.getElementById("interface");
 
    options.addEventListener('click', function ()
   {
-    document.getElementById("interface").style.display = 'block';
+    if(menu.style.display === 'none') {
+       menu.style.display = 'block';
+       options.classList = "";
+    } else {
+      menu.style.display = 'none';
+      options.classList = "clear";
+    }
+   
   }, false);
 
   body.addEventListener('click', function (event)
@@ -158,7 +166,7 @@
   }, false);
 
   /************Interface focused Reader Hover Text ***************/
-  var menu = document.getElementById("interface");
+  
 
     menu.addEventListener('click', function(event) { 
     var ele = event.target;

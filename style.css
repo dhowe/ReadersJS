@@ -39,6 +39,16 @@ canvas {
     vertical-align: middle;
     line-height: 60px;
     color:#333;
+    z-index: 100;
+    opacity:0.2;
+    -webkit-transition: opacity .5s; /* Safari */
+    transition: opacity .5s;
+}
+#options.clear{
+   opacity:1;
+}
+#options:hover{
+    opacity: 1;
 }
 
 #options span {
