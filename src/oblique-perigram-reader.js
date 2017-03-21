@@ -33,6 +33,12 @@ function ObliquePerigramReader(g, rx, ry, speed) {
   //Perigram Reader Color
   this.col = [189, 5, 4, 255]; // red
 
+  
+  // factors
+  this.fadeInFactor = .8;
+  this.fadeOutFactor = 2;
+  this.delayFactor = 2;
+  
 }
 
 ObliquePerigramReader.prototype.onEnterCell = function (curr) {
@@ -40,12 +46,11 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
   // console.log('Oblique onEnter: '+ curr.text() + " " + this.speed + " " + this.stepTime);
   // curr.showBounds(1); // DEBUG
   
-  // ---- based on Java VB NeighborFadingVisual ---- //
   // variables needed individually for instances of perigram readers:
   this.actualStepTime = this.stepTime / 1000;
-  this.fadeInTime = this.actualStepTime * FADEINFACTOR;
-  this.fadeOutTime = this.actualStepTime * FADEOUTFACTOR;
-  this.delayBeforeFadeBack = this.actualStepTime * DELAYFACTOR;
+  this.fadeInTime = this.actualStepTime * this.fadeInFactor;
+  this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
+  this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
   this.gridColor = RiText.defaultFill(); // DCH: is this interface-responsive enough?
   this.innerFadeToColor = this.gridColor.slice(0);
   this.outerFadeToColor = this.gridColor.slice(0);
@@ -54,23 +59,57 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
 
   // fading current in and out
   fid = curr.colorTo(this.col, this.fadeInTime);
-  curr.colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime); // 1st arg: this.fill
+  curr.colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack);
   
-  // get and fade in neighborhood
+  // get neighborhood
   this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
-  // filter recently read words out of the neighborhood
   this.neighborsToFade = [];
   for  (var i = 0; i < this.neighborhood.length; i++) {
     // console.log(this.neighborhood[i]);
-    if (this.neighborhood[i] && (this.neighborhood[i] != this.lastRead(2)) && (this.neighborhood[i] != this.lastRead(3))) {
+    if (this.neighborhood[i]) {
       this.neighborsToFade.push(this.neighborhood[i]);
+  	}
+	}
+  
+  this.outerNeighborsToFade = [];
+  // get outerNeighborhood
+  for (var i = 0; i < this.neighborsToFade.length; i++) {
+    this.neighborhood = Grid.gridFor(curr).neighborhood(this.neighborsToFade[i]);
+    for (var j = 0; j < this.neighborhood.length; j++) {
+      // only add unique instances
+      if (this.outerNeighborsToFade.indexOf(this.neighborhood[j]) < 0) {
+        this.outerNeighborsToFade.push(this.neighborhood[j]);
+      }
     }
   }
+  // filtering for any already active neighbors
+  var i = this.outerNeighborsToFade.length;
+  while (i--) {
+    if (!this.outerNeighborsToFade[i] || (this.outerNeighborsToFade[i] == curr) || (this.outerNeighborsToFade[i] == this.lastRead(2))) {
+      this.outerNeighborsToFade.splice(i, 1);
+      continue;
+    }
+		for (var j = 0; j < this.neighborsToFade.length; j++) {
+			if (this.neighborsToFade[j] == this.outerNeighborsToFade[i]) {
+				this.outerNeighborsToFade.splice(i, 1);
+				break;
+			}
+		}
+  }
+  
+  // also remove the lastRead word from inner neighbors
+  // so that it displays as faded in the color of the reader
+  i = this.neighborsToFade.indexOf(this.lastRead(2));
+  this.neighborsToFade.splice(i, 1);
   
   // do the fading
   for (var i = 0; i < this.neighborsToFade.length; i++) {
     this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.innerFadeToColor, this.fadeInTime);
     this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack);
+  }
+  for (var i = 0; i < this.outerNeighborsToFade.length; i++) {
+    this.outerNeighborsToFade[i] && this.outerNeighborsToFade[i].colorTo(this.outerFadeToColor, this.fadeInTime);
+    this.outerNeighborsToFade[i] && this.outerNeighborsToFade[i].colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack);
   }
 }
 
