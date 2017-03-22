@@ -67,7 +67,7 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
   for  (var i = 0; i < this.neighborhood.length; i++) {
     // console.log(this.neighborhood[i]);
     if (this.neighborhood[i]) {
-      this.neighborsToFade.push(this.neighborhood[i]);
+            if (this.neighborsToFade.indexOf(this.neighborhood[i]) < 0) this.neighborsToFade.push(this.neighborhood[i]);
   	}
 	}
   
