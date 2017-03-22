@@ -56,7 +56,7 @@
         {
           // overlay.style.display = "none";
           var time = Date.now() - timerStart - 2000;
-          console.log("[Status] Finish Initial Loading " + time );
+          console.log('[LOAD] '+ TEXTS[0].title + ' ' + time + 'ms' );
           reloadTheRest();
 
         }, 2000));
@@ -69,7 +69,7 @@
 
       textLoaded.push(text);
       var time = Date.now() - timerStart;
-      console.log("[TRIGRAM] Finish Loading: " + text + " " + time);
+      console.log('[LOAD] ' + text + ' ' + time + 'ms');
 
       if (overlay.classList.value === "" && notify === text) {
           overlay.classList.toggle('fade');
@@ -122,7 +122,7 @@
       <span  class="helpInfo">The 'focused' reader is always visible and able to display the text that it is reading. The words it has read recently are monitored separately on the right.</span>
     </div>
   </div>
-  
+
   <!-- Focused Reader Display -->
   <div id="focusDisplay"></div>
 
@@ -156,7 +156,7 @@
       menu.style.display = 'none';
       options.classList = "clear";
     }
-   
+
   }, false);
 
   body.addEventListener('click', function (event)
@@ -166,9 +166,9 @@
   }, false);
 
   /************Interface focused Reader Hover Text ***************/
-  
 
-    menu.addEventListener('click', function(event) { 
+
+    menu.addEventListener('click', function(event) {
     var ele = event.target;
      if (ele.matches('.hoverText a.help')) {
 
@@ -180,7 +180,7 @@
 
   var timeoutId;
 
-  menu.addEventListener('mouseover', function(event) { 
+  menu.addEventListener('mouseover', function(event) {
     var ele = event.target;
      if (ele.matches('.reader label') && !timeoutId) {
         timeoutId = window.setTimeout(function() {
@@ -190,7 +190,7 @@
      }
   })
 
-  menu.addEventListener('mouseout', function(event) { 
+  menu.addEventListener('mouseout', function(event) {
      if (timeoutId) {
           window.clearTimeout(timeoutId);
           timeoutId = null;
