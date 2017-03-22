@@ -8,8 +8,16 @@ function test() {
   var stone = pManager.verso.cellAt(6,3);
   stone.fill([255,0,0,255]);
 
-  stone.colorTo([0,255,0,255],4);
-  stone.colorTo([0,0,255,255],4, 2);
+  var st = millis();
+  stone.colorTo([0,0,0,255],2);
+  //stone.colorTo([100,0,255,255],1, 1);
+
+  // pManager.verso.cellAt(7,3).fill(0,0,255);
+
+  // setInterval(function() {
+  //     var el = millis() - st;
+  //     if (0&&el < 4000) console.log(floor(stone.fill().r)+"\t\t"+(floor(el/100)/10)+'s');
+  //   }, 100);
 }
 
 ///////////////////////////////////////////////////////////////////////

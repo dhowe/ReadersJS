@@ -56,7 +56,6 @@
         {
           // overlay.style.display = "none";
           var time = Date.now() - timerStart - 2000;
-          console.log("[Status] Finish Initial Loading " + time );
           reloadTheRest();
 
         }, 2000));
@@ -68,9 +67,6 @@
     function finishLoading (text) {
 
       textLoaded.push(text);
-      var time = Date.now() - timerStart;
-      console.log("[TRIGRAM] Finish Loading: " + text + " " + time);
-
       if (overlay.classList.value === "" && notify === text) {
           overlay.classList.toggle('fade');
           textChanged();
@@ -133,7 +129,7 @@
 <script src="../node_modules/jquery/dist/jquery.slim.min.js"></script>
 <script src="../node_modules/rita/lib/rita-tiny.js"></script>
 
-<script src="../lib/ritext.js"></script>
+<script src="../lib/rt.js"></script>
 <script src="../src/readers-app.js"></script>
 <script src="../data/misspeltLandings-trigrams.js"></script>
 <script src="fading.js"></script>
