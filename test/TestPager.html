@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>SplitWords</title>
+  <script src="../node_modules/p5/lib/p5.js"></script>
+  <script src="../node_modules/rita/lib/rita-tiny.js"></script>
+  <script src="../src/readers-app.js"></script>
+  <script src="../lib/rt.js"></script>
+</head>
+
+<body>
+</body>
+<script>
+
+  var rt,font,rts,g,pManager
+
+  function preload() {
+
+    font = loadFont('../fonts/Baskerville.ttf');
+  }
+
+  var STYLE = {
+    Faint: 40,
+    Grey: 70,
+    Dark: 0
+  };
+
+  function setup()
+  {
+    RiText.defaultFont(font, 24);
+    RiText.defaultFill(STYLE.Grey);
+    RiText.defaults.paragraphIndent = 20;
+
+    //console.log(RiText.defaultFill());
+    //return;
+
+    createCanvas(800, 600);
+    loadTexts(function(t) {
+      pManager = PageManager.getInstance(Reader.APP);
+      pManager.layout(t, 25, 40, 580, 650);
+
+      for (var i = 0; i < RiText.instances.length; i++) {
+        console.log(RiText.instances[i].text(), RiText.instances[i]._color);
+      }
+
+    });
+  }
+
+  function draw() {
+    background(200, 100, 0);
+    pManager && (pManager.draw());
+  }
+
+  var TEXTS = [{
+    title: 'Misspelt Landings',
+    file: 'data/misspeltLandings.txt'
+  }]
+
+  function loadTexts(callback) {
+    var count = 0;
+    var total = TEXTS.length;
+    TEXTS.forEach(function (text) {
+      RiTa.loadString('../'+text.file, function (txt) {
+        text.contents = txt;
+        if (++count === total)
+          callback(txt);
+      });
+    });
+  }
+</script>
+
+</html>

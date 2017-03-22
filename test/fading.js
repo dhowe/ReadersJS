@@ -6,11 +6,12 @@ var pManager, font, bgColor, readers = {};
 function test() {
 
   var stone = pManager.verso.cellAt(6,3);
+  //console.log(stone);
   stone.fill([255,0,0,255]);
 
-  var st = millis();
-  stone.colorTo([0,0,0,255],2);
-  //stone.colorTo([100,0,255,255],1, 1);
+  //var st = millis();
+  stone.colorTo([100,100,100,255], 2);
+  stone.colorTo([100,0,255,255],1, 1);
 
   // pManager.verso.cellAt(7,3).fill(0,0,255);
 
@@ -33,7 +34,7 @@ function setup() {
   createCanvas(1280, 720);
 
   RiText.defaultFont(font, 24);
-  RiText.defaultFill(STYLE.Gray);
+  RiText.defaultFill(STYLE.Grey);
   RiText.defaults.paragraphIndent = 20;
 
   loadTexts(function () {
@@ -41,6 +42,9 @@ function setup() {
     // do the layout
     pManager = PageManager.getInstance(Reader.APP);
     pManager.layout(TEXTS[0], 25, 40, 580, 650);
+    // for (var i = 0; i < RiText.instances.length; i++) {
+    //   console.log(RiText.instances[i].text(), RiText.instances[i]._color);
+    // }
     test();
   });
 };
@@ -58,7 +62,7 @@ function loadTexts(callback) {
     RiTa.loadString('../'+text.file, function (txt) {
       text.contents = txt;
       if (++count === total)
-        callback();
+        callback(txt);
     });
   });
 }

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>SplitWords</title>
+  <script src="../node_modules/p5/lib/p5.js"></script>
+  <script src="../node_modules/rita/lib/rita-tiny.js"></script>
+  <script src="../lib/rt.js"></script>
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+    }
+    canvas {
+      vertical-align: top;
+    }
+  </style>
+</head>
+
+<body>
+</body>
+<script>
+
+  var rt,font;
+
+  function preload() {
+
+    font = loadFont('../fonts/Baskerville.ttf');
+  }
+
+  function setup()
+  {
+    //RiText.defaultFont(font, 24);
+
+    createCanvas(800, 600);
+    rt = new RiText("The dog ran aground.");
+    rts = rt.splitWords();
+    RiText.dispose([rt]);
+    //rt.colorTo(color(255, 255, 255, 255), 2);
+    //rt.colorTo(color(255,0,255,255), 2, 1);
+  // }
+  //
+  // function draw()
+  // {
+    background(200, 100, 0);
+    // if (rt) {
+    //   rt.showBounds(1);
+    //   rt.draw();
+    // }
+    for (var i = 0; rts&&i < rts.length; i++) {
+      rts[i].showBounds(1);
+      rts[i].draw();
+      console.log(rts[i]._color);
+    }
+  }
+</script>
+
+</html>

@@ -1106,7 +1106,7 @@ var PageManager = function PageManager(host, port) {
 
       this.clear();
 
-      if (typeof txt === 'object') {
+      if (typeof txt !== 'string') {
 
         this.perigrams[3] = Trigrams[toSafeName(txt.title)];
         console.log('[PMAN] Stored ' + Object.keys(this.perigrams[3]).length + ' 3-grams');

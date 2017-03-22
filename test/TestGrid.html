@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>SplitWords</title>
+  <script src="../node_modules/p5/lib/p5.js"></script>
+  <script src="../node_modules/rita/lib/rita-tiny.js"></script>
+  <script src="../src/readers-app.js"></script>
+  <script src="../lib/rt.js"></script>
+</head>
+
+<body>
+</body>
+<script>
+
+  var rt,font,rts,g;
+
+  function preload() {
+
+    font = loadFont('../fonts/Baskerville.ttf');
+  }
+
+  function _createGrid (lines) {
+
+    var g = new Grid(_toCells(lines), 25, 40, 580, 65);
+    RiText.dispose(lines);
+    return g;
+  }
+
+  function _toCells (rt) {
+
+    var cells = [];
+    for (var y = 0; y < rt.length; y++)
+      cells.push(rt[y].splitWords());
+    //console.log(cells);
+    return cells;
+  }
+
+  function setup()
+  {
+    RiText.defaultFont(font, 24);
+    RiText.defaultFill(200,200,200);
+
+    createCanvas(800, 600);
+    var rt1 = new RiText("The dog ran aground.", 25, 100);
+    var rt2 = new RiText("The cat ran aground.", 25, 120);
+    var rt3 = new RiText("The flea ran aground.", 25, 140);
+    g = _createGrid([rt1,rt2,rt3]);
+    rts = RiText.instances;
+    for (var i = 0; i < rts.length; i++) {
+      //rts[i].showBounds(1);
+      //rts[i].draw();
+      console.log(rts[i].id, rts[i].text(), rts[i]._color);
+    }
+    // new Grid(this._toCells(lines), this.x, this.y, this.width, this.height);
+    // RiText.dispose(lines);
+    //
+    // rts = rt.splitWords();
+    // RiText.dispose([rt]);
+    //rt.colorTo(color(255, 255, 255, 255), 2);
+    //rt.colorTo(color(255,0,255,255), 2, 1);
+  }
+
+  function draw() {
+    background(200, 100, 0);
+    // if (rt) {
+    //   rt.showBounds(1);
+    //   rt.draw();
+    // }
+    g.draw();
+    // for (var i = 0; rts&&i < rts.length; i++) {
+    //   rts[i].showBounds(1);
+    //   rts[i].draw();
+    //   console.log(rts[i]._color);
+    // }
+  }
+</script>
+
+</html>
