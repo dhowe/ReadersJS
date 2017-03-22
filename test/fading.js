@@ -3,6 +3,8 @@ var pManager, font, bgColor, readers = {};
 
 ///////////////////////////////////////////////////////////////////////
 
+
+
 async function test() {
 
   var stone = pManager.verso.cellAt(6,3);
@@ -24,6 +26,14 @@ async function test() {
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+function test2() {
+  var stone = pManager.verso.cellAt(6,3);
+  stone.fill([255,0,0,255]);
+  stone.colorTo([0,255,0,255],4);
+  stone.colorTo([0,0,255,255],2, 2);
+}
+
 ///////////////////////////////////////////////////////////////////////
 
 
@@ -37,7 +47,8 @@ function setup() {
   createCanvas(1280, 720);
 
   RiText.defaultFont(font, 24);
-  RiText.defaultFill(STYLE.Gray);
+  //RiText.defaultFill(STYLE.Gray); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  RiText.defaultFill(STYLE.Grey);
   RiText.defaults.paragraphIndent = 20;
 
   loadTexts(function () {

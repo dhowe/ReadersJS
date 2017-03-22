@@ -12,7 +12,7 @@ function setup() {
   createCanvas(1280, 720);
 
   RiText.defaultFont(font, 24);
-  RiText.defaultFill(STYLE.Faint);
+  RiText.defaultFill(STYLE.Grey);
   RiText.defaults.paragraphIndent = 20;
 
   loadTexts(function () {
@@ -126,6 +126,6 @@ function textChanged() {
     else {
       notify = textName;
       overlay.classList.toggle('fade');
-     
+
     }
 }
