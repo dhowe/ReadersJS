@@ -40,7 +40,7 @@ M.selectNext = function () {
 
       letter = letter.toLowerCase();
       break;
-      
+
     } else { // for punct, just send line-break
 
       this.sendLinebreak = true; // a space
@@ -60,7 +60,9 @@ M.selectNext = function () {
 
       if (this.upperCasing) {
 
+        var originalWidth = next.textWidth();
         next.replaceChar(next.indexOf(letter), letter.toUpperCase());
+        next.x -= (next.textWidth() - originalWidth) / 2;
       }
 
       this.letter = letter;

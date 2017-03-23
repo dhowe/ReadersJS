@@ -795,8 +795,10 @@ Grid.previousCell = function (rt) {
 
 /** Resets the cell to its original text */
 Grid.resetCell = function (rt) {
-  var cf = Grid.coordsFor(rt);
+  var cf = Grid.coordsFor(rt),
+    tw = rt.textWidth();
   rt.text(cf.grid.origWords[cf.y][cf.x]);
+  rt.x += (tw - rt.textWidth()) / 2;
 }
 
 /** Prints all pages to the console */
