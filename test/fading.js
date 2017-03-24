@@ -1,10 +1,45 @@
 var pManager, font, bgColor, readers = {};
 
+
 ///////////////////////////////////////////////////////////////////////
+
+
+
+async function test() {
+
+  var stone = pManager.verso.cellAt(6,3);
+  await sleep(4001);
+  // why is this fill function necessary? doesn't the ritext already have a fill?
+  // if the next line is commented out, nothing happens
+  stone.fill([255,0,0,255]); // red in 4
+
+  // big question: why doesn't the green fade in slowly - over 4 secs
+  // when the follow line is commented out:
+  // await sleep(4001);
+  stone.colorTo([0,255,0,255],4); // green from red in 4
+  await sleep(8001);
+  stone.colorTo([0,0,255,255],4, 4); // stays green for 4, then blue in 4
+  await sleep(8001);
+  stone.colorTo([255,0,0,255],4, 4); // stays blue for 4, then red
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function test2() {
+  var stone = pManager.verso.cellAt(6,3);
+  stone.fill([255,0,0,255]);
+  stone.colorTo([0,255,0,255],4);
+  stone.colorTo([0,0,255,255],2, 2);
+}
+
+///////////////////////////////////////////////////////////////////////
+
 
 function preload() {
 
-  font = loadFont('fonts/Baskerville.ttf');
+  font = loadFont('../fonts/Baskerville.ttf');
 }
 
 function setup() {
@@ -12,6 +47,7 @@ function setup() {
   createCanvas(1280, 720);
 
   RiText.defaultFont(font, 24);
+  //RiText.defaultFill(STYLE.Gray); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   RiText.defaultFill(STYLE.Grey);
   RiText.defaults.paragraphIndent = 20;
 
@@ -20,24 +56,7 @@ function setup() {
     // do the layout
     pManager = PageManager.getInstance(Reader.APP);
     pManager.layout(TEXTS[0], 25, 40, 580, 650);
-
-    // add some readers
-    readers['Perigram Reader'] = {
-      reader: new PerigramReader(pManager.recto, SPEED.Fluent)
-    };
-
-    readers['Mesostic Reader'] = {
-      reader: new MesosticReader(pManager.verso, SPEED.Steady)
-    };
-
-    readers['Oblique Perigram Reader'] = {
-      reader: new ObliquePerigramReader(pManager.verso, SPEED.Steady)
-    };
-
-    // set page-turner/logger
-    pManager.focus(randomReader());
-
-    createInterface();
+    test();
   });
 };
 
@@ -47,17 +66,11 @@ function draw() {
   pManager && (pManager.draw());
 }
 
-function keyPressed() {
-
-  keyCode == 39 && (pManager.nextPage());
-  keyCode == 37 && (pManager.lastPage());
-}
-
 function loadTexts(callback) {
   var count = 0;
   var total = TEXTS.length;
   TEXTS.forEach(function (text) {
-    RiTa.loadString(text.file, function (txt) {
+    RiTa.loadString('../'+text.file, function (txt) {
       text.contents = txt;
       if (++count === total)
         callback();
@@ -118,18 +131,8 @@ function readerFromName(name) {
     return readers[name].reader;
 }
 
-function nameFromReader(reader) {
-  var result = '';
-  Object.keys(readers).forEach(function (name) {
-    var rdr = readers[name].reader;
-    if (rdr === reader) result = name;
-  });
-  return result;
-}
-
 function textChanged() {
-    var e = document.getElementById('textSelect')
-    var textName = e.options[e.selectedIndex].value;
+    var textName = textSelect.value();
     log("[UI] TEXT: " + textName);
     if ( ifTrigramReady(textName) )
        resetText(textName);
@@ -138,17 +141,4 @@ function textChanged() {
       overlay.classList.toggle('fade');
 
     }
-}
-
-function ifTrigramReady(textName) {
-   
-   if (textLoaded.indexOf(textName) != -1) {
-    log("[Check Trigram] true", textName);
-    return true;
-   }
-   else {
-    log("[Check Trigram] false");
-    notify = textName;
-    return false;
-  }
 }

@@ -44,6 +44,12 @@ is = function (obj, type) {
   return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase() === type;
 }
 
+endsWith = function (str, ending) {
+
+  if (typeof str !== 'string') return false;
+  return new RegExp(ending + '$').test(str);
+}
+
 ////////////////////////////// GRID ////////////////////////////////
 
 Grid.SINGLE_GRID_MODE = false;
@@ -789,8 +795,10 @@ Grid.previousCell = function (rt) {
 
 /** Resets the cell to its original text */
 Grid.resetCell = function (rt) {
-  var cf = Grid.coordsFor(rt);
+  var cf = Grid.coordsFor(rt),
+    tw = rt.textWidth();
   rt.text(cf.grid.origWords[cf.y][cf.x]);
+  rt.x += (tw - rt.textWidth()) / 2;
 }
 
 /** Prints all pages to the console */
@@ -1079,6 +1087,25 @@ var PageManager = function PageManager(host, port) {
 
   this.layout = function (txt, x, y, w, h, leading) {
 
+      var addToStack = function (txt, words) {
+        var tmp = txt.split(' ');
+        for (var i = tmp.length - 1; i >= 0; i--)
+          words.push(tmp[i]);
+      };
+
+      var withinBoundsY = function (currentY, leading, maxY, descent, firstLine) {
+        if (!firstLine)
+          return currentY + leading <= maxY - descent;
+        return currentY <= maxY - descent;
+      };
+
+      var newRiTextLine = function (s, pf, xPos, nextY) {
+        // strip trailing spaces
+        while (s && s.length > 0 && endsWith(s, ' '))
+          s = s.substring(0, s.length - 1);
+        return new RiText(s, xPos, nextY, pf);
+      };
+
       this.clear();
 
       if (typeof txt === 'object') {
@@ -1129,7 +1156,7 @@ var PageManager = function PageManager(host, port) {
       txt = txt.replace(/ ?(<[^>]+>) ?/g, " $1 ").replace(/[\r\n]/g, SP);
 
       // split into reversed array of words
-      RiText._addToStack(txt, words);
+      addToStack(txt, words);
 
       if (RiText.defaults.indentFirstParagraph)
         startX += RiText.defaults.paragraphIndent;
@@ -1172,10 +1199,10 @@ var PageManager = function PageManager(host, port) {
 
           // check yPosition for line break
 
-          if (!pageBreak && RiText._withinBoundsY(currentY, leading, maxH, descent)) {
+          if (!pageBreak && withinBoundsY(currentY, leading, maxH, descent)) {
 
             yPos = firstLine ? currentY : currentY + leading;
-            rt = RiText._newRiTextLine(sb, pfont, startX, yPos);
+            rt = newRiTextLine(sb, pfont, startX, yPos);
             if (dbug) info("add1: " + rt + " currentY=" + currentY + " yPos=" + yPos);
             rlines.push(rt);
 
@@ -1195,7 +1222,7 @@ var PageManager = function PageManager(host, port) {
             if (pageBreak) {
 
               pageBreak = false;
-              rt = RiText._newRiTextLine(sb, pfont, startX, yPos + leading);
+              rt = newRiTextLine(sb, pfont, startX, yPos + leading);
               if (dbug) info("add2: " + rt + " currentY=" + currentY + " yPos=" + yPos);
               rlines.push(rt);
               sb = E;
@@ -1217,16 +1244,16 @@ var PageManager = function PageManager(host, port) {
       }
 
       // check if leftover words can make a new line
-      if (RiText._withinBoundsY(currentY, leading, maxH, descent)) {
+      if (withinBoundsY(currentY, leading, maxH, descent)) {
 
-        rlines.push(rt = RiText._newRiTextLine(sb, pfont, x, leading + currentY));
+        rlines.push(rt = newRiTextLine(sb, pfont, x, leading + currentY));
 
         if (dbug) info("add3: " + rt);
         sb = E;
 
       } else if (words.length) { // IF ADDED: (DCH) 12.4.13
 
-        rlines.push(rt = RiText._newRiTextLine(words.join(SP).trim(), pfont, x, leading));
+        rlines.push(rt = newRiTextLine(words.join(SP).trim(), pfont, x, leading));
 
         if (dbug) info("add4: " + rt);
       }

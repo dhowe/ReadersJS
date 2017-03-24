@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="UTF-8">
+  <title>The Readers Project</title>
+
+  <script type="text/javascript">
+      var timerStart = Date.now();
+  </script>
+
+  <link rel="stylesheet" href="../fonts/webfont/font.css">
+  <link rel="stylesheet" href="../style.css">
+
+  <script>
+    window.onload = function ()
+    {
+      var menu = document.getElementById('interface'),
+        overlay = document.getElementById('overlay');
+
+      function monitor(element, callback)
+      {
+        var self = element;
+        var h = self.clientHeight;
+        var w = self.clientWidth;
+        var txt = self.innerText;
+        var html = self.innerHTML;
+        (function flux()
+        {
+          setTimeout(function ()
+          {
+            var done = h === self.clientHeight &&
+              w === self.clientWidth &&
+              txt === self.innerText &&
+              html === self.innerHTML;
+            if (done)
+            {
+              callback();
+            }
+            else
+            {
+              h = self.clientHeight;
+              w = self.clientWidth;
+              txt = self.innerText;
+              html = self.innerHTML;
+              flux();
+            }
+          }, 250);
+        })()
+      };
+
+      monitor(menu, function ()
+      {
+        // fadeout overlay
+        overlay.classList.toggle('fade', setTimeout(function ()
+        {
+          // overlay.style.display = "none";
+          var time = Date.now() - timerStart - 2000;
+          console.log("[Status] Finish Initial Loading " + time );
+          reloadTheRest();
+
+        }, 2000));
+      });
+    }
+
+    var textLoaded = ["Misspelt Landings"], notify;
+
+    function finishLoading (text) {
+
+      textLoaded.push(text);
+      var time = Date.now() - timerStart;
+      console.log("[TRIGRAM] Finish Loading: " + text + " " + time);
+
+      if (overlay.classList.value === "" && notify === text) {
+          overlay.classList.toggle('fade');
+          textChanged();
+        // TODO: call textChanged here
+       }
+
+    }
+
+    function reloadTheRest() {
+
+      var trigramScripts = {
+          'Poetic Caption': "../data/poeticCaption-trigrams.js",
+          'The Image': "../data/theImage-trigrams.js"
+      }
+
+      for (key in trigramScripts) {
+          var script = document.createElement("script"),
+              html = document.getElementsByTagName("html")[0];
+
+          script.src = trigramScripts[key];
+          html.appendChild(script);
+          script.onload = script.onreadystatechange = finishLoading(key);
+      }
+
+    }
+
+  </script>
+
+</head>
+
+<body>
+  <!-- Top Text Section -->
+  <p id="hint">Use left/right arrow-keys to change pages</p>
+  <div id="options">Readers <span>Options</span></div>
+  <div class="tag">Under Construction</div>
+
+ <!-- Overlay -->
+  <div id="overlay">
+    <div id="loader"></div>
+    <p>Loading</p>
+  </div>
+
+  <!-- Interface -->
+  <div id="interface"></div>
+  <div id="hoverTextWrapper">
+    <!-- <div id="hoverText-unchecked" class="hoverText">click to enable</div> -->
+    <div id="hoverText-checked" class="hoverText">
+      click to disable/enable<span>, double-click for focus <a class="help">[?]</a></span>
+      <span  class="helpInfo">The 'focused' reader is always visible and able to display the text that it is reading. The words it has read recently are monitored separately on the right.</span>
+    </div>
+  </div>
+
+  <!-- Focused Reader Display -->
+  <div id="focusDisplay"></div>
+
+</body>
+
+<script src="../node_modules/p5/lib/p5.js"></script>
+<script src="../node_modules/p5/lib/addons/p5.dom.js"></script>
+<script src="../node_modules/jquery/dist/jquery.slim.min.js"></script>
+<script src="../node_modules/rita/lib/rita-tiny.js"></script>
+
+<script src="../lib/rt.js"></script>
+<script src="../src/readers-app.js"></script>
+<script src="../data/misspeltLandings-trigrams.js"></script>
+<script src="fading.js"></script>
+<script src="../multi-page-ui.js"></script>
+<script>
+  // Interface hide & show
+  var body = document.getElementsByTagName('body')[0],
+      options = document.getElementById('options'),
+      menu = document.getElementById("interface");
+
+   options.addEventListener('click', function ()
+  {
+    if(menu.style.display === 'none') {
+       menu.style.display = 'block';
+       options.classList = "";
+    } else {
+      menu.style.display = 'none';
+      options.classList = "clear";
+    }
+
+  }, false);
+
+  body.addEventListener('click', function (event)
+  {
+    if (event.pageX > 520 || event.pageY > 524)
+      document.getElementById("interface").style.display = 'none';
+  }, false);
+
+  /************Interface focused Reader Hover Text ***************/
+
+
+    menu.addEventListener('click', function(event) {
+    var ele = event.target;
+     if (ele.matches('.hoverText a.help')) {
+
+        var display = ele.parentNode.parentNode.getElementsByClassName("helpInfo")[0].style.display;
+        display = display === "block" ? "none" : "block";
+        ele.parentNode.parentNode.getElementsByClassName("helpInfo")[0].style.display = display;
+     }
+  })
+
+  var timeoutId;
+
+  menu.addEventListener('mouseover', function(event) {
+    var ele = event.target;
+     if (ele.matches('.reader label') && !timeoutId) {
+        timeoutId = window.setTimeout(function() {
+          timeoutId = null;
+          ele.parentNode.querySelector("#hoverTextWrapper").classList = "hover";
+         }, 1000);
+     }
+  })
+
+  menu.addEventListener('mouseout', function(event) {
+     if (timeoutId) {
+          window.clearTimeout(timeoutId);
+          timeoutId = null;
+      }
+      var helpInfos = document.getElementsByClassName("helpInfo");
+      for(var i = 0; i < helpInfos.length; i++)
+        helpInfos[i].style.display = "none";
+  })
+
+  // //on input changed display none
+
+  // function hideAllInfoTag () {
+  //     document.getElementById('hoverTextWrapper').style.display = "none";
+  // }
+   /*****************************************************************************/
+
+  // Customized select list
+  // var ul = document.getElementsByClassName('ul');
+  //   console.log(ul);
+  // var onSelectClicked = function () {console.log("click");}
+  // for (var i = 0; i < ul.length; i++)
+  //    ul[i].addEventListener('click', onSelectClicked, false);
+
+  $(document).ready(function ()
+  {
+    $("body").on("click", "ul.select li.init", function ()
+    {
+      //hide other select list if opened
+      $('ul').children('li:not(.init)').hide();
+      $('ul').children('li.init').show();
+      $(this).closest("ul").children('li').toggle();
+    });
+
+    $("body").on("click", "ul.select li:not(.init)", function ()
+    {
+      var allOptions = $("ul").children('li:not(.init)');
+      allOptions.removeClass('selected');
+      $(this).addClass('selected');
+      $(this).closest("ul").children('.init').html($(this).html());
+      $(this).closest("ul").children('li').toggle();
+    });
+  });
+</script>
+<script>
+
+
+</script>
+<!-- <script src="data/poeticCaption-trigrams.js"  defer onload="finishLoading('poeticCaption')"></script>
+<script src="data/theImage-trigrams.js"  defer onload="finishLoading('theImage')"></script> -->
+</html>
