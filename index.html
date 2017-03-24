@@ -91,8 +91,12 @@
               html = document.getElementsByTagName("html")[0];
 
           script.src = trigramScripts[key];
+          script.id = key;
+
           html.appendChild(script);
-          script.onload = script.onreadystatechange = finishLoading(key);
+          script.onload = function() {
+            finishLoading(this.id);
+          };
       }
 
     }
