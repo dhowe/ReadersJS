@@ -128,7 +128,8 @@ function nameFromReader(reader) {
 }
 
 function textChanged() {
-    var textName = textSelect.value();
+    var e = document.getElementById('textSelect')
+    var textName = e.options[e.selectedIndex].value;
     log("[UI] TEXT: " + textName);
     if ( ifTrigramReady(textName) )
        resetText(textName);
@@ -137,4 +138,17 @@ function textChanged() {
       overlay.classList.toggle('fade');
      
     }
+}
+
+function ifTrigramReady(textName) {
+   
+   if (textLoaded.indexOf(textName) != -1) {
+    log("[Check Trigram] true", textName);
+    return true;
+   }
+   else {
+    log("[Check Trigram] false");
+    notify = textName;
+    return false;
+  }
 }
