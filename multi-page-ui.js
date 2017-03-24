@@ -35,7 +35,7 @@ function createInterface() {
       reader = readerDef.reader,
       rb = createCheckbox(name, !reader.hidden);
 
-    rb.changed(readerOnOffEvent);
+    // rb.changed(readerOnOffEvent);
     rb.parent('interface');
     rb.class("reader");
     rb.id(toSafeName(name));
@@ -50,22 +50,22 @@ function createInterface() {
     rb.child(hint);
   });
 
-  var focusSelect, textSelect, styleSelect, themeSelect, uiElements = [
+  
 
-    focusSelect = initSelect("focusSelect", "full", activeReaderNames(), focusChanged),
+  var textSelect, styleSelect, themeSelect, uiElements = [
+
     textSelect = initSelect("textSelect",   "full", textNames(), textChanged),
     styleSelect = initSelect("styleSelect", "half", Object.keys(STYLE), styleChanged),
     themeSelect = initSelect("themeSelect", "half", ["Dark", "Light"], themeChanged),
     //createButton('go').mousePressed(selectionDone).id('go')
   ];
 
-  // set initial value for focusSelect
+  // set initial class 
   var focusedName = nameFromReader(pManager.focus()) || '';
-  focusSelect.value(focusedName);
   document.getElementById(toSafeName(focusedName)).className += " focused";
 
   // Append elements to interface
-  var descText = ["Focus", "Text", "Style", "Theme"];
+  var descText = ["Text", "Style", "Theme"];
   for (var i = 0; i < uiElements.length; i++) {
     var wrapper = createDiv('');
     wrapper.addClass('item').parent('interface');
@@ -122,29 +122,6 @@ function createInterface() {
     return ul;
   }
 
-  function nameFromReader(reader) {
-    var result = '';
-    Object.keys(readers).forEach(function (name) {
-      var rdr = readers[name].reader;
-      if (rdr === reader) result = name;
-    });
-    return result;
-  }
-
-  function focusChanged() {
-    var focus = readerFromName(focusSelect.value());
-    log("[UI] FOCUS: " + focusSelect.value());
-    focus && pManager.focus(focus);
-    //change classname
-    var readers = document.getElementsByClassName("reader");
-    for (var i = 0; i < readers.length; i++)
-      readers[i].className = "reader";
-    var focusElement = document.getElementById(focusSelect.value().replace(/ /g, "_"));
-    focusElement.className += " focused";
-    //clear focusDisplay
-    $('#focusDisplay').html("");
-  }
-
 
   function ifTrigramReady(textName) {
      
@@ -181,20 +158,7 @@ function createInterface() {
     // TODO: need to change reader colors ?
   }
 
-  function readerOnOffEvent() {
-    var name = fromSafeName(this.id());
-    var reader = readerFromName(name);
-    var actives = activeReaders();
-    reader.hide(!this.checked());
-    log("[UI] READER: " + name + (reader.hidden ? ' off' : ' on'));
-    resetFocus();
-  }
-
   function resetFocus() {
-    // rebuild focus options with active readers
-    resetOptions(focusSelect, activeReaderNames());
-    focusSelect.value(nameFromReader(pManager.focus()));
-
     // if only one reader is not hidden, give it focus
     var actives = activeReaders();
     if (actives.length == 1)
@@ -211,16 +175,53 @@ function createInterface() {
       var actives = activeReaders();
       focused = actives.length && actives[Math.floor(random(actives.length))];
     }
-    focusSelect.value(nameFromReader(focused)) && focusChanged();
+     //change classname
+      var readers = document.getElementsByClassName("reader");
+      for (var i = 0; i < readers.length; i++)
+          readers[i].className = readers[i].className.replace(" focused","");
+
+    document.getElementById(toSafeName(nameFromReader(focused))).className += " focused";
+    // focusSelect.value(nameFromReader(focused)) && focusChanged();
   }
 
-  function resetOptions(select, options) {
-    for (var i = select.elt.length - 1; i >= 0; i--)
-      select.elt[i].remove();
+  function readerOnOffEvent(reader, onOffSwitch) {
 
-    for (var i = 0; i < options.length; i++)
-      select.option(options[i]);
+    reader.hide(!onOffSwitch);
+    resetFocus();
+    
+    var name = nameFromReader(reader), readerEle = document.getElementById(toSafeName(name));
+    log("[UI] READER: " + name + (reader.hidden ? ' off' : ' on'));
+    // if(onOffSwitch)
+    //   readerEle.className += ' active';
+    // else
+    //   readerEle.className = readerEle.className.replace(" active","");
+    
   }
+
+  function focusChanged(focused) {
+
+      log("[UI] FOCUS: " + nameFromReader(focused));
+      focused && pManager.focus(focused);
+      assignFocus(focused);
+      //clear focusDisplay
+      $('#focusDisplay').html("");
+  }
+
+  function renderActiveReadersClass() {
+    readers = activeReaderNames();
+    for (var i = 0; i < readers.length; i++) {
+       var readerEle = document.getElementById(toSafeName(readers[i]));
+       readerEle.className = readerEle.className.replace(" active","");
+    }
+  }
+
+  // function resetOptions(select, options) {
+  //   for (var i = select.elt.length - 1; i >= 0; i--)
+  //     select.elt[i].remove();
+
+  //   for (var i = 0; i < options.length; i++)
+  //     select.option(options[i]);
+  // }
 
   function activeReaderNames() {
     var actives = [];
@@ -255,10 +256,109 @@ function createInterface() {
     uiLogging && console.log.apply(console, arguments);
   }
 
-}
-
 ////////////////////////////////////////////////////////////////////
 //FOCUS DISPLAY
+
+window.onresize = function () {
+  //recalculate maxLog when window height changes
+  maxFocusLog = Math.floor(window.innerHeight / 30);
+}
+
+// Interface hide & show
+var body = document.getElementsByTagName('body')[0],
+    options = document.getElementById('options'),
+    menu = document.getElementById("interface");
+
+ options.addEventListener('click', function ()
+{
+  if(menu.style.display === 'none') {
+     menu.style.display = 'block';
+     options.classList = "";
+  } else {
+    menu.style.display = 'none';
+    options.classList = "clear";
+  }
+ 
+}, false);
+
+body.addEventListener('click', function (event)
+{
+  if (event.pageX > 520 || event.pageY > 524)
+    document.getElementById("interface").style.display = 'none';
+}, false);
+
+////////////////////////////////////////////////////////////////////  
+//Interface focused Reader Hover Text
+
+function onReaderSingleClick (ele) {
+    readerOnOffEvent(readerFromName(ele.innerHTML), ele.parentNode.getElementsByTagName('input')[0].checked);
+}
+
+function onReaderDoubleClick (ele) {
+    if(!ele.parentNode.matches('.focused'))
+      focusChanged(readerFromName(ele.innerHTML));
+}
+
+menu.addEventListener('click', function(event) {
+  var el = event.target;
+//differenciate single & double click for reader
+   if (!el.matches('.reader label'))  return;
+
+   if (el.getAttribute("data-dblclick") == null) {
+      el.setAttribute("data-dblclick", 1);
+      setTimeout(function() {
+          if (el.getAttribute("data-dblclick") == 1) {
+              onReaderSingleClick(el);
+          }
+          el.removeAttribute("data-dblclick");
+      }, 300);
+  } else {
+      el.removeAttribute("data-dblclick");
+      onReaderDoubleClick(el);
+  }
+})
+
+menu.addEventListener('click', function(event) {
+    var ele = event.target;
+    if (ele.matches('.hoverText a.help')) {
+
+        var display = ele.parentNode.parentNode.getElementsByClassName("helpInfo")[0].style.display;
+        display = display === "block" ? "none" : "block";
+        ele.parentNode.parentNode.getElementsByClassName("helpInfo")[0].style.display = display;
+    }
+})
+
+var timeoutId;
+
+menu.addEventListener('mouseover', function(event) {
+    var ele = event.target;
+    if (ele.matches('.reader label') && !timeoutId) {
+        timeoutId = window.setTimeout(function() {
+            timeoutId = null;
+            ele.parentNode.querySelector("#hoverTextWrapper").classList = "hover";
+        }, 1000);
+    }
+})
+
+menu.addEventListener('mouseout', function(event) {
+    if (timeoutId) {
+        window.clearTimeout(timeoutId);
+        timeoutId = null;
+    }
+    var helpInfos = document.getElementsByClassName("helpInfo");
+    for (var i = 0; i < helpInfos.length; i++)
+        helpInfos[i].style.display = "none";
+})
+
+  // //on input changed display none
+  // function hideAllInfoTag () {
+  //     document.getElementById('hoverTextWrapper').style.display = "none";
+  // }
+
+}
+//End of Create Interface
+
+//////////////////////////////////////////////////////////////////// 
 function logToDisplay(msg) {
     
     createP(msg).parent('focusDisplay');
@@ -275,7 +375,31 @@ function logToDisplay(msg) {
 
 }
 
-window.onresize = function () {
-  //recalculate maxLog when window height changes
-  maxFocusLog = Math.floor(window.innerHeight / 30);
-}
+//////////////////////////////////////////////////////////////////// 
+// Customized select list : Not used yet
+
+// var ul = document.getElementsByClassName('ul');
+//   console.log(ul);
+// var onSelectClicked = function () {console.log("click");}
+// for (var i = 0; i < ul.length; i++)
+//    ul[i].addEventListener('click', onSelectClicked, false);
+
+  $(document).ready(function ()
+  {
+    $("body").on("click", "ul.select li.init", function ()
+    {
+      //hide other select list if opened
+      $('ul').children('li:not(.init)').hide();
+      $('ul').children('li.init').show();
+      $(this).closest("ul").children('li').toggle();
+    });
+
+    $("body").on("click", "ul.select li:not(.init)", function ()
+    {
+      var allOptions = $("ul").children('li:not(.init)');
+      allOptions.removeClass('selected');
+      $(this).addClass('selected');
+      $(this).closest("ul").children('.init').html($(this).html());
+      $(this).closest("ul").children('li').toggle();
+    });
+  });

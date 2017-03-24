@@ -118,8 +118,18 @@ function readerFromName(name) {
     return readers[name].reader;
 }
 
+function nameFromReader(reader) {
+  var result = '';
+  Object.keys(readers).forEach(function (name) {
+    var rdr = readers[name].reader;
+    if (rdr === reader) result = name;
+  });
+  return result;
+}
+
 function textChanged() {
-    var textName = textSelect.value();
+    var e = document.getElementById('textSelect')
+    var textName = e.options[e.selectedIndex].value;
     log("[UI] TEXT: " + textName);
     if ( ifTrigramReady(textName) )
        resetText(textName);
@@ -128,4 +138,17 @@ function textChanged() {
       overlay.classList.toggle('fade');
 
     }
+}
+
+function ifTrigramReady(textName) {
+   
+   if (textLoaded.indexOf(textName) != -1) {
+    log("[Check Trigram] true", textName);
+    return true;
+   }
+   else {
+    log("[Check Trigram] false");
+    notify = textName;
+    return false;
+  }
 }

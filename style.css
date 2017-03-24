@@ -220,6 +220,10 @@ button:hover {
   font-size: 14px;
 }
 /* Reader Color Scheme */
+.reader input + label:before {
+   /* fake*/
+   transition: background-color .5s;
+}
 .reader#Mesostic_Reader input:checked + label:before {
      background-color: #1464DB;
 }
