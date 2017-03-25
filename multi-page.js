@@ -30,12 +30,12 @@ function setup() {
     //   reader: new MesosticReader(pManager.verso, SPEED.Steady)
     // };
 
-    readers['Oblique Perigram Reader'] = {
-      reader: new ObliquePerigramReader(pManager.verso, SPEED.Steady)
-    };
-
-    // set page-turner/logger
-    pManager.focus(randomReader());
+    // readers['Oblique Perigram Reader'] = {
+    //   reader: new ObliquePerigramReader(pManager.verso, SPEED.Steady)
+    // };
+    //
+    // // set page-turner/logger
+    // pManager.focus(randomReader());
 
     createInterface();
   });

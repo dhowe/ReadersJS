@@ -50,33 +50,33 @@ function createInterface() {
     rb.child(hint);
   });
 
-
-
   var textSelect, styleSelect, themeSelect, uiElements = [
-
-    textSelect = initSelect("textSelect",   "full", textNames(), textChanged),
+    textSelect = initSelect("textSelect", "full", textNames(), textChanged),
     styleSelect = initSelect("styleSelect", "half", Object.keys(STYLE), styleChanged),
     themeSelect = initSelect("themeSelect", "half", ["Dark", "Light"], themeChanged),
-    //createButton('go').mousePressed(selectionDone).id('go')
   ];
 
   // set initial class
-  var focusedName = nameFromReader(pManager.focus()) || '';
-  document.getElementById(toSafeName(focusedName)).className += " focused";
+  var focused = pManager.focus();
+  if (focused) {
+    var focusedName = nameFromReader() || '';
+    document.getElementById(toSafeName(focusedName)).className += " focused";
+  }
 
   // Append elements to interface
   var descText = ["Text", "Style", "Theme"];
   for (var i = 0; i < uiElements.length; i++) {
+
     var wrapper = createDiv('');
     wrapper.addClass('item').parent('interface');
     createP(descText[i]).parent(wrapper);
     wrapper.child(uiElements[i])
-      // uiElements[i].parent(wrapper);
   }
 
   ////////////////////////////////////////////////////////////////////
 
   function textNames() {
+
     var names = [];
     TEXTS.forEach(function (text) {
       names.push(text.title);
@@ -85,6 +85,7 @@ function createInterface() {
   }
 
   function initSelect(id, style, options, onChanged, parent) {
+
     var sel = createSelect();
     for (var i = 0; i < options.length; i++)
       sel.option(options[i]);
@@ -93,7 +94,7 @@ function createInterface() {
     return sel.id(id).changed(onChanged);
   }
 
-  function initStylizedSelect(id, style, options, onChanged, parent) {
+  function initStylizedSelect(id, style, options, onChanged, parent) { // used?
 
     var ul = document.createElement('ul');
     ul.setAttribute('id', id);
@@ -106,6 +107,7 @@ function createInterface() {
     li.innerHTML = li.innerHTML + options[0];
 
     function renderList(element, index, arr) {
+
       var li = document.createElement('li');
       ul.appendChild(li);
       if (index === 0) li.setAttribute('class', "selected");
@@ -114,7 +116,7 @@ function createInterface() {
 
     if (style === "half") {
       ul.className += " half";
-    };
+    }
 
     parent && ul.parent(parent);
     options.forEach(renderList);
@@ -127,11 +129,13 @@ function createInterface() {
 
   function ifTrigramReady(textName) {
 
-     if (textLoaded.indexOf(textName) != -1) {
+    if (textLoaded.indexOf(textName) != -1) {
+
       log("[Check Trigram] true", textName);
       return true;
-     }
-     else {
+
+    } else {
+
       log("[Check Trigram] false");
       notify = textName;
       return false;
@@ -139,6 +143,7 @@ function createInterface() {
   }
 
   function styleChanged() {
+
     var name = styleSelect.value();
     log("[UI] STYLE: " + name + "/" + STYLE[name]);
     RiText.defaultFill(STYLE[name]);
@@ -187,7 +192,7 @@ function createInterface() {
 
     clearFocus();
 
-    if (focused)  { // only if we have an active reader
+    if (focused) { // only if we have an active reader
       document.getElementById(toSafeName(nameFromReader(focused))).className += " focused";
       // focusSelect.value(nameFromReader(focused)) && focusChanged();
     }
@@ -206,7 +211,8 @@ function createInterface() {
     reader.hide(!onOffSwitch);
     resetFocus();
 
-    var name = nameFromReader(reader), readerEle = document.getElementById(toSafeName(name));
+    var name = nameFromReader(reader),
+      readerEle = document.getElementById(toSafeName(name));
     log("[UI] READER: " + name + (reader.hidden ? ' off' : ' on'));
     // if(onOffSwitch)
     //   readerEle.className += ' active';
@@ -217,30 +223,24 @@ function createInterface() {
 
   function focusChanged(focused) {
 
-      log("[UI] FOCUS: " + nameFromReader(focused));
-      focused && pManager.focus(focused);
-      assignFocus(focused);
-      //clear focusDisplay
-      $('#focusDisplay').html("");
+    log("[UI] FOCUS: " + nameFromReader(focused));
+    focused && pManager.focus(focused);
+    assignFocus(focused);
+    //clear focusDisplay
+    $('#focusDisplay').html("");
   }
 
   function renderActiveReadersClass() {
+
     readers = activeReaderNames();
     for (var i = 0; i < readers.length; i++) {
-       var readerEle = document.getElementById(toSafeName(readers[i]));
-       readerEle.className = readerEle.className.replace(" active","");
+      var readerEle = document.getElementById(toSafeName(readers[i]));
+      readerEle.className = readerEle.className.replace(" active", "");
     }
   }
 
-  // function resetOptions(select, options) {
-  //   for (var i = select.elt.length - 1; i >= 0; i--)
-  //     select.elt[i].remove();
-
-  //   for (var i = 0; i < options.length; i++)
-  //     select.option(options[i]);
-  // }
-
   function activeReaderNames() {
+
     var actives = [];
     Object.keys(readers).forEach(function (name) {
       if (!readers[name].reader.hidden)
@@ -254,145 +254,147 @@ function createInterface() {
   }
 
   function speedToName(spd) {
+
     var result;
     Object.keys(SPEED).forEach(function (name) {
       if (SPEED[name] === spd)
         result = name;
     });
-    if (!result) throw Error('unknown speed: '+spd);
+    if (!result) throw Error('unknown speed: ' + spd);
     return result;
   }
 
   function speedChanged() {
+
     var spd = this.value();
     this.source.speed = SPEED[spd];
     log("[UI] SPEED: " + nameFromReader(this.source) + '/' + this.source.speed);
   }
 
   function log() {
+
     uiLogging && console.log.apply(console, arguments);
   }
 
-////////////////////////////////////////////////////////////////////
-//FOCUS DISPLAY
+  ////////////////////////////////////////////////////////////////////
 
-window.onresize = function () {
-  //recalculate maxLog when window height changes
-  maxFocusLog = Math.floor(window.innerHeight / 30);
-}
+  window.onresize = function () {
 
-// Interface hide & show
-var body = document.getElementsByTagName('body')[0],
-    options = document.getElementById('options'),
-    menu = document.getElementById("interface");
-
- options.addEventListener('click', function ()
-{
-  if(menu.style.display === 'none') {
-     menu.style.display = 'block';
-     options.classList = "";
-  } else {
-    menu.style.display = 'none';
-    options.classList = "clear";
+    // recalculate maxLog when window height changes
+    maxFocusLog = Math.floor(window.innerHeight / 30);
   }
 
-}, false);
+  document.getElementById('options').addEventListener('click', function () {
 
-body.addEventListener('click', function (event)
-{
-  if (event.pageX > 520 || event.pageY > 524)
-    document.getElementById("interface").style.display = 'none';
-}, false);
+    if (menu.style.display === 'none') {
 
-////////////////////////////////////////////////////////////////////
-//Interface focused Reader Hover Text
+      menu.style.display = 'block';
+      options.classList = "";
 
-function onReaderSingleClick (ele) {
+    } else {
+
+      menu.style.display = 'none';
+      options.classList = "clear";
+    }
+
+  }, false);
+
+  document.getElementsByTagName('body')[0].addEventListener('click', function (event) {
+
+    if (event.pageX > 520 || event.pageY > 524)
+      document.getElementById("interface").style.display = 'none';
+
+  }, false);
+
+  ////////////////////////////////////////////////////////////////////
+
+  function onReaderSingleClick(ele) {
 
     readerOnOffEvent(readerFromName(ele.innerHTML),
       ele.parentNode.getElementsByTagName('input')[0].checked);
-}
+  }
 
-function onReaderDoubleClick (ele) {
+  function onReaderDoubleClick(ele) {
 
-    if(!ele.parentNode.matches('.focused'))
+    if (!ele.parentNode.matches('.focused'))
       focusChanged(readerFromName(ele.innerHTML));
-}
+  }
 
-menu.addEventListener('click', function(event) {
+  var timeoutId, menu = document.getElementById("interface");
 
-  var el = event.target;
-//differenciate single & double click for reader
-   if (!el.matches('.reader label'))  return;
+  menu.addEventListener('click', function (event) {
 
-   if (el.getAttribute("data-dblclick") == null) {
+    var el = event.target;
+
+    // differeniate single & double click for reader
+    if (!el.matches('.reader label')) return;
+
+    if (el.getAttribute("data-dblclick") == null) {
       el.setAttribute("data-dblclick", 1);
-      setTimeout(function() {
-          if (el.getAttribute("data-dblclick") == 1) {
-              onReaderSingleClick(el);
-          }
-          el.removeAttribute("data-dblclick");
+      setTimeout(function () {
+        if (el.getAttribute("data-dblclick") == 1) {
+          onReaderSingleClick(el);
+        }
+        el.removeAttribute("data-dblclick");
       }, 300);
-  } else {
+
+    } else {
+
       el.removeAttribute("data-dblclick");
       onReaderDoubleClick(el);
-  }
-})
+    }
+  })
 
-menu.addEventListener('click', function(event) {
+  menu.addEventListener('click', function (event) {
+
     var ele = event.target;
     if (ele.matches('.hoverText a.help')) {
 
-        var display = ele.parentNode.parentNode.getElementsByClassName("helpInfo")[0].style.display;
-        display = display === "block" ? "none" : "block";
-        ele.parentNode.parentNode.getElementsByClassName("helpInfo")[0].style.display = display;
+      var display = ele.parentNode.parentNode.getElementsByClassName("helpInfo")[0].style.display;
+      display = display === "block" ? "none" : "block";
+      ele.parentNode.parentNode.getElementsByClassName("helpInfo")[0].style.display = display;
     }
-})
+  })
 
-var timeoutId;
+  menu.addEventListener('mouseover', function (event) {
 
-menu.addEventListener('mouseover', function(event) {
     var ele = event.target;
     if (ele.matches('.reader label') && !timeoutId) {
-        timeoutId = window.setTimeout(function() {
-            timeoutId = null;
-            ele.parentNode.querySelector("#hoverTextWrapper").classList = "hover";
-        }, 1000);
-    }
-})
-
-menu.addEventListener('mouseout', function(event) {
-    if (timeoutId) {
-        window.clearTimeout(timeoutId);
+      timeoutId = window.setTimeout(function () {
         timeoutId = null;
+        ele.parentNode.querySelector("#hoverTextWrapper").classList = "hover";
+      }, 1000);
+    }
+  })
+
+  menu.addEventListener('mouseout', function (event) {
+
+    if (timeoutId) {
+      window.clearTimeout(timeoutId);
+      timeoutId = null;
     }
     var helpInfos = document.getElementsByClassName("helpInfo");
     for (var i = 0; i < helpInfos.length; i++)
-        helpInfos[i].style.display = "none";
-})
+      helpInfos[i].style.display = "none";
+  })
 
-  // //on input changed display none
-  // function hideAllInfoTag () {
-  //     document.getElementById('hoverTextWrapper').style.display = "none";
-  // }
-
-}
-//End of Create Interface
+} // end createInterface
 
 ////////////////////////////////////////////////////////////////////
 function logToDisplay(msg) {
 
-    createP(msg).parent('focusDisplay');
-    //remove first element from focusDisplay
-    var display = document.getElementById("focusDisplay");
-    var logEntries = display.childNodes.length;
+  createP(msg).parent('focusDisplay');
 
-    if ( logEntries > maxFocusLog) {
-        while(logEntries > maxFocusLog) {
-           display.removeChild(display.childNodes[1]);
-           logEntries --;
-        }
+  //remove first element from focusDisplay
+  var display = document.getElementById("focusDisplay");
+  var logEntries = display.childNodes.length;
+
+  if (logEntries > maxFocusLog) {
+    while (logEntries > maxFocusLog) {
+      display.removeChild(display.childNodes[1]);
+      logEntries--;
     }
+  }
 
 }
 
@@ -405,22 +407,19 @@ function logToDisplay(msg) {
 // for (var i = 0; i < ul.length; i++)
 //    ul[i].addEventListener('click', onSelectClicked, false);
 
-  $(document).ready(function ()
-  {
-    $("body").on("click", "ul.select li.init", function ()
-    {
-      //hide other select list if opened
-      $('ul').children('li:not(.init)').hide();
-      $('ul').children('li.init').show();
-      $(this).closest("ul").children('li').toggle();
-    });
-
-    $("body").on("click", "ul.select li:not(.init)", function ()
-    {
-      var allOptions = $("ul").children('li:not(.init)');
-      allOptions.removeClass('selected');
-      $(this).addClass('selected');
-      $(this).closest("ul").children('.init').html($(this).html());
-      $(this).closest("ul").children('li').toggle();
-    });
+$(document).ready(function () {
+  $("body").on("click", "ul.select li.init", function () {
+    //hide other select list if opened
+    $('ul').children('li:not(.init)').hide();
+    $('ul').children('li.init').show();
+    $(this).closest("ul").children('li').toggle();
   });
+
+  $("body").on("click", "ul.select li:not(.init)", function () {
+    var allOptions = $("ul").children('li:not(.init)');
+    allOptions.removeClass('selected');
+    $(this).addClass('selected');
+    $(this).closest("ul").children('.init').html($(this).html());
+    $(this).closest("ul").children('li').toggle();
+  });
+});

@@ -362,6 +362,7 @@ Grid.prototype = {
         }
         pUnder = Grid.coordsFor(under);
       }
+
     } else {
 
       // is last line so wrap
@@ -487,12 +488,14 @@ Grid.prototype = {
     // Does this handle multiple/incorrect grids??
 
     if (!rt) {
+
       warn("Undefined rt passed to Grid.bestBelows()");
       return undefined;
     }
 
     var p1 = Grid.coordsFor(rt),
       p2, l = new Array();
+
     if (p1.y < this.numLines() - 1) {
       for (var i = 0; i < this.allRiTexts.length; i++) {
         var test = this.allRiTexts[i];
@@ -1273,7 +1276,9 @@ var PageManager = function PageManager(host, port) {
     },
 
     this.clear = function () {
+
       while (Grid.instances.length) {
+
         Grid.instances.pop().dispose();
       }
     },
