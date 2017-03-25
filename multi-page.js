@@ -22,13 +22,13 @@ function setup() {
     pManager.layout(TEXTS[0], 25, 40, 580, 650);
 
     // add some readers
-    readers['Perigram Reader'] = {
-      reader: new PerigramReader(pManager.recto, SPEED.Fluent)
-    };
-
-    readers['Mesostic Reader'] = {
-      reader: new MesosticReader(pManager.verso, SPEED.Steady)
-    };
+    // readers['Perigram Reader'] = {
+    //   reader: new PerigramReader(pManager.recto, SPEED.Fluent)
+    // };
+    //
+    // readers['Mesostic Reader'] = {
+    //   reader: new MesosticReader(pManager.verso, SPEED.Steady)
+    // };
 
     readers['Oblique Perigram Reader'] = {
       reader: new ObliquePerigramReader(pManager.verso, SPEED.Steady)
@@ -141,7 +141,7 @@ function textChanged() {
 }
 
 function ifTrigramReady(textName) {
-   
+
    if (textLoaded.indexOf(textName) != -1) {
     log("[Check Trigram] true", textName);
     return true;

@@ -24,8 +24,8 @@ var STYLE = {
   Dark: 0
 };
 
-var uiLogging = true;
-var maxFocusLog = Math.floor(window.innerHeight / 30);
+var uiLogging = true,
+  maxFocusLog = Math.floor(window.innerHeight / 30);
 
 function createInterface() {
 
@@ -50,7 +50,7 @@ function createInterface() {
     rb.child(hint);
   });
 
-  
+
 
   var textSelect, styleSelect, themeSelect, uiElements = [
 
@@ -60,7 +60,7 @@ function createInterface() {
     //createButton('go').mousePressed(selectionDone).id('go')
   ];
 
-  // set initial class 
+  // set initial class
   var focusedName = nameFromReader(pManager.focus()) || '';
   document.getElementById(toSafeName(focusedName)).className += " focused";
 
@@ -94,6 +94,7 @@ function createInterface() {
   }
 
   function initStylizedSelect(id, style, options, onChanged, parent) {
+
     var ul = document.createElement('ul');
     ul.setAttribute('id', id);
     ul.setAttribute('class', "select");
@@ -117,14 +118,15 @@ function createInterface() {
 
     parent && ul.parent(parent);
     options.forEach(renderList);
+
+    console.log(typeof onChanged);
     ul.addEventListener("change", onChanged);
 
     return ul;
   }
 
-
   function ifTrigramReady(textName) {
-     
+
      if (textLoaded.indexOf(textName) != -1) {
       log("[Check Trigram] true", textName);
       return true;
@@ -146,6 +148,7 @@ function createInterface() {
   }
 
   function themeChanged() {
+
     var theme = themeSelect.value(),
       dark = (theme === "Dark");
 
@@ -159,43 +162,57 @@ function createInterface() {
   }
 
   function resetFocus() {
-    // if only one reader is not hidden, give it focus
+
+    // if only one reader is active, give it focus
     var actives = activeReaders();
-    if (actives.length == 1)
+    if (actives.length == 1) {
+
       assignFocus(actives[0]);
+    }
 
     // if focused reader is hidden, pick a random visible
     var focused = pManager.focus();
-    if (focused && focused.hidden)
+    if (focused && focused.hidden) {
       assignFocus();
+    }
   }
 
   function assignFocus(focused) {
-    if (!focused) {
-      var actives = activeReaders();
-      focused = actives.length && actives[Math.floor(random(actives.length))];
-    }
-     //change classname
-      var readers = document.getElementsByClassName("reader");
-      for (var i = 0; i < readers.length; i++)
-          readers[i].className = readers[i].className.replace(" focused","");
 
-    document.getElementById(toSafeName(nameFromReader(focused))).className += " focused";
-    // focusSelect.value(nameFromReader(focused)) && focusChanged();
+    if (!focused) {
+
+      var actives = activeReaders(); // pick a random reader for focus
+      focused = actives.length && actives[floor(random(actives.length))];
+    }
+
+    clearFocus();
+
+    if (focused)  { // only if we have an active reader
+      document.getElementById(toSafeName(nameFromReader(focused))).className += " focused";
+      // focusSelect.value(nameFromReader(focused)) && focusChanged();
+    }
+  }
+
+  function clearFocus() {
+
+    var readers = document.getElementsByClassName("reader");
+    for (var i = 0; i < readers.length; i++) {
+      readers[i].className = readers[i].className.replace(" focused", "");
+    }
   }
 
   function readerOnOffEvent(reader, onOffSwitch) {
 
     reader.hide(!onOffSwitch);
     resetFocus();
-    
+
     var name = nameFromReader(reader), readerEle = document.getElementById(toSafeName(name));
     log("[UI] READER: " + name + (reader.hidden ? ' off' : ' on'));
     // if(onOffSwitch)
     //   readerEle.className += ' active';
     // else
     //   readerEle.className = readerEle.className.replace(" active","");
-    
+
   }
 
   function focusChanged(focused) {
@@ -278,7 +295,7 @@ var body = document.getElementsByTagName('body')[0],
     menu.style.display = 'none';
     options.classList = "clear";
   }
- 
+
 }, false);
 
 body.addEventListener('click', function (event)
@@ -287,19 +304,23 @@ body.addEventListener('click', function (event)
     document.getElementById("interface").style.display = 'none';
 }, false);
 
-////////////////////////////////////////////////////////////////////  
+////////////////////////////////////////////////////////////////////
 //Interface focused Reader Hover Text
 
 function onReaderSingleClick (ele) {
-    readerOnOffEvent(readerFromName(ele.innerHTML), ele.parentNode.getElementsByTagName('input')[0].checked);
+
+    readerOnOffEvent(readerFromName(ele.innerHTML),
+      ele.parentNode.getElementsByTagName('input')[0].checked);
 }
 
 function onReaderDoubleClick (ele) {
+
     if(!ele.parentNode.matches('.focused'))
       focusChanged(readerFromName(ele.innerHTML));
 }
 
 menu.addEventListener('click', function(event) {
+
   var el = event.target;
 //differenciate single & double click for reader
    if (!el.matches('.reader label'))  return;
@@ -358,9 +379,9 @@ menu.addEventListener('mouseout', function(event) {
 }
 //End of Create Interface
 
-//////////////////////////////////////////////////////////////////// 
+////////////////////////////////////////////////////////////////////
 function logToDisplay(msg) {
-    
+
     createP(msg).parent('focusDisplay');
     //remove first element from focusDisplay
     var display = document.getElementById("focusDisplay");
@@ -370,12 +391,12 @@ function logToDisplay(msg) {
         while(logEntries > maxFocusLog) {
            display.removeChild(display.childNodes[1]);
            logEntries --;
-        }  
+        }
     }
 
 }
 
-//////////////////////////////////////////////////////////////////// 
+////////////////////////////////////////////////////////////////////
 // Customized select list : Not used yet
 
 // var ul = document.getElementsByClassName('ul');

@@ -18,12 +18,12 @@ function PerigramReader(g, rx, ry, speed) {
   //Perigram Reader Color
   this.col = [189, 5, 4, 255]; // red
   // this.neighborCol = [127, 10, 30, 255];
-  
+
   // factors
   this.fadeInFactor = .8;
   this.fadeOutFactor = 10;
   this.delayFactor = 2.5;
-  
+
 }
 
 PerigramReader.prototype.selectNext = function () {
@@ -38,7 +38,7 @@ PerigramReader.prototype.onEnterCell = function (curr) {
 
   // console.log('onEnter: '+ curr.text() + " " + this.speed + " " + this.stepTime);
   // curr.showBounds(1); // DEBUG
-  
+
   // ---- based on Java VB NeighborFadingVisual ---- //
   // variables needed individually for instances of perigram readers:
   this.actualStepTime = this.stepTime / 1000;
@@ -55,7 +55,7 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   // fading current in and out
   fid = curr.colorTo(this.col, this.fadeInTime);
   curr.colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime); // 1st arg: this.fill
-  
+
   // get and fade in neighborhood
   this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
   // console.log('X ' + this.neighborhood);
@@ -68,7 +68,7 @@ PerigramReader.prototype.onEnterCell = function (curr) {
     }
   }
   // console.log('Y ' + this.neighborsToFade);
-  
+
   // do the fading
   for (var i = 0; i < this.neighborsToFade.length; i++) {
     this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.leadingFadeToColor, this.fadeInTime);
@@ -84,6 +84,7 @@ PerigramReader.prototype.onExitCell = function (curr) {
 }
 
 PerigramReader.prototype.hide = function (v) {
+
 	this.hidden = v;
 	if (this.hidden) {
 		var c = RiText.defaultFill();
