@@ -18,7 +18,7 @@ function OnewayPerigramReader(g, rx, ry, speed, dir, parent) {
 
   //Perigram Reader Color
   this.col = [194, 194, 194, 255]; // light gray
-  
+
   // factors
   this.fadeInFactor = .8;
   this.fadeOutFactor = 10;
@@ -36,7 +36,7 @@ OnewayPerigramReader.prototype.onEnterCell = function (curr) {
   // fading current in and out
   fid = curr.colorTo(this.col, this.fadeInTime);
   curr.colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime); // 1st arg: this.fill
-  
+
 }
 
 OnewayPerigramReader.prototype.selectNext = function () {
@@ -71,13 +71,13 @@ OnewayPerigramReader.prototype._determineReadingPath = function (last, neighbors
   	}
   	this.freeCount = 0;
     this.pause(true);
-    warn("Not viable heading " + Grid.direction(this.wayToGo));
+    //warn("Not viable heading " + Grid.direction(this.wayToGo));
     return null;
 		// return neighbors[E] || this.current;
   }
 
 	// continue viable:
-	
+
   // this._buildConTextForServer(wayToGo, neighbors);
   conText = neighbors[this.wayToGo].text().replace("—", "-"); // TEMP!
 
@@ -107,7 +107,7 @@ OnewayPerigramReader.prototype._isViableDirection = function (last, curr, neighb
 	var i = 0;
 	for (; i < neighbors.length; i++) {
 		if (!neighbors[i]) {
-			warn("no neighbors[" + i + "]");
+			//warn("no neighbors[" + i + "]");
 			result = result || false;
 		}
 		else {
@@ -116,16 +116,16 @@ OnewayPerigramReader.prototype._isViableDirection = function (last, curr, neighb
 			countThreshold = 0; // this._adjustForStopWords(0, key.split(S));
 
 			result = result || PageManager.getInstance().isBigram(key, countThreshold);
-			info("key: '" + key + "' threshold: " + countThreshold + " result: " + result);
+			//info("key: '" + key + "' threshold: " + countThreshold + " result: " + result);
 		}
 		if (result) break;
   }
 
   if (result) {
-  	info("Oneway - viable " + ((i == 0) ? "SE" : "S") + ": " + key + " (" + Grid.direction(dir) + ") " + countThreshold);
+  	//info("Oneway - viable " + ((i == 0) ? "SE" : "S") + ": " + key + " (" + Grid.direction(dir) + ") " + countThreshold);
   	this.freeCount = 0;
 	}
-	
+
   return result;
 }
 

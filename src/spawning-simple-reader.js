@@ -18,19 +18,19 @@ function SpawningSimpleReader(g, rx, ry, speed) {
   //Perigram Reader Color
   this.col = [5, 189, 4, 255]; // greenish
   // this.neighborCol = [127, 10, 30, 255];
-  
+
   // factors
   this.fadeInFactor = .8;
   this.fadeOutFactor = 10;
   this.delayFactor = 2.5;
-  
+
 }
 
 SpawningSimpleReader.prototype.onEnterCell = function (curr) {
 
   // console.log('onEnter: '+ curr.text() + " " + this.speed + " " + this.stepTime);
   // curr.showBounds(1); // DEBUG
-  
+
   // ---- based on Java VB NeighborFadingVisual ---- //
   // variables needed individually for instances of perigram readers:
   this.actualStepTime = this.stepTime / 1000;
@@ -48,14 +48,14 @@ SpawningSimpleReader.prototype.onEnterCell = function (curr) {
 
 	// SE:
   if (this._isViableDirection(this.lastRead(2), curr, neighbors[8], 8)) {
-    info("SpawningSimple ack'd and spawned on " + neighbors[8].text());
+    //info("SpawningSimple ack'd and spawned on " + neighbors[8].text());
     var coords = Grid.coordsFor(neighbors[8]);
     var spawned = new OnewayPerigramReader(g, coords.x, coords.y, SPEED.Fast, 8, curr);
 	}
-	
+
   // NE:
   if (this._isViableDirection(this.lastRead(2), curr, neighbors[2], 2)) {
-    info("SpawningSimple ack'd and spawned on " + neighbors[2].text());
+    //info("SpawningSimple ack'd and spawned on " + neighbors[2].text());
     var coords = Grid.coordsFor(neighbors[2]);
     var spawned = new OnewayPerigramReader(g, coords.x, coords.y, SPEED.Fast, 2, curr);
     // this.pause(true); // DEBUG
@@ -63,7 +63,7 @@ SpawningSimpleReader.prototype.onEnterCell = function (curr) {
   else {
     // neighbors[8] && console.log("non-viable SE neighbor " + neighbors[8].text());
   }
-  
+
 }
 
 SpawningSimpleReader.prototype.selectNext = function () {

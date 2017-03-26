@@ -1002,7 +1002,7 @@ Reader.prototype = {
         this.onExitCell(this.current);
         this.current = this.selectNext();
         if (!this.current) { // added by JHC
-        	warn("Undefined or null result from selectNext()");
+        	//warn("Undefined or null result from selectNext()");
         	return;
         }
 

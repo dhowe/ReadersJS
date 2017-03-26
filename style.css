@@ -234,10 +234,10 @@ button:hover {
 .reader#Oblique_Perigram_Reader input:checked + label:before {
      background-color: #FA0007;
 }
-.reader#Spawning_Reader input:checked + label:before {
+.reader#Spawning_Simple_Reader input:checked + label:before {
      background-color: #FFB017;
 }
-.reader#Perigram_Spawner input:checked + label:before {
+.reader#Spawning_Perigram_Reader input:checked + label:before {
      background-color: #D88100;
 }
 .reader#Oblique_Spawner input:checked + label:before {
@@ -253,15 +253,16 @@ button:hover {
 .reader#Oblique_Perigram_Reader input + label:hover:before{
      border-color: #FA0007;
 }
-.reader#Spawning_Reader input + label:hover:before{
+.reader#Spawning_Simple_Reader input + label:hover:before{
      border-color: #FFB017;
 }
-.reader#Perigram_Spawner input + label:hover:before{
+.reader#Spawning_Perigram_Reader input + label:hover:before{
      border-color: #D88100;
 }
 .reader#Oblique_Spawner input + label:hover:before{
      border-color: #FFD000;
 }
+
 .reader.focused#Mesostic_Reader input:checked + label:before {
     -webkit-box-shadow: 0px 0px 15px 5px #1464DB;
     -moz-box-shadow: 0px 0px 15px 5px #1464DB;
@@ -277,12 +278,12 @@ button:hover {
     -moz-box-shadow: 0px 0px 15px 5px #FA0007;
     box-shadow: 0px 0px 15px 5px #FA0007;
 }
-.reader.focused#Spawning_Reader input:checked + label:before {
+.reader.focused#Spawning_Simple_Reader input:checked + label:before {
     -webkit-box-shadow: 0px 0px 15px 5px #FFB017;
     -moz-box-shadow: 0px 0px 15px 5px #FFB017;
     box-shadow: 0px 0px 15px 5px #FFB017;
 }
-.reader.focused#Perigram_Spawner input:checked + label:before {
+.reader.focused#Spawning_Perigram_Reader input:checked + label:before {
     -webkit-box-shadow: 0px 0px 15px 5px #D88100;
     -moz-box-shadow: 0px 0px 15px 5px #D88100;
     box-shadow: 0px 0px 15px 5px #D88100;
