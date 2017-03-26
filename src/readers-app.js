@@ -712,11 +712,11 @@ Grid.prototype = {
   // returns a 2d string array of all cells at time of grid creation
   storeInitial: function () {
 
-    console.log(RiText.defaultFill(), this.cellAt(1,1).fill());
+    //console.log(RiText.defaultFill(), this.cellAt(1,1).fill());
 
     function toData(rt) {
       return {
-        x: rt.x, y: rt.y, text: rt.text(), fill: rt.fill()
+        x: rt.x, y: rt.y, text: rt.text(), fill: rt._color
       };
     }
 
@@ -825,6 +825,7 @@ Grid.resetCell = function (rt) {
     //tw = rt.textWidth();
   rt.position(data.x, data.y)
   rt.text(data.text);
+  //rt.fill(data.fill.r, data.fill.g, data.fill.b, data.fill.a);
   rt.fill(data.fill);
   //rt.x += (tw - rt.textWidth()) / 2;
 }
@@ -1429,7 +1430,7 @@ var PageManager = function PageManager(host, port) {
         // only position if not already visible
         if (grid !== this.recto && grid !== this.verso) {
 
-          reader.stopBehaviors();
+          Grid.resetCell(reader.current);
           reader.position(this.verso, 0, 0);
         }
       }
