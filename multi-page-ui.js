@@ -324,9 +324,17 @@ function createInterface() {
   }
 
   function onReaderDoubleClick(ele) {
-
+     //if it is off, turn it on
+    var input = ele.parentNode.children[0];
+    if (input.checked) {
+       readerOnOffEvent(readerFromName(ele.innerHTML), true);
+       input.checked = false;
+    }
+     
     if (!ele.parentNode.matches('.focused'))
       focusChanged(readerFromName(ele.innerHTML));
+
+   
   }
 
   menu.addEventListener('click', function (event) {
