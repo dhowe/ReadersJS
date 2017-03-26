@@ -1127,14 +1127,14 @@ var PageManager = function PageManager(host, port) {
 
       this.clear();
 
-      this.perigrams[2] = this._loadBigrams(txt);
-
       if (typeof txt === 'object') {
 
         this.perigrams[3] = Trigrams[toSafeName(txt.title)];
         console.log('[PMAN] Stored ' + Object.keys(this.perigrams[3]).length + ' 3-grams');
         txt = txt.contents;
       }
+
+      this.perigrams[2] = this._loadBigrams(txt);
 
       this.x = x;
       this.y = y;
