@@ -1,3 +1,4 @@
+
 var TEXTS = [{
   title: 'Misspelt Landings',
   file: 'data/misspeltLandings.txt'
@@ -45,7 +46,7 @@ function createInterface() {
     readerDef.speedSelect.source = reader;
     readerDef.speedSelect.value(speedToName(reader.speed));
 
-    //onhover message
+    // onhover message
     var hint = document.getElementById("hoverTextWrapper").cloneNode(true);
     rb.child(hint);
   });
@@ -59,8 +60,10 @@ function createInterface() {
   // set initial class
   var focused = pManager.focus();
   if (focused) {
-    var focusedName = nameFromReader() || '';
-    document.getElementById(toSafeName(focusedName)).className += " focused";
+
+    var focusedName = nameFromReader(focused) || '';
+    var button = document.getElementById(toSafeName(focusedName));
+    button && (button.className += " focused");
   }
 
   // Append elements to interface
@@ -72,6 +75,10 @@ function createInterface() {
     createP(descText[i]).parent(wrapper);
     wrapper.child(uiElements[i])
   }
+
+  var timeoutId,
+    instructions = document.getElementById("instructions"),
+    menu = document.getElementById("interface");
 
   ////////////////////////////////////////////////////////////////////
 
@@ -213,7 +220,7 @@ function createInterface() {
 
     var name = nameFromReader(reader),
       readerEle = document.getElementById(toSafeName(name));
-    log("[UI] READER: " + name + (reader.hidden ? ' off' : ' on'));
+    log("[UI] " + name + (reader.hidden ? ': Off' : ': On'));
     // if(onOffSwitch)
     //   readerEle.className += ' active';
     // else
@@ -289,11 +296,13 @@ function createInterface() {
     if (menu.style.display === 'none') {
 
       menu.style.display = 'block';
+      instructions.style.visibility = 'hidden';
       options.classList = "";
 
     } else {
 
       menu.style.display = 'none';
+      instructions.style.visibility = 'visible';
       options.classList = "clear";
     }
 
@@ -319,8 +328,6 @@ function createInterface() {
     if (!ele.parentNode.matches('.focused'))
       focusChanged(readerFromName(ele.innerHTML));
   }
-
-  var timeoutId, menu = document.getElementById("interface");
 
   menu.addEventListener('click', function (event) {
 

@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
   <meta charset="UTF-8">
   <title>The Readers Project</title>
 
   <script type="text/javascript">
-      var timerStart = Date.now();
+    var timerStart = Date.now();
   </script>
 
   <link rel="stylesheet" href="fonts/webfont/font.css">
@@ -56,62 +57,67 @@
         {
           // overlay.style.display = "none";
           var time = Date.now() - timerStart - 2000;
-          console.log('[LOAD] '+ TEXTS[0].title + ' ' + time + 'ms' );
+          console.log('[LOAD] ' + TEXTS[0].title + ' ' + time + 'ms');
           reloadTheRest();
 
         }, 2000));
       });
     }
 
-    var textLoaded = ["Misspelt Landings"], notify;
+    var textLoaded = ["Misspelt Landings"],
+      notify;
 
-    function finishLoading (text) {
+    function finishLoading(text)
+    {
 
       textLoaded.push(text);
       var time = Date.now() - timerStart;
       console.log('[LOAD] ' + text + ' ' + time + 'ms');
 
-      if (overlay.classList.value === "" && notify === text) {
-          overlay.classList.toggle('fade');
-          textChanged();
+      if (overlay.classList.value === "" && notify === text)
+      {
+        overlay.classList.toggle('fade');
+        textChanged();
         // TODO: call textChanged here
-       }
+      }
 
     }
 
-    function reloadTheRest() {
+    function reloadTheRest()
+    {
 
       var trigramScripts = {
-          'Poetic Caption': "data/poeticCaption-trigrams.js",
-          'The Image': "data/theImage-trigrams.js"
+        'Poetic Caption': "data/poeticCaption-trigrams.js",
+        'The Image': "data/theImage-trigrams.js"
       }
 
-      for (key in trigramScripts) {
-          var script = document.createElement("script"),
-              html = document.getElementsByTagName("html")[0];
+      for (key in trigramScripts)
+      {
+        var script = document.createElement("script"),
+          html = document.getElementsByTagName("html")[0];
 
-          script.src = trigramScripts[key];
-          script.id = key;
+        script.src = trigramScripts[key];
+        script.id = key;
 
-          html.appendChild(script);
-          script.onload = function() {
-            finishLoading(this.id);
-          };
+        html.appendChild(script);
+        script.onload = function ()
+        {
+          finishLoading(this.id);
+        };
       }
 
     }
-
   </script>
 
 </head>
 
 <body>
   <!-- Top Text Section -->
-  <p id="hint">Use left/right arrow-keys to change pages</p>
+  <p id="instructions">Use left/right arrow-keys to change pages</p>
   <div id="options">Readers <span>Options</span></div>
   <div class="tag">Under Construction</div>
 
- <!-- Overlay -->
+  <!-- Overlay -->
   <div id="overlay">
     <div id="loader"></div>
     <p>Loading</p>
@@ -123,7 +129,7 @@
     <!-- <div id="hoverText-unchecked" class="hoverText">click to enable</div> -->
     <div id="hoverText-checked" class="hoverText">
       click to disable/enable<span>, double-click for focus <a class="help">[?]</a></span>
-      <span  class="helpInfo">The 'focused' reader is always visible and able to display the text that it is reading. The words it has read recently are monitored separately on the right.</span>
+      <span class="helpInfo">The 'focused' reader is always visible and able to display the text that it is reading. The words it has read recently are monitored separately on the right.</span>
     </div>
   </div>
 
@@ -148,4 +154,5 @@
 </script>
 <!-- <script src="data/poeticCaption-trigrams.js"  defer onload="finishLoading('poeticCaption')"></script>
 <script src="data/theImage-trigrams.js"  defer onload="finishLoading('theImage')"></script> -->
+
 </html>

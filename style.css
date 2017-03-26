@@ -22,7 +22,7 @@ canvas {
     border: 1px solid #333;
 }
 
-#hint {
+#instructions {
     margin-left: 120px;
     margin-top: 60px;
 }
@@ -40,9 +40,9 @@ canvas {
     line-height: 60px;
     color:#333;
     z-index: 100;
-    opacity:0.2;
+    COMMENTED-opacity:0.2;
     -webkit-transition: opacity .5s; /* Safari */
-    transition: opacity .5s;
+    COMMENTED-transition: opacity .5s;
 }
 #options.clear{
    opacity:1;
@@ -71,6 +71,7 @@ canvas {
     padding: 30px 20px 20px 120px;
     width: 400px;
     border: 1px solid #555;
+    display: none;
 }
 
 #focusDisplay {
@@ -369,7 +370,7 @@ ul.select li:not(.init):hover{
     z-index: 100;
     opacity: 1;
     display: block;
-    transition: opacity 2s; 
+    transition: opacity 2s;
 }
 #overlay.fade{
     opacity: 0;

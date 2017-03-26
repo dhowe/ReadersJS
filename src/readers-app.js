@@ -108,6 +108,16 @@ Grid.prototype = {
     RiText.disposeAll([this.header, this.footer]);
   },
 
+  update: function () { // not called in Node
+
+    for (var i = 0; i < this.cells.length; i++) {
+      for (var j = 0; j < this.cells[i].length; j++)
+        if (this.cells[i][j]) {
+          this.cells[i][j]._update();
+        }
+    }
+  },
+
   draw: function (isRecto) { // not called in Node
 
     push();
@@ -117,12 +127,12 @@ Grid.prototype = {
     for (var i = 0; i < this.cells.length; i++) {
       for (var j = 0; j < this.cells[i].length; j++)
         if (this.cells[i][j]) {
-          this.cells[i][j].draw();
+          this.cells[i][j]._render();
         }
     }
 
-    this.header && (this.header.draw());
-    this.footer && (this.footer.draw());
+    this.header && (this.header._render());
+    this.footer && (this.footer._render());
 
     pop();
   },
@@ -812,6 +822,12 @@ Grid.dumpPages = function (rt) {
   console.log(s)
 }
 
+Grid.updateAll = function () {
+
+  for (var i = 0; i < Grid.instances.length; i++)
+    Grid.instances[i].update();
+}
+
 Grid.direction = function (dirConst) {
   switch (dirConst) {
   case Grid.DIRECTION.NW:
@@ -1393,14 +1409,17 @@ var PageManager = function PageManager(host, port) {
     this.focus = function (reader) {
 
       if (arguments.length) {
+
         this.focused = reader;
-        //console.log("Focus:"+this.focused.type);
         return this;
       }
+
       return this.focused;
     },
 
     this.draw = function () {
+
+      Grid.updateAll();
 
       this.verso && (this.verso.draw(0));
       this.recto && (this.recto.draw(1));
@@ -1559,6 +1578,52 @@ PageManager.getInstance = function (a, b, c) {
     this.instance = new PageManager(a, b, c);
   return this.instance;
 }
+
+///////////////// CACHE (unused) ///////////////////
+
+var Cache = {
+
+  cacheData: {},
+
+  get: (key) => {
+    if (Cache.cacheData.hasOwnProperty(key) && Cache.cacheData[key].val) {
+      return Cache.cacheData[key].val;
+    }
+    return false;
+  },
+
+  set: (key, value, expiry) => {
+
+    Cache.clear(key);
+
+    var to = false;
+    if (expiry && parseInt(expiry) > 0) {
+      to = setTimeout(function() {
+        Cache.clear(key);
+      }, parseInt(expiry));
+    }
+
+    Cache.cacheData[key] = {
+          expiry: expiry,
+          val: value,
+          timeout: to,
+        };
+  },
+
+  clear: (key) => {
+
+    if (Cache.cacheData.hasOwnProperty(key)) {
+      if (Cache.cacheData[key].to) {
+        clearTimeout(Cache.cacheData[key].to);
+      }
+
+      delete Cache.cacheData[key];
+      return true;
+    }
+
+    return false;
+  },
+};
 
 ///////////////// GLOBALS (no node) ///////////////////
 
