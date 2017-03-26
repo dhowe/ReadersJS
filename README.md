@@ -10,4 +10,4 @@ $ npm install
 
 To Run:
 
-open multi-page.html in a browser (using a local server is advisable)
+open index.html in a browser (using a local server is advisable)

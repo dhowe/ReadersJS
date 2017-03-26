@@ -1,5 +1,4 @@
-rita: v1.052
+rita: v1.1.51
 socket.io:
-processingjs: v1.4.7
+p5js:
 jquery:
-Font.js: 0.2.6
