@@ -1,6 +1,6 @@
 ///////////////////// SpawningPerigramReader /////////////////////
 
-subclass(SpawningPerigramReader, PerigramReader);
+subclass(SpawningPerigramReader, SpawningSimpleReader);
 // these apply to all perigram readers:
 
 function SpawningPerigramReader(g, rx, ry, speed) {
@@ -16,7 +16,7 @@ function SpawningPerigramReader(g, rx, ry, speed) {
   if (!speed) this.speed = SPEED.Fluent; // default speed for SpawningPerigramReaders
 
   //Perigram Reader Color
-  this.col = [189, 5, 4, 255]; // red
+  this.col = [255, 165, 0, 255]; // orange
   // this.neighborCol = [127, 10, 30, 255];
   
   // factors
@@ -26,23 +26,81 @@ function SpawningPerigramReader(g, rx, ry, speed) {
   
 }
 
-SpawningPerigramReader.prototype.onEnterCell = function (curr) {
+SpawningPerigramReader.prototype.selectNext = function () {
 
-  // console.log('onEnter: '+ curr.text() + " " + this.speed + " " + this.stepTime);
-  // curr.showBounds(1); // DEBUG
-  
-  // ---- based on Java VB NeighborFadingVisual ---- //
-  // variables needed individually for instances of perigram readers:
-  this.actualStepTime = this.stepTime / 1000;
-  this.fadeInTime = this.actualStepTime * this.fadeInFactor;
-  this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
-  this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
-  this.gridColor = RiText.defaultFill(); // DCH: is this interface-responsive enough?
+  var last = this.lastRead(2),
+    neighbors = Grid.gridFor(this.current).neighborhood(this.current);
 
-  // fading current in and out
-  fid = curr.colorTo(this.col, this.fadeInTime);
-  curr.colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime); // 1st arg: this.fill
-  
+  return this._determineReadingPath(last, neighbors);
+}
+
+SpawningPerigramReader.prototype._determineReadingPath = function (last, neighbors) {
+
+  if (!neighbors) throw Error("no neighbors");
+
+  if (!this.current) throw Error("no current cell!");
+
+  var NEConText, SEConText, NEViable, SEViable, NW = 0,
+    N = 1,
+    NE = 2,
+    W = 3,
+    E = 5,
+    SW = 6,
+    S = 7,
+    SE = 8,
+    wayToGo = E,
+    conText;
+
+  this.consoleString = '';
+
+  // only go NE if it is viable
+  if (this._isViableDirection(last, this.current, neighbors[NE], NE)) {
+    wayToGo = NE;
+    NEViable = true;
+  }
+
+  if (wayToGo == NE) {
+    // collect the context in any case
+    NEConText = this.current.text() + " " + neighbors[NE].text();
+
+    // but only actually go NE rarely
+    wayToGo = (Math.random() < this.upWeighting) ? NE : E;
+  }
+
+  // only go SE if it is viable
+  if (this._isViableDirection(last, this.current, neighbors[SE], SE))
+    SEViable = true;
+
+  if (SEViable && wayToGo == E)
+    wayToGo = SE;
+
+  if (wayToGo == SE) {
+    // collect the context in any case
+    SEConText = this.current.text() + " " + neighbors[SE].text();
+
+    // but only actually go SE occasionally
+    wayToGo = (Math.random() < this.downWeighting) ? SE : E;
+  }
+
+  //this._buildConTextForServer(wayToGo, neighbors);
+  conText = neighbors[wayToGo].text().replace("—", "-"); // TEMP!
+
+  if (neighbors[wayToGo]) {
+//     this.consoleString = (neighbors[wayToGo].text() + " (" + Grid.direction(wayToGo) + ") ");
+  }
+
+  this.lastDirection = wayToGo;
+
+  switch (wayToGo) {
+  case NE:
+    return neighbors[NE];
+
+  case SE:
+    return neighbors[SE];
+
+  default:
+    return neighbors[E] || this.current;
+  }
 }
 
 //////////////////////// Exports ////////////////////////

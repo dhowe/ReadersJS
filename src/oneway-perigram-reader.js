@@ -14,7 +14,7 @@ function OnewayPerigramReader(g, rx, ry, speed, dir, parent) {
   this.selectedLast = null;
   this.consoleString = '';
   this.fill = RiText.defaultFill();
-  this.eastCount = 0;
+  this.freeCount = 0;
 
   //Perigram Reader Color
   this.col = [194, 194, 194, 255]; // light gray
@@ -63,9 +63,13 @@ OnewayPerigramReader.prototype._determineReadingPath = function (last, neighbors
 	var altDir = (this.wayToGo == 8) ? 7 : 1; // 7 = S; 1 = N
   // if the direction is not viable delete the reader
   if (!this._isViableDirection(last, this.current, neighbors[this.wayToGo], neighbors[altDir], this.wayToGo)) {
-  	if (this.eastCount++ < 2)
-  		return neighbors[5] || this.current;
-  	this.eastCount = 0;
+  	if (this.freeCount++ < 4) {
+  		// info("went east"); // DEBUG
+  		if (neighbors[this.wayToGo]) return neighbors[this.wayToGo];
+  		else return neighbors[altDir];
+  		// return neighbors[this.wayToGo] || this.current;
+  	}
+  	this.freeCount = 0;
     this.pause(true);
     warn("Not viable heading " + Grid.direction(this.wayToGo));
     return null;
@@ -119,7 +123,7 @@ OnewayPerigramReader.prototype._isViableDirection = function (last, curr, neighb
 
   if (result) {
   	info("Oneway - viable " + ((i == 0) ? "SE" : "S") + ": " + key + " (" + Grid.direction(dir) + ") " + countThreshold);
-  	this.eastCount = 0;
+  	this.freeCount = 0;
 	}
 	
   return result;
