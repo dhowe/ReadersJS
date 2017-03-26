@@ -1,0 +1,5 @@
+rita: v1.052
+socket.io:
+processingjs: v1.4.7
+jquery:
+Font.js: 0.2.6

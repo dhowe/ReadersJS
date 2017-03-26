@@ -22,25 +22,25 @@ function setup() {
     pManager.layout(TEXTS[0], 25, 40, 580, 650);
 
     // add some readers
-    readers['Perigram Reader'] = {
-      reader: new PerigramReader(pManager.recto, SPEED.Fluent)
-    };
-
-    readers['Mesostic Reader'] = {
-      reader: new MesosticReader(pManager.verso, SPEED.Steady)
-    };
-
-    readers['Oblique Perigram Reader'] = {
-      reader: new ObliquePerigramReader(pManager.verso, SPEED.Steady)
-    };
+    // readers['Perigram Reader'] = {
+    //   reader: new PerigramReader(pManager.recto, SPEED.Fluent)
+    // };
+    //
+    // readers['Mesostic Reader'] = {
+    //   reader: new MesosticReader(pManager.verso, SPEED.Steady)
+    // };
+    //
+    // readers['Oblique Perigram Reader'] = {
+    //   reader: new ObliquePerigramReader(pManager.verso, SPEED.Steady)
+    // };
 
     readers['Spawning Simple Reader'] = {
       reader: new SpawningSimpleReader(pManager.recto, SPEED.Steady)
     };
 
-    readers['Spawning Perigram Reader'] = {
-      reader: new SpawningPerigramReader(pManager.verso, SPEED.Steady)
-    };
+    // readers['Spawning Perigram Reader'] = {
+    //   reader: new SpawningPerigramReader(pManager.verso, SPEED.Steady)
+    // };
 
     // set page-turner/logger
     pManager.focus(randomReader());
@@ -53,12 +53,24 @@ function draw() {
 
   background(bgColor || 0);
   pManager && (pManager.draw());
+  //console.log(Reader.instances.length);
 }
 
 function keyPressed() {
 
   keyCode == 39 && (pManager.nextPage(1));
   keyCode == 37 && (pManager.lastPage(1));
+
+  if (key === 'R') {
+    var stats = {}, ids = [];
+    for (var i = 0; i < Reader.instances.length; i++) {
+      ids.push(Reader.instances[i].id);
+      if (!stats[Reader.instances[i].type])
+        stats[Reader.instances[i].type] = 0;
+      stats[Reader.instances[i].type]++;
+    }
+    console.log(stats, ids);
+  }
 }
 
 function loadTexts(callback) {

@@ -43,21 +43,22 @@ SpawningSimpleReader.prototype.onEnterCell = function (curr) {
   fid = curr.colorTo(this.col, this.fadeInTime);
   curr.colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime); // 1st arg: this.fill
 
-  var g = Grid.gridFor(curr);
-  var neighbors = g.neighborhood(curr);
+  var coords, spawned, g = Grid.gridFor(curr), neighbors = g.neighborhood(curr);
 
 	// SE:
   if (this._isViableDirection(this.lastRead(2), curr, neighbors[8], 8)) {
     //info("SpawningSimple ack'd and spawned on " + neighbors[8].text());
-    var coords = Grid.coordsFor(neighbors[8]);
-    var spawned = new OnewayPerigramReader(g, coords.x, coords.y, SPEED.Fast, 8, curr);
+    coords = Grid.coordsFor(neighbors[8]);
+    spawned = new OnewayPerigramReader(g, coords.x, coords.y, SPEED.Fast, 8, curr);
+    Reader.DEBUG_CREATES && console.log('Created #', spawned.id, '(SE)');
 	}
 
   // NE:
-  if (this._isViableDirection(this.lastRead(2), curr, neighbors[2], 2)) {
+  else if (this._isViableDirection(this.lastRead(2), curr, neighbors[2], 2)) {
     //info("SpawningSimple ack'd and spawned on " + neighbors[2].text());
-    var coords = Grid.coordsFor(neighbors[2]);
-    var spawned = new OnewayPerigramReader(g, coords.x, coords.y, SPEED.Fast, 2, curr);
+    coords = Grid.coordsFor(neighbors[2]);
+    spawned = new OnewayPerigramReader(g, coords.x, coords.y, SPEED.Fast, 2, curr);
+    Reader.DEBUG_CREATES &&  console.log('Created #', spawned.id, '(NE)');
     // this.pause(true); // DEBUG
   }
   else {

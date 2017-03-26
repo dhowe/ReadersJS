@@ -65,12 +65,11 @@ OnewayPerigramReader.prototype._determineReadingPath = function (last, neighbors
   if (!this._isViableDirection(last, this.current, neighbors[this.wayToGo], neighbors[altDir], this.wayToGo)) {
   	if (this.freeCount++ < 4) {
   		// info("went east"); // DEBUG
-  		if (neighbors[this.wayToGo]) return neighbors[this.wayToGo];
-  		else return neighbors[altDir];
+  		return neighbors[this.wayToGo || altDir];
   		// return neighbors[this.wayToGo] || this.current;
   	}
   	this.freeCount = 0;
-    this.pause(true);
+    Reader.dispose(this);
     //warn("Not viable heading " + Grid.direction(this.wayToGo));
     return null;
 		// return neighbors[E] || this.current;
@@ -98,7 +97,7 @@ OnewayPerigramReader.prototype._isViableDirection = function (last, curr, neighb
   neighbors.push(neighborAlt);
 
   if (!last || !curr || (!neighbor && !neighborAlt)) {
-  	// DEBUG warn("Oneway found an incomplete trigram key");
+  	//warn("Oneway found an incomplete trigram key");
     return false;
   }
 
