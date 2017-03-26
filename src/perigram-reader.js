@@ -186,7 +186,11 @@ PerigramReader.prototype._isViableDirection = function (last, curr, neighbor, di
   result = PageManager.getInstance().isTrigram(key, countThreshold);
 
   if (result) {
+<<<<<<< HEAD
    // DEBUG info("Perigram_isViable found: " + key + " (" + Grid.direction(dir) + ") " + countThreshold);
+=======
+   //info("Perigram_isViable found: " + key + " (" + Grid.direction(dir) + ") " + countThreshold);
+>>>>>>> master
 	}
   return result;
 }
