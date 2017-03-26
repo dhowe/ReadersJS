@@ -1,3 +1,4 @@
+
 var TEXTS = [{
   title: 'Misspelt Landings',
   file: 'data/misspeltLandings.txt'
@@ -24,8 +25,8 @@ var STYLE = {
   Dark: 0
 };
 
-var uiLogging = true;
-var maxFocusLog = Math.floor(window.innerHeight / 30);
+var uiLogging = true,
+  maxFocusLog = Math.floor(window.innerHeight / 30);
 
 function createInterface() {
 
@@ -45,38 +46,44 @@ function createInterface() {
     readerDef.speedSelect.source = reader;
     readerDef.speedSelect.value(speedToName(reader.speed));
 
-    //onhover message
+    // onhover message
     var hint = document.getElementById("hoverTextWrapper").cloneNode(true);
     rb.child(hint);
   });
 
-  
-
   var textSelect, styleSelect, themeSelect, uiElements = [
-
-    textSelect = initSelect("textSelect",   "full", textNames(), textChanged),
+    textSelect = initSelect("textSelect", "full", textNames(), textChanged),
     styleSelect = initSelect("styleSelect", "half", Object.keys(STYLE), styleChanged),
     themeSelect = initSelect("themeSelect", "half", ["Dark", "Light"], themeChanged),
-    //createButton('go').mousePressed(selectionDone).id('go')
   ];
 
-  // set initial class 
-  var focusedName = nameFromReader(pManager.focus()) || '';
-  document.getElementById(toSafeName(focusedName)).className += " focused";
+  // set initial class
+  var focused = pManager.focus();
+  if (focused) {
+
+    var focusedName = nameFromReader(focused) || '';
+    var button = document.getElementById(toSafeName(focusedName));
+    button && (button.className += " focused");
+  }
 
   // Append elements to interface
   var descText = ["Text", "Style", "Theme"];
   for (var i = 0; i < uiElements.length; i++) {
+
     var wrapper = createDiv('');
     wrapper.addClass('item').parent('interface');
     createP(descText[i]).parent(wrapper);
     wrapper.child(uiElements[i])
-      // uiElements[i].parent(wrapper);
   }
+
+  var timeoutId,
+    instructions = document.getElementById("instructions"),
+    menu = document.getElementById("interface");
 
   ////////////////////////////////////////////////////////////////////
 
   function textNames() {
+
     var names = [];
     TEXTS.forEach(function (text) {
       names.push(text.title);
@@ -85,6 +92,7 @@ function createInterface() {
   }
 
   function initSelect(id, style, options, onChanged, parent) {
+
     var sel = createSelect();
     for (var i = 0; i < options.length; i++)
       sel.option(options[i]);
@@ -93,7 +101,8 @@ function createInterface() {
     return sel.id(id).changed(onChanged);
   }
 
-  function initStylizedSelect(id, style, options, onChanged, parent) {
+  function initStylizedSelect(id, style, options, onChanged, parent) { // used?
+
     var ul = document.createElement('ul');
     ul.setAttribute('id', id);
     ul.setAttribute('class', "select");
@@ -105,6 +114,7 @@ function createInterface() {
     li.innerHTML = li.innerHTML + options[0];
 
     function renderList(element, index, arr) {
+
       var li = document.createElement('li');
       ul.appendChild(li);
       if (index === 0) li.setAttribute('class', "selected");
@@ -113,23 +123,26 @@ function createInterface() {
 
     if (style === "half") {
       ul.className += " half";
-    };
+    }
 
     parent && ul.parent(parent);
     options.forEach(renderList);
+
+    console.log(typeof onChanged);
     ul.addEventListener("change", onChanged);
 
     return ul;
   }
 
-
   function ifTrigramReady(textName) {
-     
-     if (textLoaded.indexOf(textName) != -1) {
+
+    if (textLoaded.indexOf(textName) != -1) {
+
       log("[Check Trigram] true", textName);
       return true;
-     }
-     else {
+
+    } else {
+
       log("[Check Trigram] false");
       notify = textName;
       return false;
@@ -137,6 +150,7 @@ function createInterface() {
   }
 
   function styleChanged() {
+
     var name = styleSelect.value();
     log("[UI] STYLE: " + name + "/" + STYLE[name]);
     RiText.defaultFill(STYLE[name]);
@@ -146,6 +160,7 @@ function createInterface() {
   }
 
   function themeChanged() {
+
     var theme = themeSelect.value(),
       dark = (theme === "Dark");
 
@@ -159,71 +174,80 @@ function createInterface() {
   }
 
   function resetFocus() {
-    // if only one reader is not hidden, give it focus
+
+    // if only one reader is active, give it focus
     var actives = activeReaders();
-    if (actives.length == 1)
+    if (actives.length == 1) {
+
       assignFocus(actives[0]);
+    }
 
     // if focused reader is hidden, pick a random visible
     var focused = pManager.focus();
-    if (focused && focused.hidden)
+    if (focused && focused.hidden) {
       assignFocus();
+    }
   }
 
   function assignFocus(focused) {
-    if (!focused) {
-      var actives = activeReaders();
-      focused = actives.length && actives[Math.floor(random(actives.length))];
-    }
-     //change classname
-      var readers = document.getElementsByClassName("reader");
-      for (var i = 0; i < readers.length; i++)
-          readers[i].className = readers[i].className.replace(" focused","");
 
-    document.getElementById(toSafeName(nameFromReader(focused))).className += " focused";
-    // focusSelect.value(nameFromReader(focused)) && focusChanged();
+    if (!focused) {
+
+      var actives = activeReaders(); // pick a random reader for focus
+      focused = actives.length && actives[floor(random(actives.length))];
+    }
+
+    clearFocus();
+
+    if (focused) { // only if we have an active reader
+      document.getElementById(toSafeName(nameFromReader(focused))).className += " focused";
+      // focusSelect.value(nameFromReader(focused)) && focusChanged();
+    }
+  }
+
+  function clearFocus() {
+
+    var readers = document.getElementsByClassName("reader");
+    for (var i = 0; i < readers.length; i++) {
+      readers[i].className = readers[i].className.replace(" focused", "");
+    }
   }
 
   function readerOnOffEvent(reader, onOffSwitch) {
 
     reader.hide(!onOffSwitch);
     resetFocus();
-    
-    var name = nameFromReader(reader), readerEle = document.getElementById(toSafeName(name));
-    log("[UI] READER: " + name + (reader.hidden ? ' off' : ' on'));
+
+    var name = nameFromReader(reader),
+      readerEle = document.getElementById(toSafeName(name));
+    log("[UI] " + name + (reader.hidden ? ': Off' : ': On'));
     // if(onOffSwitch)
     //   readerEle.className += ' active';
     // else
     //   readerEle.className = readerEle.className.replace(" active","");
-    
+
   }
 
   function focusChanged(focused) {
 
-      log("[UI] FOCUS: " + nameFromReader(focused));
-      focused && pManager.focus(focused);
-      assignFocus(focused);
-      //clear focusDisplay
-      $('#focusDisplay').html("");
+    log("[UI] FOCUS: " + nameFromReader(focused));
+    focused && pManager.focus(focused);
+    assignFocus(focused);
+    //clear focusDisplay
+    $('#focusDisplay').html("");
   }
 
   function renderActiveReadersClass() {
+
     readers = activeReaderNames();
     for (var i = 0; i < readers.length; i++) {
-       var readerEle = document.getElementById(toSafeName(readers[i]));
-       readerEle.className = readerEle.className.replace(" active","");
+      var readerEle = document.getElementById(toSafeName(readers[i]));
+      readerEle.className = readerEle.className.replace(" active", "");
     }
   }
 
-  // function resetOptions(select, options) {
-  //   for (var i = select.elt.length - 1; i >= 0; i--)
-  //     select.elt[i].remove();
-
-  //   for (var i = 0; i < options.length; i++)
-  //     select.option(options[i]);
-  // }
-
   function activeReaderNames() {
+
     var actives = [];
     Object.keys(readers).forEach(function (name) {
       if (!readers[name].reader.hidden)
@@ -237,145 +261,151 @@ function createInterface() {
   }
 
   function speedToName(spd) {
+
     var result;
     Object.keys(SPEED).forEach(function (name) {
       if (SPEED[name] === spd)
         result = name;
     });
-    if (!result) throw Error('unknown speed: '+spd);
+    if (!result) throw Error('unknown speed: ' + spd);
     return result;
   }
 
   function speedChanged() {
+
     var spd = this.value();
     this.source.speed = SPEED[spd];
     log("[UI] SPEED: " + nameFromReader(this.source) + '/' + this.source.speed);
   }
 
   function log() {
+
     uiLogging && console.log.apply(console, arguments);
   }
 
-////////////////////////////////////////////////////////////////////
-//FOCUS DISPLAY
+  ////////////////////////////////////////////////////////////////////
 
-window.onresize = function () {
-  //recalculate maxLog when window height changes
-  maxFocusLog = Math.floor(window.innerHeight / 30);
-}
+  window.onresize = function () {
 
-// Interface hide & show
-var body = document.getElementsByTagName('body')[0],
-    options = document.getElementById('options'),
-    menu = document.getElementById("interface");
-
- options.addEventListener('click', function ()
-{
-  if(menu.style.display === 'none') {
-     menu.style.display = 'block';
-     options.classList = "";
-  } else {
-    menu.style.display = 'none';
-    options.classList = "clear";
+    // recalculate maxLog when window height changes
+    maxFocusLog = Math.floor(window.innerHeight / 30);
   }
- 
-}, false);
 
-body.addEventListener('click', function (event)
-{
-  if (event.pageX > 520 || event.pageY > 524)
-    document.getElementById("interface").style.display = 'none';
-}, false);
+  document.getElementById('options').addEventListener('click', function () {
 
-////////////////////////////////////////////////////////////////////  
-//Interface focused Reader Hover Text
+    if (menu.style.display === 'none') {
 
-function onReaderSingleClick (ele) {
-    readerOnOffEvent(readerFromName(ele.innerHTML), ele.parentNode.getElementsByTagName('input')[0].checked);
-}
+      menu.style.display = 'block';
+      instructions.style.visibility = 'hidden';
+      options.classList = "";
 
-function onReaderDoubleClick (ele) {
-    if(!ele.parentNode.matches('.focused'))
+    } else {
+
+      menu.style.display = 'none';
+      instructions.style.visibility = 'visible';
+      options.classList = "clear";
+    }
+
+  }, false);
+
+  document.getElementsByTagName('body')[0].addEventListener('click', function (event) {
+
+    if (event.pageX > 520 || event.pageY > 524)
+      document.getElementById("interface").style.display = 'none';
+
+  }, false);
+
+  ////////////////////////////////////////////////////////////////////
+
+  function onReaderSingleClick(ele) {
+
+    readerOnOffEvent(readerFromName(ele.innerHTML),
+      ele.parentNode.getElementsByTagName('input')[0].checked);
+  }
+
+  function onReaderDoubleClick(ele) {
+
+    if (!ele.parentNode.matches('.focused'))
       focusChanged(readerFromName(ele.innerHTML));
-}
+  }
 
-menu.addEventListener('click', function(event) {
-  var el = event.target;
-//differenciate single & double click for reader
-   if (!el.matches('.reader label'))  return;
+  menu.addEventListener('click', function (event) {
 
-   if (el.getAttribute("data-dblclick") == null) {
+    var el = event.target;
+
+    // differeniate single & double click for reader
+    if (!el.matches('.reader label')) return;
+
+    if (el.getAttribute("data-dblclick") == null) {
       el.setAttribute("data-dblclick", 1);
-      setTimeout(function() {
-          if (el.getAttribute("data-dblclick") == 1) {
-              onReaderSingleClick(el);
-          }
-          el.removeAttribute("data-dblclick");
+      setTimeout(function () {
+        if (el.getAttribute("data-dblclick") == 1) {
+          onReaderSingleClick(el);
+        }
+        el.removeAttribute("data-dblclick");
       }, 300);
-  } else {
+
+    } else {
+
       el.removeAttribute("data-dblclick");
       onReaderDoubleClick(el);
-  }
-})
+    }
+  })
 
-menu.addEventListener('click', function(event) {
+  menu.addEventListener('click', function (event) {
+
     var ele = event.target;
     if (ele.matches('.hoverText a.help')) {
 
-        var display = ele.parentNode.parentNode.getElementsByClassName("helpInfo")[0].style.display;
-        display = display === "block" ? "none" : "block";
-        ele.parentNode.parentNode.getElementsByClassName("helpInfo")[0].style.display = display;
+      var display = ele.parentNode.parentNode.getElementsByClassName("helpInfo")[0].style.display;
+      display = display === "block" ? "none" : "block";
+      ele.parentNode.parentNode.getElementsByClassName("helpInfo")[0].style.display = display;
     }
-})
+  })
 
-var timeoutId;
+  menu.addEventListener('mouseover', function (event) {
 
-menu.addEventListener('mouseover', function(event) {
     var ele = event.target;
     if (ele.matches('.reader label') && !timeoutId) {
-        timeoutId = window.setTimeout(function() {
-            timeoutId = null;
-            ele.parentNode.querySelector("#hoverTextWrapper").classList = "hover";
-        }, 1000);
-    }
-})
-
-menu.addEventListener('mouseout', function(event) {
-    if (timeoutId) {
-        window.clearTimeout(timeoutId);
+      timeoutId = window.setTimeout(function () {
         timeoutId = null;
+        ele.parentNode.querySelector("#hoverTextWrapper").classList = "hover";
+      }, 1000);
+    }
+  })
+
+  menu.addEventListener('mouseout', function (event) {
+
+    if (timeoutId) {
+      window.clearTimeout(timeoutId);
+      timeoutId = null;
     }
     var helpInfos = document.getElementsByClassName("helpInfo");
     for (var i = 0; i < helpInfos.length; i++)
-        helpInfos[i].style.display = "none";
-})
+      helpInfos[i].style.display = "none";
+  })
 
-  // //on input changed display none
-  // function hideAllInfoTag () {
-  //     document.getElementById('hoverTextWrapper').style.display = "none";
-  // }
+} // end createInterface
 
-}
-//End of Create Interface
-
-//////////////////////////////////////////////////////////////////// 
+////////////////////////////////////////////////////////////////////
 function logToDisplay(msg) {
-    
-    createP(msg).parent('focusDisplay');
-    //remove first element from focusDisplay
-    var display = document.getElementById("focusDisplay");
-    var logEntries = display.childNodes.length;
 
-    if ( logEntries > maxFocusLog) {
-        while(logEntries > maxFocusLog) {
-           display.removeChild(display.childNodes[1]);
-           logEntries --;
-        }  
+  createP(msg).parent('focusDisplay');
+
+  //remove first element from focusDisplay
+  var display = document.getElementById("focusDisplay");
+  var logEntries = display.childNodes.length;
+
+  if (logEntries > maxFocusLog) {
+    while (logEntries > maxFocusLog) {
+      display.removeChild(display.childNodes[1]);
+      logEntries--;
     }
+  }
 
 }
 
-//////////////////////////////////////////////////////////////////// 
+////////////////////////////////////////////////////////////////////
 // Customized select list : Not used yet
 
 // var ul = document.getElementsByClassName('ul');
@@ -384,22 +414,19 @@ function logToDisplay(msg) {
 // for (var i = 0; i < ul.length; i++)
 //    ul[i].addEventListener('click', onSelectClicked, false);
 
-  $(document).ready(function ()
-  {
-    $("body").on("click", "ul.select li.init", function ()
-    {
-      //hide other select list if opened
-      $('ul').children('li:not(.init)').hide();
-      $('ul').children('li.init').show();
-      $(this).closest("ul").children('li').toggle();
-    });
-
-    $("body").on("click", "ul.select li:not(.init)", function ()
-    {
-      var allOptions = $("ul").children('li:not(.init)');
-      allOptions.removeClass('selected');
-      $(this).addClass('selected');
-      $(this).closest("ul").children('.init').html($(this).html());
-      $(this).closest("ul").children('li').toggle();
-    });
+$(document).ready(function () {
+  $("body").on("click", "ul.select li.init", function () {
+    //hide other select list if opened
+    $('ul').children('li:not(.init)').hide();
+    $('ul').children('li.init').show();
+    $(this).closest("ul").children('li').toggle();
   });
+
+  $("body").on("click", "ul.select li:not(.init)", function () {
+    var allOptions = $("ul").children('li:not(.init)');
+    allOptions.removeClass('selected');
+    $(this).addClass('selected');
+    $(this).closest("ul").children('.init').html($(this).html());
+    $(this).closest("ul").children('li').toggle();
+  });
+});

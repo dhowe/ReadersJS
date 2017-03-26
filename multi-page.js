@@ -62,6 +62,7 @@ function keyPressed() {
 }
 
 function loadTexts(callback) {
+
   var count = 0;
   var total = TEXTS.length;
   TEXTS.forEach(function (text) {
@@ -127,11 +128,13 @@ function readerFromName(name) {
 }
 
 function nameFromReader(reader) {
+
   var result = '';
   Object.keys(readers).forEach(function (name) {
     var rdr = readers[name].reader;
     if (rdr === reader) result = name;
   });
+
   return result;
 }
 
@@ -149,7 +152,7 @@ function textChanged() {
 }
 
 function ifTrigramReady(textName) {
-   
+
    if (textLoaded.indexOf(textName) != -1) {
     log("[Check Trigram] true", textName);
     return true;
