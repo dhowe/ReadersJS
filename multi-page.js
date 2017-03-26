@@ -49,8 +49,8 @@ function draw() {
 
 function keyPressed() {
 
-  keyCode == 39 && (pManager.nextPage());
-  keyCode == 37 && (pManager.lastPage());
+  keyCode == 39 && (pManager.nextPage(1));
+  keyCode == 37 && (pManager.lastPage(1));
 }
 
 function loadTexts(callback) {
