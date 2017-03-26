@@ -71,7 +71,7 @@ OnewayPerigramReader.prototype._determineReadingPath = function (last, neighbors
   	}
   	this.freeCount = 0;
     this.pause(true);
-    warn("Not viable heading " + Grid.direction(this.wayToGo));
+    // DEBUG warn("Not viable heading " + Grid.direction(this.wayToGo));
     return null;
 		// return neighbors[E] || this.current;
   }
@@ -98,7 +98,7 @@ OnewayPerigramReader.prototype._isViableDirection = function (last, curr, neighb
   neighbors.push(neighborAlt);
 
   if (!last || !curr || (!neighbor && !neighborAlt)) {
-  	warn("Oneway found an incomplete trigram key");
+  	// DEBUG warn("Oneway found an incomplete trigram key");
     return false;
   }
 
@@ -107,7 +107,7 @@ OnewayPerigramReader.prototype._isViableDirection = function (last, curr, neighb
 	var i = 0;
 	for (; i < neighbors.length; i++) {
 		if (!neighbors[i]) {
-			warn("no neighbors[" + i + "]");
+			// DEBUG warn("no neighbors[" + i + "]");
 			result = result || false;
 		}
 		else {
@@ -116,13 +116,13 @@ OnewayPerigramReader.prototype._isViableDirection = function (last, curr, neighb
 			countThreshold = 0; // this._adjustForStopWords(0, key.split(S));
 
 			result = result || PageManager.getInstance().isBigram(key, countThreshold);
-			info("key: '" + key + "' threshold: " + countThreshold + " result: " + result);
+			// DEBUG info("key: '" + key + "' threshold: " + countThreshold + " result: " + result);
 		}
 		if (result) break;
   }
 
   if (result) {
-  	info("Oneway - viable " + ((i == 0) ? "SE" : "S") + ": " + key + " (" + Grid.direction(dir) + ") " + countThreshold);
+  	// DEBUG info("Oneway - viable " + ((i == 0) ? "SE" : "S") + ": " + key + " (" + Grid.direction(dir) + ") " + countThreshold);
   	this.freeCount = 0;
 	}
 	
