@@ -1348,6 +1348,10 @@ var PageManager = function PageManager(host, port) {
         bigrams = this.perigrams[2];
 
       if (!bigrams) throw Error("No 2-grams loaded!");
+//       else {
+//       	console.log(bigrams);
+//       	debugger;
+//       }
 
       if (is(rts, 'array')) {
 
@@ -1356,8 +1360,10 @@ var PageManager = function PageManager(host, port) {
         key = RiTa.stripPunctuation((rts[0].text() + S +
           rts[1].text()).toLowerCase());
       }
+      threshold = threshold || 0;
+      count = bigrams[key] || 0;
 
-      return bigrams[key];
+      return count > threshold;
     },
 
     // this seems only to work in the browser for smaller files
@@ -1485,7 +1491,8 @@ var PageManager = function PageManager(host, port) {
         if (!words[i].length || words[i].match(/<pb?\/?>/)) { // <p/> or <pb/>
           continue;
         }
-        bigrams[last + ' ' + words[i]] = 0;
+        var key = RiTa.stripPunctuation((last + ' ' + words[i]).toLowerCase());
+        bigrams[key] = 1; // JHC changed this: a minimal count
         //console.log(last+' '+words[i]);
         last = words[i];
         num++;
