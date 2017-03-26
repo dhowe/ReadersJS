@@ -107,11 +107,11 @@ OnewayPerigramReader.prototype._isViableDirection = function (last, curr, neighb
 			result = result || false;
 		}
 		else {
-			key = (last.text() + S + curr.text() + S + neighbors[i].text()).toLowerCase();
+			key = (curr.text() + S + neighbors[i].text()).toLowerCase();
 			key = RiTa.stripPunctuation(key);
-			countThreshold = this._adjustForStopWords(0, key.split(S));
+			countThreshold = 0; // this._adjustForStopWords(0, key.split(S));
 
-			result = result || PageManager.getInstance().isTrigram(key, countThreshold);
+			result = result || PageManager.getInstance().isBigram(key, countThreshold);
 			info("key: '" + key + "' threshold: " + countThreshold + " result: " + result);
 		}
 		if (result) break;

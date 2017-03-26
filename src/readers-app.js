@@ -1344,9 +1344,9 @@ var PageManager = function PageManager(host, port) {
       var key = rts,
         count, words = [],
         S = ' ',
-        trigrams = this.perigrams[3];
+        bigrams = this.perigrams[2];
 
-      if (!trigrams) throw Error("No 3-grams loaded!");
+      if (!bigrams) throw Error("No 2-grams loaded!");
 
       if (is(rts, 'array')) {
 
@@ -1356,11 +1356,7 @@ var PageManager = function PageManager(host, port) {
           rts[1].text()).toLowerCase());
       }
 
-      threshold = threshold || 0;
-      count = trigrams[key] || 0;
-      //info(key+' -> '+count);
-
-      return count > threshold;
+      return bigrams[key];
     },
 
     // this seems only to work in the browser for smaller files
