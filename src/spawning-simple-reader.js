@@ -47,12 +47,12 @@ SpawningSimpleReader.prototype.onEnterCell = function (curr) {
   var neighbors = g.neighborhood(curr);
 
   if (this._isViableDirection(this.lastRead(2), curr, neighbors[8], 8)) {
-    console.log(neighbors[8]);
+    info("SpawningSimple ack'd and spawned on " + neighbors[8].text());
     var coords = Grid.coordsFor(neighbors[8]);
     var spawned = new OnewayPerigramReader(g, coords.x, coords.y, SPEED.Fast, 8, curr);
   }
   else {
-    neighbors[8] && console.log("non-viable SE neighbor " + neighbors[8].text());
+    // neighbors[8] && console.log("non-viable SE neighbor " + neighbors[8].text());
   }
   
 }

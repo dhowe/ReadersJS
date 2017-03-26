@@ -14,6 +14,7 @@ function OnewayPerigramReader(g, rx, ry, speed, dir, parent) {
   this.selectedLast = null;
   this.consoleString = '';
   this.fill = RiText.defaultFill();
+  this.eastCount = 0;
 
   //Perigram Reader Color
   this.col = [194, 194, 194, 255]; // light gray
@@ -26,21 +27,11 @@ function OnewayPerigramReader(g, rx, ry, speed, dir, parent) {
 
 OnewayPerigramReader.prototype.onEnterCell = function (curr) {
 
-  // console.log('onEnter: '+ curr.text() + " " + this.speed + " " + this.stepTime);
-  // curr.showBounds(1); // DEBUG
-  
-  // ---- based on Java VB NeighborFadingVisual ---- //
-  // variables needed individually for instances of perigram readers:
   this.actualStepTime = this.stepTime / 1000;
   this.fadeInTime = this.actualStepTime * this.fadeInFactor;
   this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
   this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
   this.gridColor = RiText.defaultFill(); // DCH: is this interface-responsive enough?
-  this.leadingFadeToColor = this.gridColor.slice(0);
-  this.trailingFadeToColor = this.gridColor.slice(0);
-  // DCH: may not work with the other 'theme' can we use alphas instead?
-  this.leadingFadeToColor = this.leadingFadeToColor.fill(this.gridColor[0] + (255 - this.gridColor[0]) / 4, 0, 3);
-  this.trailingFadeToColor = this.trailingFadeToColor.fill(this.gridColor[0] + (255 - this.gridColor[0]) / 6, 0, 3);
 
   // fading current in and out
   fid = curr.colorTo(this.col, this.fadeInTime);
@@ -64,37 +55,74 @@ OnewayPerigramReader.prototype._determineReadingPath = function (last, neighbors
 
   if (!this.current) throw Error("no current cell!");
 
-  var NW = 0,
-    N = 1,
-    NE = 2,
-    W = 3,
-    E = 5,
-    SW = 6,
-    S = 7,
-    SE = 8,
-    conText;
+  var conText;
 
   this.consoleString = '';
 
+	// adjust to allow S or SE for SE and N or NE for NE
+	var altDir = (this.wayToGo == 8) ? 7 : 1; // 7 = S; 1 = N
   // if the direction is not viable delete the reader
-  if (!this._isViableDirection(last, this.current, neighbors[this.wayToGo], this.wayToGo)) {
+  if (!this._isViableDirection(last, this.current, neighbors[this.wayToGo], neighbors[altDir], this.wayToGo)) {
+  	if (this.eastCount++ < 2)
+  		return neighbors[5] || this.current;
+  	this.eastCount = 0;
     this.pause(true);
-    return this.current;
-//     console.log("not viable");
-//     return neighbors[E] || this.current;
+    warn("Not viable heading " + Grid.direction(this.wayToGo));
+    return null;
+		// return neighbors[E] || this.current;
   }
 
-  console.log("viable");
-
-  //this._buildConTextForServer(wayToGo, neighbors);
+	// continue viable:
+	
+  // this._buildConTextForServer(wayToGo, neighbors);
   conText = neighbors[this.wayToGo].text().replace("—", "-"); // TEMP!
 
   if (neighbors[this.wayToGo]) {
-    this.consoleString = (neighbors[this.wayToGo].text() + " (" +
-      Grid.direction(this.wayToGo) + ") ");
+		// this.consoleString = (neighbors[this.wayToGo].text() + " (" + Grid.direction(this.wayToGo) + ") ");
   }
 
   return neighbors[this.wayToGo] || this.current;
+}
+
+// this version of _isViableDirection allows S or SE for SE and N or NE for NE
+OnewayPerigramReader.prototype._isViableDirection = function (last, curr, neighbor, neighborAlt, dir) {
+
+  var result = false, key, S = ' ',
+    countThreshold;
+  var neighbors = [];
+  neighbors.push(neighbor);
+  neighbors.push(neighborAlt);
+
+  if (!last || !curr || (!neighbor && !neighborAlt)) {
+  	warn("Oneway found an incomplete trigram key");
+    return false;
+  }
+
+  dir = dir || -1;
+
+	var i = 0;
+	for (; i < neighbors.length; i++) {
+		if (!neighbors[i]) {
+			warn("no neighbors[" + i + "]");
+			result = result || false;
+		}
+		else {
+			key = (last.text() + S + curr.text() + S + neighbors[i].text()).toLowerCase();
+			key = RiTa.stripPunctuation(key);
+			countThreshold = this._adjustForStopWords(0, key.split(S));
+
+			result = result || PageManager.getInstance().isTrigram(key, countThreshold);
+			info("key: '" + key + "' threshold: " + countThreshold + " result: " + result);
+		}
+		if (result) break;
+  }
+
+  if (result) {
+  	info("Oneway - viable " + ((i == 0) ? "SE" : "S") + ": " + key + " (" + Grid.direction(dir) + ") " + countThreshold);
+  	this.eastCount = 0;
+	}
+	
+  return result;
 }
 
 //////////////////////// Exports ////////////////////////

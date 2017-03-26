@@ -966,6 +966,10 @@ Reader.prototype = {
         grid = Grid.gridFor(this.current);
         this.onExitCell(this.current);
         this.current = this.selectNext();
+        if (!this.current) { // added by JHC
+        	warn("Undefined or null result from selectNext()");
+        	return;
+        }
 
         this.history.push(this.current); // or .text()?
         while (this.history.length > Reader.HISTORY_SIZE) {
@@ -1305,6 +1309,30 @@ var PageManager = function PageManager(host, port) {
 
         key = RiTa.stripPunctuation((rts[0].text() + S +
           rts[1].text() + S + rts[2].text()).toLowerCase());
+      }
+
+      threshold = threshold || 0;
+      count = trigrams[key] || 0;
+      //info(key+' -> '+count);
+
+      return count > threshold;
+    },
+
+    this.isBigram = function (rts, threshold) {
+
+      var key = rts,
+        count, words = [],
+        S = ' ',
+        trigrams = this.perigrams[3];
+
+      if (!trigrams) throw Error("No 3-grams loaded!");
+
+      if (is(rts, 'array')) {
+
+        if (!(rts && rts.length == 2)) throw Error("fail: rts=" + rts);
+
+        key = RiTa.stripPunctuation((rts[0].text() + S +
+          rts[1].text()).toLowerCase());
       }
 
       threshold = threshold || 0;

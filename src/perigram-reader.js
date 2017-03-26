@@ -58,16 +58,14 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   
   // get and fade in neighborhood
   this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
-  // console.log('X ' + this.neighborhood);
+
   // filter recently read words out of the neighborhood
   this.neighborsToFade = [];
   for  (var i = 0; i < this.neighborhood.length; i++) {
-    // console.log(this.neighborhood[i]);
     if (this.neighborhood[i] && (this.neighborhood[i] != this.lastRead(2)) && (this.neighborhood[i] != this.lastRead(3))) {
       if (this.neighborsToFade.indexOf(this.neighborhood[i]) < 0) this.neighborsToFade.push(this.neighborhood[i]);
     }
   }
-  // console.log('Y ' + this.neighborsToFade);
   
   // do the fading
   for (var i = 0; i < this.neighborsToFade.length; i++) {
@@ -150,8 +148,7 @@ PerigramReader.prototype._determineReadingPath = function (last, neighbors) {
   conText = neighbors[wayToGo].text().replace("—", "-"); // TEMP!
 
   if (neighbors[wayToGo]) {
-    this.consoleString = (neighbors[wayToGo].text() + " (" +
-      Grid.direction(wayToGo) + ") " + this.consoleString);
+//     this.consoleString = (neighbors[wayToGo].text() + " (" + Grid.direction(wayToGo) + ") ");
   }
 
   this.lastDirection = wayToGo;
@@ -185,8 +182,9 @@ PerigramReader.prototype._isViableDirection = function (last, curr, neighbor, di
 
   result = PageManager.getInstance().isTrigram(key, countThreshold);
 
-  result && (this.consoleString += "- pFound: " + key + " (" + Grid.direction(dir) + ") " + countThreshold);
-
+  if (result) {
+   info("Perigram_isViable found: " + key + " (" + Grid.direction(dir) + ") " + countThreshold);
+	}
   return result;
 }
 
