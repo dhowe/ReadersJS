@@ -1131,6 +1131,8 @@ var PageManager = function PageManager(host, port) {
 
       this.clear();
 
+      this.perigrams[2] = this._loadBigrams(txt);
+
       if (typeof txt === 'object') {
 
         this.perigrams[3] = Trigrams[toSafeName(txt.title)];
@@ -1142,7 +1144,6 @@ var PageManager = function PageManager(host, port) {
       this.y = y;
       this.width = w;
       this.height = h;
-      this._loadBigrams(txt); // add cache for multiple texts
 
       var pfont = RiText.defaultFont(),
         PAGE_BREAK = '<pb/>',
@@ -1464,6 +1465,11 @@ var PageManager = function PageManager(host, port) {
         cells.push(rt[y].splitWords());
       return cells;
     },
+
+    this._computeBigramsCounts = function (bigrams, trigrams) {
+
+    }
+
 
     this._loadBigrams = function (txt) {
 
