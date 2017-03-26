@@ -358,8 +358,7 @@ ul.select li:not(.init):hover{
     margin: -30px auto 0;
     left: 0;
     right: 0;
-    opacity: .8;
-
+    opacity: .0;
 }
 #overlay{
     position:fixed;
