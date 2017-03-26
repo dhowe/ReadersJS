@@ -94,8 +94,8 @@ function Grid(c, x, y, w, h) {
   this.header = RiText('', x + w / 2, y / 2);
   this.footer = RiText('' + (this.id + 1), x + w / 2, y + h + 15);
 
-  this.allRiTexts = this.all(); // a 1d array of RiTexts
-  this.origWords = this._getWords(); // a 2d  array of strings
+  this.allRiTexts = this.storeRiTexts(); // a 1d array of RiTexts
+  this.initial = this.storeInitial(); // a 2d array of objects {word,x,y,fill}
 
   Grid.instances.push(this);
 }
@@ -695,29 +695,40 @@ Grid.prototype = {
   },
 
   // returns a single dimensional array of all rts on the grid
-  all: function () {
+  storeRiTexts: function () {
 
     if (!this.allRiTexts) {
+
       this.allRiTexts = [];
       for (var i = 0, k = 0; this.cells.length > 0 && i < this.cells.length; i++) {
         for (var j = 0; j < this.cells[i].length; j++)
           this.allRiTexts[k++] = this.cells[i][j];
       }
     }
+
     return this.allRiTexts;
   },
 
   // returns a 2d string array of all cells at time of grid creation
-  _getWords: function () {
+  storeInitial: function () {
+
+    //console.log(RiText.defaultFill(), this.cellAt(1,1).fill());
+
+    function toData(rt) {
+      return {
+        x: rt.x, y: rt.y, text: rt.text(), fill: rt._color
+      };
+    }
 
     var words = [];
     for (var i = 0; i < this.cells.length; i++) {
       var line = [];
       for (var j = 0; j < this.cells[i].length; j++) {
-        line.push(this.cells[i][j].text());
+        line.push(toData(this.cells[i][j]));
       }
       words.push(line);
     }
+
     return words;
   }
 };
@@ -806,12 +817,17 @@ Grid.previousCell = function (rt) {
   return pt.grid.previous(pt.x, pt.y);
 }
 
-/** Resets the cell to its original text */
+/** Resets the cell to its original text and color */
 Grid.resetCell = function (rt) {
+
   var cf = Grid.coordsFor(rt),
-    tw = rt.textWidth();
-  rt.text(cf.grid.origWords[cf.y][cf.x]);
-  rt.x += (tw - rt.textWidth()) / 2;
+    data = cf.grid.initial[cf.y][cf.x];
+    //tw = rt.textWidth();
+  rt.position(data.x, data.y)
+  rt.text(data.text);
+  //rt.fill(data.fill.r, data.fill.g, data.fill.b, data.fill.a);
+  rt.fill(data.fill);
+  //rt.x += (tw - rt.textWidth()) / 2;
 }
 
 /** Prints all pages to the console */
@@ -1391,19 +1407,45 @@ var PageManager = function PageManager(host, port) {
       return result;
     },
 
-    this.nextPage = function () {
+    // optional boolean arg makes sure reader is on recto/verso after switch
+    this.nextPage = function (makeFocusedReaderVisible) {
 
       var next = this.recto.getNext();
       this.verso = this.recto;
       this.recto = next;
+
+      if (makeFocusedReaderVisible)
+        this._makeFocusedReaderVisible();
+
       return this;
     },
 
-    this.lastPage = function () {
+    this._makeFocusedReaderVisible = function() {
+
+      var reader = PageManager.getInstance().focus();
+      if (reader) {
+
+        var grid = Grid.gridFor(reader.current);
+
+        // only position if not already visible
+        if (grid !== this.recto && grid !== this.verso) {
+
+          Grid.resetCell(reader.current);
+          reader.position(this.verso, 0, 0);
+        }
+      }
+    },
+
+    // optional boolean arg makes sure reader is on recto/verso after switch
+    this.lastPage = function (makeFocusedReaderVisible) {
 
       var back = this.verso.getPrevious();
       this.recto = this.verso;
       this.verso = back;
+
+      if (makeFocusedReaderVisible)
+        this._makeFocusedReaderVisible();
+
       return this;
     },
 
