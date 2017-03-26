@@ -985,6 +985,10 @@ Reader.prototype = {
         grid = Grid.gridFor(this.current);
         this.onExitCell(this.current);
         this.current = this.selectNext();
+        if (!this.current) { // added by JHC
+        	warn("Undefined or null result from selectNext()");
+        	return;
+        }
 
         this.history.push(this.current); // or .text()?
         while (this.history.length > Reader.HISTORY_SIZE) {
@@ -1336,6 +1340,32 @@ var PageManager = function PageManager(host, port) {
       return count > threshold;
     },
 
+    this.isBigram = function (rts, threshold) {
+
+      var key = rts,
+        count, words = [],
+        S = ' ',
+        bigrams = this.perigrams[2];
+
+      if (!bigrams) throw Error("No 2-grams loaded!");
+//       else {
+//       	console.log(bigrams);
+//       	debugger;
+//       }
+
+      if (is(rts, 'array')) {
+
+        if (!(rts && rts.length == 2)) throw Error("fail: rts=" + rts);
+
+        key = RiTa.stripPunctuation((rts[0].text() + S +
+          rts[1].text()).toLowerCase());
+      }
+      threshold = threshold || 0;
+      count = bigrams[key] || 0;
+
+      return count > threshold;
+    },
+
     // this seems only to work in the browser for smaller files
     // better to include the file as a regular JS-object
     this.loadTrigrams = function (pfile, callback) {
@@ -1461,7 +1491,8 @@ var PageManager = function PageManager(host, port) {
         if (!words[i].length || words[i].match(/<pb?\/?>/)) { // <p/> or <pb/>
           continue;
         }
-        bigrams[last + ' ' + words[i]] = 0;
+        var key = RiTa.stripPunctuation((last + ' ' + words[i]).toLowerCase());
+        bigrams[key] = 1; // JHC changed this: a minimal count
         //console.log(last+' '+words[i]);
         last = words[i];
         num++;
