@@ -1,4 +1,4 @@
-var pManager, font, bgColor, readers = {};
+var pManager, font, bgColor, disabled = true, readers = {};
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -23,26 +23,30 @@ function setup() {
 
     // add some readers
     readers['Perigram Reader'] = {
-      reader: new PerigramReader(pManager.recto, SPEED.Fluent)
+      reader: new PerigramReader(pManager.recto, SPEED.Fluent),
+      off: false
     };
 
     readers['Mesostic Reader'] = {
-      reader: new MesosticReader(pManager.verso, SPEED.Steady)
+      reader: new MesosticReader(pManager.verso, SPEED.Steady),
+      off: false
     };
 
     readers['Oblique Perigram Reader'] = {
-      reader: new ObliquePerigramReader(pManager.verso, SPEED.Steady)
+      reader: new ObliquePerigramReader(pManager.verso, SPEED.Steady),
+      off: false
     };
 
     readers['Spawning Simple Reader'] = {
-      reader: new SpawningSimpleReader(pManager.recto, SPEED.Steady)
+      reader: new SpawningSimpleReader(pManager.recto, SPEED.Steady),
+      off: false
     };
 
     readers['Spawning Perigram Reader'] = {
-      reader: new SpawningPerigramReader(pManager.verso, SPEED.Steady)
+      reader: new SpawningPerigramReader(pManager.verso, SPEED.Steady),
+      off: false
     };
 
-    // set page-turner/logger
     pManager.focus(randomReader());
 
     createInterface();
@@ -109,15 +113,16 @@ function allReaders(activeOnly) {
   var all = [];
   Object.keys(readers).forEach(function (name) {
     var reader = readerFromName(name);
+    //console.log(reader.type,reader.hidden);
     if (!activeOnly || !reader.hidden)
       all.push(reader);
   })
   return all;
 }
 
-function randomReader(activeOnly) {
+function randomReader() {
 
-  var rdrs = allReaders(activeOnly);
+  var rdrs = allReaders(true);
   if (rdrs && rdrs.length) {
     return rdrs[Math.floor(random(rdrs.length))];
   }

@@ -18,12 +18,12 @@ function SpawningPerigramReader(g, rx, ry, speed) {
   //Perigram Reader Color
   this.col = [255, 165, 0, 255]; // orange
   // this.neighborCol = [127, 10, 30, 255];
-  
+
   // factors
   this.fadeInFactor = .8;
   this.fadeOutFactor = 10;
   this.delayFactor = 2.5;
-  
+
 }
 
 SpawningPerigramReader.prototype.selectNext = function () {

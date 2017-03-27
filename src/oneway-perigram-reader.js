@@ -16,6 +16,7 @@ function OnewayPerigramReader(g, rx, ry, speed, dir, parent) {
   this.consoleString = '';
   this.fill = RiText.defaultFill();
   this.freeCount = 0;
+  this.maxFreeCount = 5;
   this.neighbors = [];
 
   //Perigram Reader Color
@@ -57,75 +58,59 @@ OnewayPerigramReader.prototype._determineReadingPath = function (last, neighbors
 
   if (!this.current) throw Error("no current cell!");
 
-  var conText;
-
-  this.consoleString = '';
-
-  // if the direction is not viable delete the reader
-  if (!this._isViableDirection(last, this.current, neighbors[this.wayToGo], neighbors[this.altWayToGo], this.wayToGo)) {
-
-    if (++this.freeCount < 4) {  // DCH: was (this.freeCount++ < 4)
-
-      return neighbors[this.wayToGo || this.altWayToGo];
-    }
-
-    Reader.dispose(this);
-    //warn("Not viable heading " + Grid.direction(this.wayToGo));
-    return null;
-    // return neighbors[E] || this.current;
+  var vectorNeighbors = [];
+  
+  if (this._isViableDirection(this.current, neighbors[this.wayToGo]))
+  	vectorNeighbors.push(neighbors[this.wayToGo]);
+  if (this._isViableDirection(this.current, neighbors[this.altWayToGo]))
+  	vectorNeighbors.push(neighbors[this.altWayToGo]);
+  
+  var nextCell = this._chooseCell(vectorNeighbors);
+  
+  if (nextCell != null) {
+  	// info("Found bigram"); // DEBUG
+  	this.freeCount = 0;
   }
-
-  // continue viable:
-  // info(this.neighbors[this.wayToGo || this.altWayToGo].text() + " (" + Grid.direction(this.wayToGo || this.altWayToGo) + ") ");
-
-	if (neighbors[this.wayToGo] && neighbors[this.altWayToGo]) {
-		return (Math.floor(Math.random() * 2) == 0) ? neighbors[this.wayToGo] : neighbors[this.altWayToGo];
+  
+  if ((nextCell == null) && (++this.freeCount < this.maxFreeCount)) {
+		vectorNeighbors = [];
+		if (neighbors[this.wayToGo]) vectorNeighbors.push(neighbors[this.wayToGo]);
+		if (neighbors[this.altWayToGo]) vectorNeighbors.push(neighbors[this.altWayToGo]);
+  	nextCell = this._chooseCell(vectorNeighbors);
+  	// if (nextCell != null) info("Alive with no bigrams"); // DEBUG
+  }
+  
+  if (nextCell == null) Reader.dispose(this);
+  
+  return nextCell;
+}
+  
+OnewayPerigramReader.prototype._chooseCell = function (cells) {
+	switch (cells.length) {
+		case 2:
+			return cells[Math.floor(Math.random() * 2)];
+		case 1:
+			return cells[0];
+		default:
+		return null;
 	}
-  return neighbors[this.wayToGo || this.altWayToGo];
 }
 
-// this version of _isViableDirection allows S or SE for SE and N or NE for NE
-OnewayPerigramReader.prototype._isViableDirection = function (last, curr, neighbor, neighborAlt, dir) {
+// simplified
+OnewayPerigramReader.prototype._isViableDirection = function (curr, neighbor) {
 
   var key, countThreshold, result = false,
-    S = ' ', vectorNeighbors = [];
+    S = ' ';
 
-  if (!last || !curr || (!neighbor && !neighborAlt)) {
-    //warn("Oneway has no S or SE neighbor = incomplete bigram key");
+  if (!curr || !neighbor) {
     return false;
   }
 
-  neighbor && vectorNeighbors.push(neighbor);
-  neighborAlt && vectorNeighbors.push(neighborAlt);
+  key = (curr.text() + S + neighbor.text()).toLowerCase();
+  key = RiTa.stripPunctuation(key);
+  countThreshold = 0; // this._adjustForStopWords(0, key.split(S));
 
-  dir = dir || -1; // legacy code
-
-  var i = 0;
-  for (; i < vectorNeighbors.length; i++) {
-
-    if (!vectorNeighbors[i]) { // should never happen
-    
-      //warn("no vectorNeighbors[" + i + "]");
-      result = result || false;
-    } else {
-
-      key = (curr.text() + S + vectorNeighbors[i].text()).toLowerCase();
-      key = RiTa.stripPunctuation(key);
-      countThreshold = 0; // this._adjustForStopWords(0, key.split(S));
-
-      result = result || PageManager.getInstance().isBigram(key, countThreshold);
-      //info("key: '" + key + "' threshold: " + countThreshold + " result: " + result);
-    }
-    if (result) break; // found bigram for wayToGo direction
-  }
-  
-  if (result) {
-
-    // info("Oneway - viable with: " + key + " (" + Grid.direction(this.wayToGo || this.altWayToGo) + ") " + countThreshold);
-    this.freeCount = 0; // found bigram instance so allow more free diagonal steps
-  }
-
-  return result;
+  return result || PageManager.getInstance().isBigram(key, countThreshold);
 }
 
 //////////////////////// Exports ////////////////////////

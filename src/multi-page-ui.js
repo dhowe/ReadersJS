@@ -32,9 +32,11 @@ function createInterface() {
 
   Object.keys(readers).forEach(function (name) {
 
-    var readerDef = readers[name],
-      reader = readerDef.reader,
-      rb = createCheckbox(name, !reader.hidden);
+    var rb, readerDef = readers[name],
+      reader = readerDef.reader;
+
+    reader.hidden = readerDef.off || false;
+    rb = createCheckbox(name, !reader.hidden);
 
     // rb.changed(readerOnOffEvent);
     rb.parent('interface');
@@ -42,32 +44,38 @@ function createInterface() {
     rb.id(toSafeName(name));
 
     readerDef.radioButton = rb;
-    readerDef.speedSelect = initSelect("speedSelect", "full", Object.keys(SPEED), speedChanged, rb);
+    readerDef.speedSelect = initSelect('speedSelect', 'full', Object.keys(SPEED), speedChanged, rb);
     readerDef.speedSelect.source = reader;
     readerDef.speedSelect.value(speedToName(reader.speed));
 
     // onhover message
-    var hint = document.getElementById("hoverTextWrapper").cloneNode(true);
-    rb.child(hint);
+    rb.child(document.getElementById('hoverTextWrapper').cloneNode(true));
   });
 
   var textSelect, styleSelect, themeSelect, uiElements = [
-    textSelect = initSelect("textSelect", "full", textNames(), textChanged),
-    styleSelect = initSelect("styleSelect", "half", Object.keys(STYLE), styleChanged),
-    themeSelect = initSelect("themeSelect", "half", ["Dark", "Light"], themeChanged),
+    textSelect = initSelect('textSelect', 'full', textNames(), textChanged),
+    styleSelect = initSelect('styleSelect', 'half', Object.keys(STYLE), styleChanged),
+    themeSelect = initSelect('themeSelect', 'half', ['Dark', 'Light'], themeChanged),
   ];
 
   // set initial class
   var focused = pManager.focus();
   if (focused) {
 
+    if (focused.hidden) {
+
+      focused = randomReader();
+      warn("Focus repair "+(focused ? '-> ' + focused.type :
+        "failed: "+(allReaders(true).length + " readers"))); // FIX ME
+    }
+
     var focusedName = nameFromReader(focused) || '';
     var button = document.getElementById(toSafeName(focusedName));
-    button && (button.className += " focused");
+    button && (button.className += ' focused');
   }
 
   // Append elements to interface
-  var descText = ["Text", "Style", "Theme"];
+  var descText = ['Text', 'Style', 'Theme'];
   for (var i = 0; i < uiElements.length; i++) {
 
     var wrapper = createDiv('');
@@ -327,11 +335,11 @@ function createInterface() {
        readerOnOffEvent(readerFromName(ele.innerHTML), true);
        input.checked = false;
     }
-     
+
     if (!ele.parentNode.matches('.focused'))
       focusChanged(readerFromName(ele.innerHTML));
 
-   
+
   }
 
   menu.addEventListener('click', function (event) {

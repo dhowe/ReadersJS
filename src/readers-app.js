@@ -887,6 +887,9 @@ Reader.modeName = function (mode) {
 
 Reader.dispose = function (reader) {
 
+  //Reader.DEBUG_CREATES &&
+  console.log('[MEM] Delete #'+reader.id+' called');
+
   reader.hide();
   reader.current = null;
   reader.history.length = 0;
@@ -930,8 +933,8 @@ function Reader(g, cx, cy, speed) { // constructor
   this.steps = 0;
   this.history = [];
   this.socket = null;
-  this.hidden = false;
   this.paused = false;
+  this.hidden = false;
   this.type = 'Reader';
   this.neighborhood = [];
   this.showNeighbors = true;
@@ -946,16 +949,13 @@ function Reader(g, cx, cy, speed) { // constructor
     cx = cy = 0;
   }
 
-  this.position(g, cx, cy);
+  this.position(g, cx || 0, cy || 0);
 
   Reader.instances.push(this);
 
   var reader = this;
-  if (this.pman.mode != Reader.CLIENT) {
-    setTimeout(function () {
-      reader.step();
-    }, 1);
-  }
+  if (this.pman.mode != Reader.CLIENT)
+    setTimeout(reader.step.bind(reader), 1);
 }
 
 Reader.prototype = {
@@ -994,7 +994,7 @@ Reader.prototype = {
   hide: function (b) {
 
     this.hidden = b;
-    if (this.hidden)
+    if (this.hidden && this.current)
       this.onExitCell(this.current);
   },
 
@@ -1006,9 +1006,7 @@ Reader.prototype = {
 
   step: function () {
 
-    var grid, msg, pMan = PageManager.getInstance();
-    var reader = this; // for anonymous function
-
+    var grid, msg, reader = this; // for anonymous function
     if (!this.paused && !this.hidden) {
 
       if (this.steps) {
@@ -1032,13 +1030,13 @@ Reader.prototype = {
         if (this.hasFocus() && grid != Grid.gridFor(this.current)) {
 
           // info('\n'+this.type+'.pageTurn()\n');
-          pMan.nextPage();
+          this.pman.nextPage();
         }
       }
 
       msg = this.textForServer();
 
-      pMan.notifyServer && (pMan.sendUpdate(this, msg));
+      this.pman.notifyServer && (this.pman.sendUpdate(this, msg));
 
       if (!this.hidden && this.hasFocus() && typeof createP === 'function') {
         //console.log(msg);
@@ -1048,6 +1046,7 @@ Reader.prototype = {
       reader.stepTime = this.speed * 1000; // to milliseconds
 
       if (Reader.VARY_SPEED_BY_SYLLABLE_COUNT) {
+        if (!this.current) throw Error(this.type+'/'+this.hidden);
         var letters = this.current.text().length - 1;
         reader.stepTime = Math.trunc(reader.stepTime * (1 + letters * .1));
       }
@@ -1063,7 +1062,7 @@ Reader.prototype = {
 
   hasFocus: function () {
 
-    return this === PageManager.getInstance().focused;
+    return (this === this.pman.focused);
   },
 
   textForServer: function () {
