@@ -16,6 +16,7 @@ function OnewayPerigramReader(g, rx, ry, speed, dir, parent) {
   this.consoleString = '';
   this.fill = RiText.defaultFill();
   this.freeCount = 0;
+  this.neighbors = [];
 
   //Perigram Reader Color
   this.col = [194, 194, 194, 255]; // light gray
@@ -75,7 +76,7 @@ OnewayPerigramReader.prototype._determineReadingPath = function (last, neighbors
   }
 
   // continue viable:
-  // info(neighbors[this.wayToGo || this.altWayToGo].text() + " (" + Grid.direction(this.wayToGo || this.altWayToGo) + ") ");
+  // info(this.neighbors[this.wayToGo || this.altWayToGo].text() + " (" + Grid.direction(this.wayToGo || this.altWayToGo) + ") ");
 
 	if (neighbors[this.wayToGo] && neighbors[this.altWayToGo]) {
 		return (Math.floor(Math.random() * 2) == 0) ? neighbors[this.wayToGo] : neighbors[this.altWayToGo];
@@ -87,29 +88,28 @@ OnewayPerigramReader.prototype._determineReadingPath = function (last, neighbors
 OnewayPerigramReader.prototype._isViableDirection = function (last, curr, neighbor, neighborAlt, dir) {
 
   var key, countThreshold, result = false,
-    S = ' ',
-    neighbors = [];
-
-  neighbors.push(neighbor);
-  neighbors.push(neighborAlt);
+    S = ' ', vectorNeighbors = [];
 
   if (!last || !curr || (!neighbor && !neighborAlt)) {
     //warn("Oneway has no S or SE neighbor = incomplete bigram key");
     return false;
   }
 
+  neighbor && vectorNeighbors.push(neighbor);
+  neighborAlt && vectorNeighbors.push(neighborAlt);
+
   dir = dir || -1; // legacy code
 
   var i = 0;
-  for (; i < neighbors.length; i++) {
+  for (; i < vectorNeighbors.length; i++) {
 
-    if (!neighbors[i]) {
+    if (!vectorNeighbors[i]) { // should never happen
     
-      //warn("no neighbors[" + i + "]");
+      //warn("no vectorNeighbors[" + i + "]");
       result = result || false;
     } else {
 
-      key = (curr.text() + S + neighbors[i].text()).toLowerCase();
+      key = (curr.text() + S + vectorNeighbors[i].text()).toLowerCase();
       key = RiTa.stripPunctuation(key);
       countThreshold = 0; // this._adjustForStopWords(0, key.split(S));
 
@@ -121,7 +121,7 @@ OnewayPerigramReader.prototype._isViableDirection = function (last, curr, neighb
   
   if (result) {
 
-    info("Oneway - viable with: " + key + " (" + Grid.direction(this.wayToGo || this.altWayToGo) + ") " + countThreshold);
+    // info("Oneway - viable with: " + key + " (" + Grid.direction(this.wayToGo || this.altWayToGo) + ") " + countThreshold);
     this.freeCount = 0; // found bigram instance so allow more free diagonal steps
   }
 
