@@ -65,7 +65,8 @@ OnewayPerigramReader.prototype._determineReadingPath = function (last, neighbors
   // if the direction is not viable delete the reader
   if (!this._isViableDirection(last, this.current, neighbors[this.wayToGo], neighbors[altDir], this.wayToGo)) {
 
-    if (++this.freeCount < 4) {
+    if (++this.freeCount < 4) {  // DCH: was (this.freeCount++ < 4)
+
       // info("went east"); // DEBUG
       return neighbors[this.wayToGo || altDir];
       // return neighbors[this.wayToGo] || this.current;
