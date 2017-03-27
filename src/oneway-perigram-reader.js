@@ -78,8 +78,10 @@ OnewayPerigramReader.prototype._determineReadingPath = function (last, neighbors
   // info(neighbors[this.wayToGo || this.altWayToGo].text() + " (" + Grid.direction(this.wayToGo || this.altWayToGo) + ") ");
 
 	if (neighbors[this.wayToGo] && neighbors[this.altWayToGo]) {
+
 		return (Math.floor(Math.random() * 2) == 0) ? neighbors[this.wayToGo] : neighbors[this.altWayToGo];
 	}
+
   return neighbors[this.wayToGo || this.altWayToGo];
 }
 
@@ -104,7 +106,7 @@ OnewayPerigramReader.prototype._isViableDirection = function (last, curr, neighb
   for (; i < neighbors.length; i++) {
 
     if (!neighbors[i]) {
-    
+
       //warn("no neighbors[" + i + "]");
       result = result || false;
     } else {
@@ -118,7 +120,7 @@ OnewayPerigramReader.prototype._isViableDirection = function (last, curr, neighb
     }
     if (result) break; // found bigram for wayToGo direction
   }
-  
+
   if (result) {
 
     info("Oneway - viable with: " + key + " (" + Grid.direction(this.wayToGo || this.altWayToGo) + ") " + countThreshold);

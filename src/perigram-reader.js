@@ -23,7 +23,6 @@ function PerigramReader(g, rx, ry, speed) {
   this.fadeInFactor = .8;
   this.fadeOutFactor = 10;
   this.delayFactor = 2.5;
-
 }
 
 PerigramReader.prototype.selectNext = function () {
