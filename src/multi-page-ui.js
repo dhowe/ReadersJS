@@ -292,15 +292,12 @@ function createInterface() {
   }
 
   document.getElementById('options').addEventListener('click', function () {
-
-    if (menu.style.display === 'none') {
-
+    if (menu.offsetHeight === 0) {
       menu.style.display = 'block';
       instructions.style.visibility = 'hidden';
       options.classList = "";
 
     } else {
-
       menu.style.display = 'none';
       instructions.style.visibility = 'visible';
       options.classList = "clear";
