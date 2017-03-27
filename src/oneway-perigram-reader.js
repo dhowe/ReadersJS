@@ -10,6 +10,7 @@ function OnewayPerigramReader(g, rx, ry, speed, dir, parent) {
   Reader.call(this, g, rx, ry, speed); // superclass constructor
   this.type = 'OnewayPerigramReader'; //  superclass variable(s)
   this.wayToGo = dir;
+  this.altWayToGo = (dir == 2) ? 1 : 7; // allowing N or S for NE or SE
   this.parentLast = parent;
   this.selectedLast = null;
   this.consoleString = '';
@@ -59,20 +60,14 @@ OnewayPerigramReader.prototype._determineReadingPath = function (last, neighbors
 
   this.consoleString = '';
 
-  // adjust to allow S or SE for SE and N or NE for NE
-  var altDir = (this.wayToGo == 8) ? 7 : 1; // 7 = S; 1 = N
-
   // if the direction is not viable delete the reader
-  if (!this._isViableDirection(last, this.current, neighbors[this.wayToGo], neighbors[altDir], this.wayToGo)) {
+  if (!this._isViableDirection(last, this.current, neighbors[this.wayToGo], neighbors[this.altWayToGo], this.wayToGo)) {
 
     if (++this.freeCount < 4) {  // DCH: was (this.freeCount++ < 4)
 
-      // info("went east"); // DEBUG
-      return neighbors[this.wayToGo || altDir];
-      // return neighbors[this.wayToGo] || this.current;
+      return neighbors[this.wayToGo || this.altWayToGo];
     }
 
-    this.freeCount = 0;
     Reader.dispose(this);
     //warn("Not viable heading " + Grid.direction(this.wayToGo));
     return null;
@@ -80,15 +75,12 @@ OnewayPerigramReader.prototype._determineReadingPath = function (last, neighbors
   }
 
   // continue viable:
+  // info(neighbors[this.wayToGo || this.altWayToGo].text() + " (" + Grid.direction(this.wayToGo || this.altWayToGo) + ") ");
 
-  // this._buildConTextForServer(wayToGo, neighbors);
-  conText = neighbors[this.wayToGo].text().replace("—", "-"); // TEMP!
-
-  if (neighbors[this.wayToGo]) {
-    // this.consoleString = (neighbors[this.wayToGo].text() + " (" + Grid.direction(this.wayToGo) + ") ");
-  }
-
-  return neighbors[this.wayToGo] || this.current;
+	if (neighbors[this.wayToGo] && neighbors[this.altWayToGo]) {
+		return (Math.floor(Math.random() * 2) == 0) ? neighbors[this.wayToGo] : neighbors[this.altWayToGo];
+	}
+  return neighbors[this.wayToGo || this.altWayToGo];
 }
 
 // this version of _isViableDirection allows S or SE for SE and N or NE for NE
@@ -102,17 +94,17 @@ OnewayPerigramReader.prototype._isViableDirection = function (last, curr, neighb
   neighbors.push(neighborAlt);
 
   if (!last || !curr || (!neighbor && !neighborAlt)) {
-    //warn("Oneway found an incomplete trigram key");
+    //warn("Oneway has no S or SE neighbor = incomplete bigram key");
     return false;
   }
 
-  dir = dir || -1;
+  dir = dir || -1; // legacy code
 
   var i = 0;
   for (; i < neighbors.length; i++) {
 
     if (!neighbors[i]) {
-
+    
       //warn("no neighbors[" + i + "]");
       result = result || false;
     } else {
@@ -124,13 +116,13 @@ OnewayPerigramReader.prototype._isViableDirection = function (last, curr, neighb
       result = result || PageManager.getInstance().isBigram(key, countThreshold);
       //info("key: '" + key + "' threshold: " + countThreshold + " result: " + result);
     }
-    if (result) break;
+    if (result) break; // found bigram for wayToGo direction
   }
-
+  
   if (result) {
 
-    //info("Oneway - viable " + ((i == 0) ? "SE" : "S") + ": " + key + " (" + Grid.direction(dir) + ") " + countThreshold);
-    this.freeCount = 0;
+    info("Oneway - viable with: " + key + " (" + Grid.direction(this.wayToGo || this.altWayToGo) + ") " + countThreshold);
+    this.freeCount = 0; // found bigram instance so allow more free diagonal steps
   }
 
   return result;
