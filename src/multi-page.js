@@ -25,11 +25,11 @@ function setup() {
     readers['Perigram Reader'] = {
       reader: new PerigramReader(pManager.recto, SPEED.Fluent)
     };
-    
+
     readers['Mesostic Reader'] = {
       reader: new MesosticReader(pManager.verso, SPEED.Steady)
     };
-    
+
     readers['Oblique Perigram Reader'] = {
       reader: new ObliquePerigramReader(pManager.verso, SPEED.Steady)
     };
@@ -61,15 +61,15 @@ function keyPressed() {
   keyCode == 39 && (pManager.nextPage(1));
   keyCode == 37 && (pManager.lastPage(1));
 
-  if (key === 'R') {
+  if (key === 'R') { // MEMORY DEBUGGING (PRESS 'r' FOR CONSOLE OUTPUT)
     var stats = {}, ids = [];
     for (var i = 0; i < Reader.instances.length; i++) {
-      ids.push(Reader.instances[i].id);
+      ids.push(Reader.instances[i].id + "/" + (Reader.instances[i].freeCount || '-'));
       if (!stats[Reader.instances[i].type])
         stats[Reader.instances[i].type] = 0;
       stats[Reader.instances[i].type]++;
     }
-    console.log(stats, ids);
+    console.log("[MEM] Count:", Reader.instances.length, stats, ids);
   }
 }
 
@@ -94,7 +94,7 @@ function resetText(textName) {
 
   pManager.layout(textFromName(textName), 25, 40, 580, 650);
 
-  allReaders().forEach(function(r) {
+  allReaders().forEach(function (r) {
 
     // focused reader on verso, others distributed across pages
     var idx = (r.hasFocus()) ? 0 : (r.id % Grid.instances.length);
@@ -107,7 +107,7 @@ function resetText(textName) {
 function allReaders(activeOnly) {
 
   var all = [];
-  Object.keys(readers).forEach(function(name) {
+  Object.keys(readers).forEach(function (name) {
     var reader = readerFromName(name);
     if (!activeOnly || !reader.hidden)
       all.push(reader);
@@ -151,25 +151,28 @@ function nameFromReader(reader) {
 }
 
 function textChanged() {
-    var e = document.getElementById('textSelect')
-    var textName = e.options[e.selectedIndex].value;
-    log("[UI] TEXT: " + textName);
-    if ( ifTrigramReady(textName) )
-       resetText(textName);
-    else {
-      notify = textName;
-      overlay.classList.toggle('fade');
 
-    }
+  var e = document.getElementById('textSelect')
+  var textName = e.options[e.selectedIndex].value;
+  log("[UI] TEXT: " + textName);
+
+  if (ifTrigramReady(textName)) {
+
+    resetText(textName);
+
+  } else {
+
+    notify = textName;
+    overlay.classList.toggle('fade');
+  }
 }
 
 function ifTrigramReady(textName) {
 
-   if (textLoaded.indexOf(textName) != -1) {
+  if (textLoaded.indexOf(textName) != -1) {
     log("[Check Trigram] true", textName);
     return true;
-   }
-   else {
+  } else {
     log("[Check Trigram] false");
     notify = textName;
     return false;
