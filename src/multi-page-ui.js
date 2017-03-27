@@ -292,15 +292,12 @@ function createInterface() {
   }
 
   document.getElementById('options').addEventListener('click', function () {
-
-    if (menu.style.display === 'none') {
-
+    if (menu.offsetHeight === 0) {
       menu.style.display = 'block';
       instructions.style.visibility = 'hidden';
       options.classList = "";
 
     } else {
-
       menu.style.display = 'none';
       instructions.style.visibility = 'visible';
       options.classList = "clear";
@@ -406,13 +403,19 @@ function logToDisplay(msg) {
 
   if (logEntries > maxFocusLog) {
     while (logEntries > maxFocusLog) {
-      display.removeChild(display.childNodes[1]);
+      display.removeChild(display.childNodes[2]);
       logEntries--;
     }
   }
 
 }
-
+$(document).ready(function () {
+  $('#focusDisplayTag').click(function() {
+    var tag = $('#focusDisplay:visible').length === 0 ? " - " : " + ";
+    $('#focusDisplay').slideToggle("slow");
+    $('#status').html(tag);
+  })
+});
 ////////////////////////////////////////////////////////////////////
 // Customized select list : Not used yet
 
@@ -437,4 +440,5 @@ $(document).ready(function () {
     $(this).closest("ul").children('.init').html($(this).html());
     $(this).closest("ul").children('li').toggle();
   });
+
 });
