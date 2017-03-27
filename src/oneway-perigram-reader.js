@@ -59,29 +59,32 @@ OnewayPerigramReader.prototype._determineReadingPath = function (last, neighbors
 
   this.consoleString = '';
 
-	// adjust to allow S or SE for SE and N or NE for NE
-	var altDir = (this.wayToGo == 8) ? 7 : 1; // 7 = S; 1 = N
+  // adjust to allow S or SE for SE and N or NE for NE
+  var altDir = (this.wayToGo == 8) ? 7 : 1; // 7 = S; 1 = N
+
   // if the direction is not viable delete the reader
   if (!this._isViableDirection(last, this.current, neighbors[this.wayToGo], neighbors[altDir], this.wayToGo)) {
-  	if (this.freeCount++ < 4) {
-  		// info("went east"); // DEBUG
-  		return neighbors[this.wayToGo || altDir];
-  		// return neighbors[this.wayToGo] || this.current;
-  	}
-  	this.freeCount = 0;
+
+    if (++this.freeCount < 4) {
+      // info("went east"); // DEBUG
+      return neighbors[this.wayToGo || altDir];
+      // return neighbors[this.wayToGo] || this.current;
+    }
+
+    this.freeCount = 0;
     Reader.dispose(this);
     //warn("Not viable heading " + Grid.direction(this.wayToGo));
     return null;
-		// return neighbors[E] || this.current;
+    // return neighbors[E] || this.current;
   }
 
-	// continue viable:
+  // continue viable:
 
   // this._buildConTextForServer(wayToGo, neighbors);
   conText = neighbors[this.wayToGo].text().replace("—", "-"); // TEMP!
 
   if (neighbors[this.wayToGo]) {
-		// this.consoleString = (neighbors[this.wayToGo].text() + " (" + Grid.direction(this.wayToGo) + ") ");
+    // this.consoleString = (neighbors[this.wayToGo].text() + " (" + Grid.direction(this.wayToGo) + ") ");
   }
 
   return neighbors[this.wayToGo] || this.current;
@@ -90,40 +93,44 @@ OnewayPerigramReader.prototype._determineReadingPath = function (last, neighbors
 // this version of _isViableDirection allows S or SE for SE and N or NE for NE
 OnewayPerigramReader.prototype._isViableDirection = function (last, curr, neighbor, neighborAlt, dir) {
 
-  var result = false, key, S = ' ',
-    countThreshold;
-  var neighbors = [];
+  var key, countThreshold, result = false,
+    S = ' ',
+    neighbors = [];
+
   neighbors.push(neighbor);
   neighbors.push(neighborAlt);
 
   if (!last || !curr || (!neighbor && !neighborAlt)) {
-  	//warn("Oneway found an incomplete trigram key");
+    //warn("Oneway found an incomplete trigram key");
     return false;
   }
 
   dir = dir || -1;
 
-	var i = 0;
-	for (; i < neighbors.length; i++) {
-		if (!neighbors[i]) {
-			//warn("no neighbors[" + i + "]");
-			result = result || false;
-		}
-		else {
-			key = (curr.text() + S + neighbors[i].text()).toLowerCase();
-			key = RiTa.stripPunctuation(key);
-			countThreshold = 0; // this._adjustForStopWords(0, key.split(S));
+  var i = 0;
+  for (; i < neighbors.length; i++) {
 
-			result = result || PageManager.getInstance().isBigram(key, countThreshold);
-			//info("key: '" + key + "' threshold: " + countThreshold + " result: " + result);
-		}
-		if (result) break;
+    if (!neighbors[i]) {
+
+      //warn("no neighbors[" + i + "]");
+      result = result || false;
+    } else {
+
+      key = (curr.text() + S + neighbors[i].text()).toLowerCase();
+      key = RiTa.stripPunctuation(key);
+      countThreshold = 0; // this._adjustForStopWords(0, key.split(S));
+
+      result = result || PageManager.getInstance().isBigram(key, countThreshold);
+      //info("key: '" + key + "' threshold: " + countThreshold + " result: " + result);
+    }
+    if (result) break;
   }
 
   if (result) {
-  	//info("Oneway - viable " + ((i == 0) ? "SE" : "S") + ": " + key + " (" + Grid.direction(dir) + ") " + countThreshold);
-  	this.freeCount = 0;
-	}
+
+    //info("Oneway - viable " + ((i == 0) ? "SE" : "S") + ": " + key + " (" + Grid.direction(dir) + ") " + countThreshold);
+    this.freeCount = 0;
+  }
 
   return result;
 }
