@@ -50,7 +50,7 @@ SpawningSimpleReader.prototype.onEnterCell = function (curr) {
     //info("SpawningSimple ack'd and spawned on " + neighbors[8].text());
     coords = Grid.coordsFor(neighbors[8]);
     spawned = new OnewayPerigramReader(g, coords.x, coords.y, SPEED.Fast, 8, curr);
-    Reader.DEBUG_CREATES && console.log('Created #', spawned.id, '(SE)');
+    Reader.DEBUG_CREATES && console.log('[MEM] Create #'+spawned.id+'  (SE)');
 	}
 
   // NE:
@@ -58,7 +58,7 @@ SpawningSimpleReader.prototype.onEnterCell = function (curr) {
     //info("SpawningSimple ack'd and spawned on " + neighbors[2].text());
     coords = Grid.coordsFor(neighbors[2]);
     spawned = new OnewayPerigramReader(g, coords.x, coords.y, SPEED.Fast, 2, curr);
-    Reader.DEBUG_CREATES &&  console.log('Created #', spawned.id, '(NE)');
+    Reader.DEBUG_CREATES && console.log('[MEM] Create #'+spawned.id+'  (NE)');
     // this.pause(true); // DEBUG
   }
   else {
