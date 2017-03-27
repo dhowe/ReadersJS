@@ -22,25 +22,25 @@ function setup() {
     pManager.layout(TEXTS[0], 25, 40, 580, 650);
 
     // add some readers
-    // readers['Perigram Reader'] = {
-    //   reader: new PerigramReader(pManager.recto, SPEED.Fluent)
-    // };
-    //
-    // readers['Mesostic Reader'] = {
-    //   reader: new MesosticReader(pManager.verso, SPEED.Steady)
-    // };
-    //
-    // readers['Oblique Perigram Reader'] = {
-    //   reader: new ObliquePerigramReader(pManager.verso, SPEED.Steady)
-    // };
+    readers['Perigram Reader'] = {
+      reader: new PerigramReader(pManager.recto, SPEED.Fluent)
+    };
+    
+    readers['Mesostic Reader'] = {
+      reader: new MesosticReader(pManager.verso, SPEED.Steady)
+    };
+    
+    readers['Oblique Perigram Reader'] = {
+      reader: new ObliquePerigramReader(pManager.verso, SPEED.Steady)
+    };
 
     readers['Spawning Simple Reader'] = {
       reader: new SpawningSimpleReader(pManager.recto, SPEED.Steady)
     };
 
-    // readers['Spawning Perigram Reader'] = {
-    //   reader: new SpawningPerigramReader(pManager.verso, SPEED.Steady)
-    // };
+    readers['Spawning Perigram Reader'] = {
+      reader: new SpawningPerigramReader(pManager.verso, SPEED.Steady)
+    };
 
     // set page-turner/logger
     pManager.focus(randomReader());

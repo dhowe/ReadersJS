@@ -73,18 +73,62 @@ canvas {
     border: 1px solid #555;
     display: none;
 }
+#focusDisplayWrapper {
+    position: absolute;
+    bottom: 50px;
+    top: 0;
+
+    right: 0px;
+    width: 200px;
+    height: 100%;
+
+}
 
 #focusDisplay {
-	position:absolute;
-	bottom: 50px;
-	top:0;
-	padding-top: 20px;
-	right:0px;
-	width:200px;
-	height:100%;
-	background-color: rgba(255,255,255,.1);
-	overflow: scroll;
-	font-family:monospace;
+    padding-top: 20px;
+    display:block;
+    border-left: solid;
+    border-color: rgba(255, 255, 255, .3);
+    border-radius: 1px;
+    height: 100%;
+    background-color: black;
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+}
+#focusDisplayTag {
+    color:#DDD;
+    padding:10px;
+    line-height: 24px;
+    border-left: solid;
+    border-color: rgba(255, 255, 255, .3);
+}
+#focusDisplayTag #closeButton {
+    font-size: 24px;
+    line-height: 24px;
+}
+#focusDisplayTag:hover {
+    color:white;
+}
+#focusDisplay span {
+    opacity: .5;
+    margin-left:10px;
+}
+#focusDisplay span:hover {
+    opacity:.9;
+}
+#focusDisplay p {
+    font-family: monospace;
+}
+
+@media only screen and (min-width: 1500px) {
+    #focusDisplay, #focusDisplayTag {
+        border-color: rgba(255, 255, 255, 0);
+        background-color: rgba(255, 255, 255, .15);
+    }
+
 }
 
 select {
