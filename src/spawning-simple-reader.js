@@ -53,17 +53,14 @@ SpawningSimpleReader.prototype.onEnterCell = function (curr) {
     Reader.DEBUG_CREATES && console.log('[MEM] Create #'+spawned.id+'  (SE)');
 	}
 
-  // NE:
-  else if (this._isViableDirection(this.lastRead(2), curr, neighbors[2], 2)) {
-    //info("SpawningSimple ack'd and spawned on " + neighbors[2].text());
-    coords = Grid.coordsFor(neighbors[2]);
-    spawned = new OnewayPerigramReader(g, coords.x, coords.y, SPEED.Fast, 2, curr);
-    Reader.DEBUG_CREATES && console.log('[MEM] Create #'+spawned.id+'  (NE)');
-    // this.pause(true); // DEBUG
-  }
-  else {
-    // neighbors[8] && console.log("non-viable SE neighbor " + neighbors[8].text());
-  }
+  // NE: (No else if here: these readers should be able to spawn in both vectors at once)
+//   if (this._isViableDirection(this.lastRead(2), curr, neighbors[2], 2)) {
+//     //info("SpawningSimple ack'd and spawned on " + neighbors[2].text());
+//     coords = Grid.coordsFor(neighbors[2]);
+//     spawned = new OnewayPerigramReader(g, coords.x, coords.y, SPEED.Fast, 2, curr);
+//     Reader.DEBUG_CREATES && console.log('[MEM] Create #'+spawned.id+'  (NE)');
+//     // this.pause(true); // DEBUG
+//   }
 
 }
 
