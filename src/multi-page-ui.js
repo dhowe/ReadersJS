@@ -412,7 +412,7 @@ function logToDisplay(msg) {
 
   if (logEntries > maxFocusLog) {
     while (logEntries > maxFocusLog) {
-      display.removeChild(display.childNodes[2]);
+      display.removeChild(display.childNodes[1]);
       logEntries--;
     }
   }

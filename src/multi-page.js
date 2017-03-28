@@ -167,6 +167,8 @@ function textChanged() {
     notify = textName;
     overlay.classList.toggle('fade');
   }
+
+  $('#focusDisplay').html("");
 }
 
 function ifTrigramReady(textName) {
