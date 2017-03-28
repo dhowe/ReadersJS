@@ -887,9 +887,6 @@ Reader.modeName = function (mode) {
 
 Reader.dispose = function (reader) {
 
-  //Reader.DEBUG_CREATES &&
-  console.log('[MEM] Delete #'+reader.id+' called');
-
   reader.hide();
   reader.current = null;
   reader.history.length = 0;
@@ -953,6 +950,8 @@ function Reader(g, cx, cy, speed) { // constructor
 
   Reader.instances.push(this);
 
+  var reader = this;
+  var reader = this;
   var reader = this;
   if (this.pman.mode != Reader.CLIENT)
     setTimeout(reader.step.bind(reader), 1);
