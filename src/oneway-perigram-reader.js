@@ -1,6 +1,7 @@
 ///////////////////// OnewayPerigramReader /////////////////////
 
 subclass(OnewayPerigramReader, PerigramReader);
+
 // really only ever to-be-spawned
 // requires a 'last' (read word) to allow for
 // viable tri-grammatic perigrame look-ups
@@ -19,13 +20,16 @@ function OnewayPerigramReader(g, rx, ry, speed, dir, parent) {
   this.maxFreeCount = 5;
   this.neighbors = [];
 
-  //Perigram Reader Color
+  // Perigram Reader Color
   this.col = [194, 194, 194, 255]; // light gray
 
   // factors
   this.fadeInFactor = .8;
   this.fadeOutFactor = 10;
   this.delayFactor = 2.5;
+
+  console.log(this.type+" created");
+
 }
 
 OnewayPerigramReader.prototype.onEnterCell = function (curr) {
@@ -59,32 +63,32 @@ OnewayPerigramReader.prototype._determineReadingPath = function (last, neighbors
   if (!this.current) throw Error("no current cell!");
 
   var vectorNeighbors = [];
-  
+
   if (this._isViableDirection(this.current, neighbors[this.wayToGo]))
   	vectorNeighbors.push(neighbors[this.wayToGo]);
   if (this._isViableDirection(this.current, neighbors[this.altWayToGo]))
   	vectorNeighbors.push(neighbors[this.altWayToGo]);
-  
+
   var nextCell = this._chooseCell(vectorNeighbors);
-  
-  if (nextCell != null) {
+
+  if (nextCell) {
   	// info("Found bigram"); // DEBUG
   	this.freeCount = 0;
   }
-  
-  if ((nextCell == null) && (++this.freeCount < this.maxFreeCount)) {
+
+  if ((!nextCell) && (++this.freeCount < this.maxFreeCount)) {
 		vectorNeighbors = [];
 		if (neighbors[this.wayToGo]) vectorNeighbors.push(neighbors[this.wayToGo]);
 		if (neighbors[this.altWayToGo]) vectorNeighbors.push(neighbors[this.altWayToGo]);
   	nextCell = this._chooseCell(vectorNeighbors);
   	// if (nextCell != null) info("Alive with no bigrams"); // DEBUG
   }
-  
-  if (nextCell == null) Reader.dispose(this);
-  
+
+  if (!nextCell) Reader.dispose(this);
+
   return nextCell;
 }
-  
+
 OnewayPerigramReader.prototype._chooseCell = function (cells) {
 	switch (cells.length) {
 		case 2:

@@ -890,28 +890,40 @@ Reader.modeName = function (mode) {
 
 Reader.dispose = function (reader) {
 
-    reader.hide();
-    reader.current = null;
-    reader.history.length = 0;
-    reader.neighborhood.length = 0;
+  reader.hide();
+  reader.current = null;
+  reader.history.length = 0;
+  reader.neighborhood.length = 0;
 
-    var idx = Reader.instances.indexOf(reader);
-    if (idx < 0)
-      throw Error("Failed delete1", reader);
-    var dead = Reader.instances.splice(idx, 1);
-    if (dead.length !== 1)
-      throw Error("Failed delete2", reader);
+  var idx = Reader.instances.indexOf(reader);
+  if (idx < 0)
+    throw Error("Failed delete1", reader);
+  var dead = Reader.instances.splice(idx, 1);
+  if (dead.length !== 1)
+    throw Error("Failed delete2", reader);
 
-    Reader.DEBUG_CREATES && console.log('[MEM] Delete #' + dead[0].id,
-      'total=' + Reader.instances.length);
-  },
+  Reader.DEBUG_CREATES && console.log('[MEM] Delete #' + dead[0].id,
+    'total=' + Reader.instances.length);
+}
 
-  Reader.pauseAll = function (b) {
-    if (typeof b === 'undefined') throw Error('Reader.pauseAll() needs an argument');
-    for (var i = 0, j = Reader.instances.length; i < j; i++) {
-      Reader.instances[i].pause(b);
-    }
+Reader.pauseAll = function (b) {
+  
+  if (typeof b === 'undefined')
+    throw Error('Reader.pauseAll() needs an argument');
+  for (var i = 0, j = Reader.instances.length; i < j; i++) {
+    Reader.instances[i].pause(b);
   }
+}
+
+Reader.findByType = function (type) {
+
+  var result = [];
+  for (var i = 0, j = Reader.instances.length; i < j; i++) {
+    if (Reader.instances[i].type == type)
+      result.push(Reader.instances[i]);
+  }
+  return result;
+}
 
 Reader.findById = function (id) {
 
@@ -942,7 +954,7 @@ function Reader(g, cx, cy, speed) { // constructor
   this.speed = speed || SPEED.Steady; // default to Steady
   this.pman = PageManager.getInstance();
 
-  if (cx && typeof cy==='undefined' && typeof speed==='undefined') {
+  if (cx && typeof cy === 'undefined' && typeof speed === 'undefined') {
 
     this.speed = arguments[1] || SPEED.Steady; // default to Steady
     cx = cy = 0; // use cx for speed, then set it to 0

@@ -86,6 +86,8 @@ function loadTexts(callback) {
 function resetText(textName) {
 
   Reader.pauseAll(true);
+  Reader.findByType('OnewayPerigramReader').forEach(Reader.dispose);
+  //Reader.disposeByType();
 
   var textObj = textFromName(textName);
   pManager.layout(textObj, 25, 40, 580, 650);
@@ -98,11 +100,7 @@ function resetText(textName) {
   });
 
   var meso = readerFromName('Mesostic Reader');
-  if (0&&meso) {
-    meso.mesostic = textObj.mesostic;
-    console.log(meso, TEXTS);
-  }
-
+  meso && (meso.mesostic = textObj.mesostic);
 
   Reader.pauseAll(false);
 }

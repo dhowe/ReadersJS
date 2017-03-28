@@ -340,8 +340,6 @@ function createInterface() {
 
     if (!ele.parentNode.matches('.focused'))
       focusChanged(readerFromName(ele.innerHTML));
-
-
   }
 
   menu.addEventListener('click', function (event) {
@@ -403,6 +401,7 @@ function createInterface() {
 } // end createInterface
 
 ////////////////////////////////////////////////////////////////////
+///
 function logToDisplay(msg) {
 
   createP(msg).parent('focusDisplay');
@@ -417,8 +416,8 @@ function logToDisplay(msg) {
       logEntries--;
     }
   }
-
 }
+
 $(document).ready(function () {
   $('#focusDisplayTag').click(function() {
     var tag = $('#focusDisplay:visible').length === 0 ? " - " : " + ";
