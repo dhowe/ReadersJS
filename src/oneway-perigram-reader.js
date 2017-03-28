@@ -9,7 +9,9 @@ subclass(OnewayPerigramReader, PerigramReader);
 function OnewayPerigramReader(g, rx, ry, speed, dir, parent) {
 
   Reader.call(this, g, rx, ry, speed); // superclass constructor
-  this.type = 'OnewayPerigramReader'; //  superclass variable(s)
+
+  this.type = 'OnewayPerigramReader';
+
   this.wayToGo = dir;
   this.altWayToGo = (dir == 2) ? 1 : 7; // allowing N or S for NE or SE
   this.parentLast = parent;
@@ -21,15 +23,12 @@ function OnewayPerigramReader(g, rx, ry, speed, dir, parent) {
   this.neighbors = [];
 
   // Perigram Reader Color
-  this.col = [194, 194, 194, 255]; // light gray
+  this.col = [194, 194, 194, 255]; // light grey
 
   // factors
   this.fadeInFactor = .8;
   this.fadeOutFactor = 10;
   this.delayFactor = 2.5;
-
-  console.log(this.type+" created");
-
 }
 
 OnewayPerigramReader.prototype.onEnterCell = function (curr) {
@@ -43,7 +42,6 @@ OnewayPerigramReader.prototype.onEnterCell = function (curr) {
   // fading current in and out
   fid = curr.colorTo(this.col, this.fadeInTime);
   curr.colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime); // 1st arg: this.fill
-
 }
 
 OnewayPerigramReader.prototype.selectNext = function () {
@@ -90,6 +88,7 @@ OnewayPerigramReader.prototype._determineReadingPath = function (last, neighbors
 }
 
 OnewayPerigramReader.prototype._chooseCell = function (cells) {
+
 	switch (cells.length) {
 		case 2:
 			return cells[Math.floor(Math.random() * 2)];
@@ -103,18 +102,12 @@ OnewayPerigramReader.prototype._chooseCell = function (cells) {
 // simplified
 OnewayPerigramReader.prototype._isViableDirection = function (curr, neighbor) {
 
-  var key, countThreshold, result = false,
-    S = ' ';
+  if (!curr || !neighbor) return false;
 
-  if (!curr || !neighbor) {
-    return false;
-  }
+  var key = RiTa.stripPunctuation((curr.text() + ' ' + neighbor.text()).toLowerCase()),
+    countThreshold = 0; // this._adjustForStopWords(0, key.split(S));
 
-  key = (curr.text() + S + neighbor.text()).toLowerCase();
-  key = RiTa.stripPunctuation(key);
-  countThreshold = 0; // this._adjustForStopWords(0, key.split(S));
-
-  return result || PageManager.getInstance().isBigram(key, countThreshold);
+  return PageManager.getInstance().isBigram(key, countThreshold);
 }
 
 //////////////////////// Exports ////////////////////////

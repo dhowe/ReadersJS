@@ -57,7 +57,6 @@ function draw() {
 
   background(bgColor || 0);
   pManager && (pManager.draw());
-  //console.log(Reader.instances.length);
 }
 
 function keyPressed() {
