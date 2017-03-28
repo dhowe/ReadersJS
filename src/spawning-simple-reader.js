@@ -16,7 +16,7 @@ function SpawningSimpleReader(g, rx, ry, speed) {
   if (!speed) this.speed = SPEED.Fluent; // default speed for SpawningSimpleReaders
 
   //Perigram Reader Color
-  this.col = [5, 189, 4, 255]; // greenish
+  this.col = Reader.COLORS[this.type]; // [5, 189, 4, 255] was greenish
   // this.neighborCol = [127, 10, 30, 255];
 
   // factors

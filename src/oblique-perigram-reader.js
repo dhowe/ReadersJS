@@ -31,7 +31,7 @@ function ObliquePerigramReader(g, rx, ry, speed) {
   if (!speed) this.speed = SPEED.Steady; // default speed for ObliquePerigramReaders
 
   //Perigram Reader Color
-  this.col = [189, 5, 4, 255]; // red
+  this.col = Reader.COLORS[this.type]; // red
 
   
   // factors

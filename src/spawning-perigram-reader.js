@@ -16,7 +16,7 @@ function SpawningPerigramReader(g, rx, ry, speed) {
   if (!speed) this.speed = SPEED.Fluent; // default speed for SpawningPerigramReaders
 
   //Perigram Reader Color
-  this.col = [255, 165, 0, 255]; // orange
+  this.col = Reader.COLORS[this.type]; // orange
   // this.neighborCol = [127, 10, 30, 255];
 
   // factors
