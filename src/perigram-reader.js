@@ -16,7 +16,7 @@ function PerigramReader(g, rx, ry, speed) {
   if (!speed) this.speed = SPEED.Fluent; // default speed for PerigramReaders
 
   //Perigram Reader Color
-  this.col = [189, 5, 4, 255]; // red
+  this.col = Reader.COLORS[this.type]; // red
   // this.neighborCol = [127, 10, 30, 255];
 
   // factors
