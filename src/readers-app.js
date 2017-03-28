@@ -709,7 +709,10 @@ Grid.prototype = {
 
     function toData(rt) {
       return {
-        x: rt.x, y: rt.y, text: rt.text(), fill: rt._color
+        x: rt.x,
+        y: rt.y,
+        text: rt.text(),
+        fill: rt._color
       };
     }
 
@@ -815,7 +818,7 @@ Grid.resetCell = function (rt) {
 
   var cf = Grid.coordsFor(rt),
     data = cf.grid.initial[cf.y][cf.x];
-    //tw = rt.textWidth();
+  //tw = rt.textWidth();
   rt.position(data.x, data.y)
   rt.text(data.text);
   //rt.fill(data.fill.r, data.fill.g, data.fill.b, data.fill.a);
@@ -887,28 +890,28 @@ Reader.modeName = function (mode) {
 
 Reader.dispose = function (reader) {
 
-  reader.hide();
-  reader.current = null;
-  reader.history.length = 0;
-  reader.neighborhood.length = 0;
+    reader.hide();
+    reader.current = null;
+    reader.history.length = 0;
+    reader.neighborhood.length = 0;
 
-  var idx = Reader.instances.indexOf(reader);
-  if (idx < 0)
+    var idx = Reader.instances.indexOf(reader);
+    if (idx < 0)
       throw Error("Failed delete1", reader);
-  var dead = Reader.instances.splice(idx, 1);
-  if (dead.length !== 1)
-    throw Error("Failed delete2", reader);
+    var dead = Reader.instances.splice(idx, 1);
+    if (dead.length !== 1)
+      throw Error("Failed delete2", reader);
 
-  Reader.DEBUG_CREATES && console.log('[MEM] Delete #'+dead[0].id,
-    'total='+Reader.instances.length);
-},
+    Reader.DEBUG_CREATES && console.log('[MEM] Delete #' + dead[0].id,
+      'total=' + Reader.instances.length);
+  },
 
-Reader.pauseAll = function (b) {
-  if (typeof b === 'undefined') throw Error('Reader.pauseAll() needs an argument');
-  for (var i = 0, j = Reader.instances.length; i < j; i++) {
-    Reader.instances[i].pause(b);
+  Reader.pauseAll = function (b) {
+    if (typeof b === 'undefined') throw Error('Reader.pauseAll() needs an argument');
+    for (var i = 0, j = Reader.instances.length; i < j; i++) {
+      Reader.instances[i].pause(b);
+    }
   }
-}
 
 Reader.findById = function (id) {
 
@@ -989,7 +992,7 @@ Reader.prototype = {
 
     var line = g.lineAt(cy);
     if (!line)
-      throw Error('No line for y: '+cy);
+      throw Error('No line for y: ' + cy);
 
     if (cx < 0 || cx > line.length)
       cx = floor(random(1, line.length)); // dont select first word
@@ -1022,8 +1025,8 @@ Reader.prototype = {
         this.current = this.selectNext();
 
         if (!this.current) { // added by JHC (DH: why should this happen repeatedly?)
-        	//warn("Undefined or null result from selectNext()");
-        	return;
+          //warn("Undefined or null result from selectNext()");
+          return;
         }
 
         this.history.push(this.current); // or .text()?
@@ -1046,13 +1049,13 @@ Reader.prototype = {
 
       if (!this.hidden && this.hasFocus() && typeof createP === 'function') {
         //console.log(msg);
-        logToDisplay(msg.replace(/ /g, "&nbsp;").replace(/\n/g,"<br>"));
+        logToDisplay(msg.replace(/ /g, "&nbsp;").replace(/\n/g, "<br>"));
       }
 
       reader.stepTime = this.speed * 1000; // to milliseconds
 
       if (Reader.VARY_SPEED_BY_SYLLABLE_COUNT) {
-        if (!this.current) throw Error(this.type+'/'+this.hidden);
+        if (!this.current) throw Error(this.type + '/' + this.hidden);
         var letters = this.current.text().length - 1;
         reader.stepTime = Math.trunc(reader.stepTime * (1 + letters * .1));
       }
@@ -1387,10 +1390,10 @@ var PageManager = function PageManager(host, port) {
         bigrams = this.perigrams[2];
 
       if (!bigrams) throw Error("No 2-grams loaded!");
-//       else {
-//       	console.log(bigrams);
-//       	debugger;
-//       }
+      //       else {
+      //       	console.log(bigrams);
+      //       	debugger;
+      //       }
 
       if (is(rts, 'array')) {
 
@@ -1472,7 +1475,7 @@ var PageManager = function PageManager(host, port) {
       return this;
     },
 
-    this.makeFocusedReaderVisible = function() {
+    this.makeFocusedReaderVisible = function () {
 
       var reader = PageManager.getInstance().focus();
       if (reader) {
@@ -1484,7 +1487,7 @@ var PageManager = function PageManager(host, port) {
 
           Grid.resetCell(reader.current);
           reader.position(this.verso, -1, 0); // randomize x-pos
-          uiLogging && console.log("[UI] Reposition: "+reader.type);
+          uiLogging && console.log("[UI] Reposition: " + reader.type);
         }
       }
     },
@@ -1541,8 +1544,7 @@ var PageManager = function PageManager(host, port) {
 
     }
 
-
-    this._loadBigrams = function (txt) {
+  this._loadBigrams = function (txt) {
 
       if (this.mode == Reader.CLIENT) return; // dumb-client, no need for data
 
@@ -1700,16 +1702,16 @@ var Cache = {
 
     var to = false;
     if (expiry && parseInt(expiry) > 0) {
-      to = setTimeout(function() {
+      to = setTimeout(function () {
         Cache.clear(key);
       }, parseInt(expiry));
     }
 
     Cache.cacheData[key] = {
-          expiry: expiry,
-          val: value,
-          timeout: to,
-        };
+      expiry: expiry,
+      val: value,
+      timeout: to,
+    };
   },
 
   clear: (key) => {

@@ -29,7 +29,7 @@ function setup() {
 
     readers['Mesostic Reader'] = {
       reader: new MesosticReader(pManager.verso, SPEED.Steady),
-      off: true
+      off: 0
     };
 
     readers['Oblique Perigram Reader'] = {
@@ -87,7 +87,8 @@ function resetText(textName) {
 
   Reader.pauseAll(true);
 
-  pManager.layout(textFromName(textName), 25, 40, 580, 650);
+  var textObj = textFromName(textName);
+  pManager.layout(textObj, 25, 40, 580, 650);
 
   allReaders().forEach(function (r) {
 
@@ -95,6 +96,13 @@ function resetText(textName) {
     var idx = (r.hasFocus()) ? 0 : (r.id % Grid.instances.length);
     r.position(Grid.instances[idx], 0, 0);
   });
+
+  var meso = readerFromName('Mesostic Reader');
+  if (meso) {
+    meso.mesostic = textObj.mesostic;
+    console.log(meso, TEXTS);
+  }
+
 
   Reader.pauseAll(false);
 }
@@ -148,8 +156,9 @@ function nameFromReader(reader) {
 
 function textChanged() {
 
-  var e = document.getElementById('textSelect')
-  var textName = e.options[e.selectedIndex].value;
+  var e = document.getElementById('textSelect'),
+    textName = e.options[e.selectedIndex].value;
+
   log("[UI] TEXT: " + textName);
 
   if (ifTrigramReady(textName)) {

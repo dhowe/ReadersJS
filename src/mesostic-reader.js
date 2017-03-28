@@ -8,7 +8,7 @@ function MesosticReader(g, rx, ry, speed) {
   this.type = 'MesosticReader'; //  superclass variable(s)
 
   this.maxWordLen = Grid.maxWordLength();
-  this.mesostic = "Its Over Its Done";
+  this.mesostic = TEXTS[0].mesostic;
   this.sendLinebreak = false;
   this.upperCasing = true;
   this.letterIdx = 0;

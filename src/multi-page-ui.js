@@ -1,13 +1,16 @@
 
 var TEXTS = [{
   title: 'Misspelt Landings',
-  file: 'data/misspeltLandings.txt'
+  file: 'data/misspeltLandings.txt',
+  mesostic: 'reaching out falling through circling over landing on turning within spelling as'
 }, {
   title: 'Poetic Caption',
-  file: 'data/poeticCaption.txt'
+  file: 'data/poeticCaption.txt',
+  mesostic: 'reading as writing through'
 }, {
   title: 'The Image',
-  file: 'data/image.txt'
+  file: 'data/image.txt',
+  mesostic: 'comes in is over goes out is done lolls in stays there is had no more'
 }];
 
 var SPEED = {
