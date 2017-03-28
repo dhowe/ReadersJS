@@ -421,7 +421,7 @@ function logToDisplay(msg) {
 $(document).ready(function () {
   $('#focusDisplayTag').click(function() {
     var tag = $('#focusDisplay:visible').length === 0 ? " - " : " + ";
-    $('#focusDisplay').slideToggle("slow");
+    $('#focusDisplay').toggle("slide");
     $('#status').html(tag);
   })
 });
