@@ -29,22 +29,22 @@ function setup() {
 
     readers['Mesostic Reader'] = {
       reader: new MesosticReader(pManager.verso, SPEED.Steady),
-      off: false
+      off: true
     };
 
     readers['Oblique Perigram Reader'] = {
       reader: new ObliquePerigramReader(pManager.verso, SPEED.Steady),
-      off: false
+      off: true
     };
 
     readers['Spawning Simple Reader'] = {
       reader: new SpawningSimpleReader(pManager.recto, SPEED.Steady),
-      off: false
+      off: true
     };
 
     readers['Spawning Perigram Reader'] = {
       reader: new SpawningPerigramReader(pManager.verso, SPEED.Steady),
-      off: false
+      off: true
     };
 
     pManager.focus(randomReader());
@@ -65,16 +65,7 @@ function keyPressed() {
   keyCode == 39 && (pManager.nextPage(1));
   keyCode == 37 && (pManager.lastPage(1));
 
-  if (key === 'R') { // MEMORY DEBUGGING (PRESS 'r' FOR CONSOLE OUTPUT)
-    var stats = {}, ids = [];
-    for (var i = 0; i < Reader.instances.length; i++) {
-      ids.push(Reader.instances[i].id + "/" + (Reader.instances[i].freeCount || '-'));
-      if (!stats[Reader.instances[i].type])
-        stats[Reader.instances[i].type] = 0;
-      stats[Reader.instances[i].type]++;
-    }
-    console.log("[MEM] Count:", Reader.instances.length, stats, ids);
-  }
+  if (key === 'R') dumpMem(); // DEBUG: (PRESS 'r' FOR CONSOLE OUTPUT)
 }
 
 function loadTexts(callback) {
@@ -182,4 +173,16 @@ function ifTrigramReady(textName) {
     notify = textName;
     return false;
   }
+}
+
+function dumpMem() {
+
+  var stats = {}, ids = [];
+  for (var i = 0; i < Reader.instances.length; i++) {
+    ids.push(Reader.instances[i].id + "/" + (Reader.instances[i].freeCount || '-'));
+    if (!stats[Reader.instances[i].type])
+      stats[Reader.instances[i].type] = 0;
+    stats[Reader.instances[i].type]++;
+  }
+  console.log("[MEM] Count:", Reader.instances.length, stats, ids);
 }

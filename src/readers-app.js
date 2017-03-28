@@ -987,7 +987,14 @@ Reader.prototype = {
 
   position: function (g, cx, cy) {
 
-    this.current = g.cellAt(cx || 0, cy || 0);
+    var line = g.lineAt(cy);
+    if (!line)
+      throw Error('No line for y: '+cy);
+
+    if (cx < 0 || cx > line.length)
+      cx = floor(random(1, line.length)); // dont select first word
+
+    this.current = line[cx];
   },
 
   hide: function (b) {
@@ -1454,19 +1461,18 @@ var PageManager = function PageManager(host, port) {
     },
 
     // optional boolean arg makes sure reader is on recto/verso after switch
-    this.nextPage = function (makeFocusedReaderVisible) {
+    this.nextPage = function (ensureFocusedReaderIsVisible) {
 
       var next = this.recto.getNext();
       this.verso = this.recto;
       this.recto = next;
 
-      if (makeFocusedReaderVisible)
-        this._makeFocusedReaderVisible();
+      ensureFocusedReaderIsVisible && this.makeFocusedReaderVisible();
 
       return this;
     },
 
-    this._makeFocusedReaderVisible = function() {
+    this.makeFocusedReaderVisible = function() {
 
       var reader = PageManager.getInstance().focus();
       if (reader) {
@@ -1477,7 +1483,8 @@ var PageManager = function PageManager(host, port) {
         if (grid !== this.recto && grid !== this.verso) {
 
           Grid.resetCell(reader.current);
-          reader.position(this.verso, 0, 0);
+          reader.position(this.verso, -1, 0); // randomize x-pos
+          uiLogging && console.log("[UI] Reposition: "+reader.type);
         }
       }
     },
@@ -1490,7 +1497,7 @@ var PageManager = function PageManager(host, port) {
       this.verso = back;
 
       if (makeFocusedReaderVisible)
-        this._makeFocusedReaderVisible();
+        this.makeFocusedReaderVisible();
 
       return this;
     },

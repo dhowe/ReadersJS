@@ -65,8 +65,8 @@ function createInterface() {
     if (focused.hidden) {
 
       focused = randomReader();
-      warn("Focus repair "+(focused ? '-> ' + focused.type :
-        "failed: "+(allReaders(true).length + " readers"))); // FIX ME
+      warn("Focus repair"+(focused ? ': ' + focused.type :
+        " failed: "+(allReaders(true).length + " readers"))); // FIX ME
     }
 
     var focusedName = nameFromReader(focused) || '';
@@ -136,7 +136,7 @@ function createInterface() {
     parent && ul.parent(parent);
     options.forEach(renderList);
 
-    console.log(typeof onChanged);
+    //console.log(typeof onChanged);
     ul.addEventListener("change", onChanged);
 
     return ul;
@@ -209,6 +209,7 @@ function createInterface() {
 
     if (focused) { // only if we have an active reader
       document.getElementById(toSafeName(nameFromReader(focused))).className += " focused";
+      pManager.makeFocusedReaderVisible();
       // focusSelect.value(nameFromReader(focused)) && focusChanged();
     }
   }
@@ -226,20 +227,14 @@ function createInterface() {
     reader.hide(!onOffSwitch);
     resetFocus();
 
-    var name = nameFromReader(reader),
-      readerEle = document.getElementById(toSafeName(name));
-    log("[UI] " + name + (reader.hidden ? ': Off' : ': On'));
-    // if(onOffSwitch)
-    //   readerEle.className += ' active';
-    // else
-    //   readerEle.className = readerEle.className.replace(" active","");
-
+    log("[UI] " + nameFromReader(reader) + (reader.hidden ? ': Off' : ': On'));
   }
 
   function focusChanged(focused) {
 
-    log("[UI] FOCUS: " + nameFromReader(focused));
+    log("[UI] Focus: " + nameFromReader(focused));
     focused && pManager.focus(focused);
+
     assignFocus(focused);
     //clear focusDisplay
     $('#focusDisplay').html("");
@@ -265,6 +260,7 @@ function createInterface() {
   }
 
   function activeReaders() {
+
     return allReaders(true);
   }
 
@@ -283,13 +279,16 @@ function createInterface() {
 
     var spd = this.value();
     this.source.speed = SPEED[spd];
-    log("[UI] SPEED: " + nameFromReader(this.source) + '/' + this.source.speed);
+    log("[UI] SPEED: " + nameFromReader(this.source)
+      + '/' + this.source.speed);
   }
 
   function log() {
 
     uiLogging && console.log.apply(console, arguments);
   }
+
+  var UI = { log: log };
 
   ////////////////////////////////////////////////////////////////////
 
