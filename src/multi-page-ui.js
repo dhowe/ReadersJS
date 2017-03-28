@@ -426,9 +426,9 @@ $(document).ready(function () {
     $('#status').html(tag);
   })
 });
+
 ////////////////////////////////////////////////////////////////////
 // Customized select list : Not used yet
-
 // var ul = document.getElementsByClassName('ul');
 //   console.log(ul);
 // var onSelectClicked = function () {console.log("click");}

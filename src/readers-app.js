@@ -941,14 +941,14 @@ function Reader(g, cx, cy, speed) { // constructor
   this.waitForNetwork = false;
   this.speed = speed || SPEED.Steady; // default to Steady
   this.pman = PageManager.getInstance();
-  this.stepTime = speed * 1000; // in milliseconds
 
-  if (cx && !cy && !speed) { // 2-arg version
+  if (cx && typeof cy==='undefined' && typeof speed==='undefined') {
 
     this.speed = arguments[1] || SPEED.Steady; // default to Steady
-    cx = cy = 0;
+    cx = cy = 0; // use cx for speed, then set it to 0
   }
 
+  this.stepTime = speed * 1000; // in milliseconds
   this.position(g, cx || 0, cy || 0);
 
   Reader.instances.push(this);

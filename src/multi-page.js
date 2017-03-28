@@ -98,7 +98,7 @@ function resetText(textName) {
   });
 
   var meso = readerFromName('Mesostic Reader');
-  if (meso) {
+  if (0&&meso) {
     meso.mesostic = textObj.mesostic;
     console.log(meso, TEXTS);
   }
