@@ -29,22 +29,22 @@ function setup() {
 
     readers['Mesostic Reader'] = {
       reader: new MesosticReader(pManager.verso, SPEED.Steady),
-      off: 0
+      off: false
     };
 
     readers['Oblique Perigram Reader'] = {
       reader: new ObliquePerigramReader(pManager.verso, SPEED.Steady),
-      off: true
+      off: false
     };
 
     readers['Spawning Simple Reader'] = {
       reader: new SpawningSimpleReader(pManager.recto, SPEED.Steady),
-      off: true
+      off: false
     };
 
     readers['Spawning Perigram Reader'] = {
       reader: new SpawningPerigramReader(pManager.verso, SPEED.Steady),
-      off: true
+      off: false
     };
 
     pManager.focus(randomReader());
