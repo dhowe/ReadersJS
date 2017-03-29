@@ -746,20 +746,18 @@
       if (delay <= 0)
         return this.fill(newColor);
 
-      var c = parseColor(newColor);
-      console.log(c);
       var rt = this;
 
-      /*rt.faderId = */setTimeout(function() {
+      /*rt.faderId = */
+      setTimeout(function() {
         //clearTimeout(rt.faderId);
-
         rt.fader = {
           startTime: millis(),
           duration: seconds * 1000,
           from: rt._color,
           to: parseColor(newColor),
         }
-        console.log(rt.fader.to);
+        //console.log(rt.fader.to);
 
       }, delay * 1000);
     },
