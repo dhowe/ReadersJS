@@ -891,7 +891,6 @@ Reader.COLORS = {
   SpawningSimpleReader: [255, 126, 23, 255], // #FFB017
   SpawningPerigramReader: [216, 129, 0, 255], // #D88100
   OnewayPerigramReader: [194, 194, 194, 255] //
-
 }
 
 Reader.DEBUG_CREATES = 0;
@@ -983,8 +982,6 @@ function Reader(g, cx, cy, speed) { // constructor
 
   Reader.instances.push(this);
 
-  var reader = this;
-  var reader = this;
   var reader = this;
   if (this.pman.mode != Reader.CLIENT)
     setTimeout(reader.step.bind(reader), 1);

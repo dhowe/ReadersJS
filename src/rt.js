@@ -1,17 +1,5 @@
 (function (window, undefined) {
 
-  // TODO: remove methods that are duplicated in rita.js
-
-  function toColArr(obj, overrideAlpha) {
-
-    var a = (typeof overrideAlpha === 'undefined') ? obj.a || 255 : overrideAlpha;
-    return [obj.r, obj.g, obj.b, a];
-  }
-
-  function isNum(n) {
-    return !isNaN(parseFloat(n)) && isFinite(n);
-  }
-
   /** Returns a color object {r:,g:,b:,a:} for any set of color arguments */
   function parseColor() {
 
@@ -27,7 +15,7 @@
     if (!len) return color;
 
     if (len == 1 && is(a[0], A)) {
-      return parseColor.apply(this, a[0]);
+      return parseColor.apply(null, a[0]);
     }
 
     if (typeof a[0] === 'undefined')
@@ -133,6 +121,18 @@
 
     amt = Math.max(Math.min(amt, 1), 0);
 
+    return {
+      r: lerp(from.r, to.r, amt),
+      g: lerp(from.g, to.g, amt),
+      b: lerp(from.b, to.b, amt),
+      a: lerp(from.a, to.a, amt)
+    };
+  }
+
+  function lerpColObjArr(from, to, amt) {
+
+    amt = Math.max(Math.min(amt, 1), 0);
+
     var l = {};
 
     l.r = lerp(from.r, to[0], amt);
@@ -140,20 +140,6 @@
     l.b = lerp(from.b, to[2], amt);
     if (to.length > 3)
       l.a = lerp(from.a, to[3], amt);
-
-    return l;
-  }
-
-  function lerpCol2(from, to, amt) {
-
-    amt = Math.max(Math.min(amt, 1), 0);
-
-    var l = {};
-
-    l.r = lerp(from.r, to.r, amt);
-    l.g = lerp(from.g, to.g, amt);
-    l.b = lerp(from.b, to.b, amt);
-    l.a = lerp(from.a, to.a, amt);
 
     return l;
   }
@@ -372,9 +358,9 @@
 
     if (arguments.length) {
       RiText.defaults.fill = parseColor.apply(RiText, arguments);
-      console.log(parseColor(arguments));
+      //console.log(RiText.defaults.fill);
     }
-    return toColArr(RiText.defaults.fill);
+    return RiText.defaults.fill;
   }
 
   RiText.defaultFont = function (font, size) {
@@ -748,7 +734,7 @@
       };
     },
 
-    colorTo: function (col, seconds, delay) {
+    colorTo: function (newColor, seconds, delay) {
 
       delay = delay || 0;
 
@@ -760,7 +746,7 @@
           startTime: millis(),
           duration: seconds * 1000,
           from: rt._color,
-          to: parseColor(col),
+          to: parseColor.apply(null, newColor),
         }
 
       }, delay * 1000);
@@ -849,25 +835,21 @@
     match: function (pattern) {
 
       return this._rs.match(pattern);
-
     },
 
     charAt: function (index) {
 
       return this._rs.charAt(index);
-
     },
 
     concat: function (riText) {
 
       return this._rs._text.concat(riText.text());
-
     },
 
     containsWord: function (text) {
 
       return this._rs.indexOf(text) > -1;
-
     },
 
     endsWith: function (ending) {
@@ -878,7 +860,6 @@
     equals: function (RiText) {
 
       return RiText._rs._text === this._rs._text;
-
     },
 
     equalsIgnoreCase: function (str) {
@@ -890,25 +871,21 @@
 
         return str.text().toLowerCase() === this._rs._text.toLowerCase();
       }
-
     },
 
     indexOf: function (searchstring, start) {
 
       return this._rs._text.indexOf(searchstring, start);
-
     },
 
     lastIndexOf: function (searchstring, start) {
 
       return this._rs._text.lastIndexOf(searchstring, start);
-
     },
 
     length: function () {
 
       return this._rs._text.length;
-
     },
 
     pos: function () {
@@ -933,21 +910,18 @@
         return E;
 
       return tags[index];
-
     },
 
     insertChar: function (ind, theChar) {
 
       this._rs.insertChar.apply(this._rs, arguments);
       return this;
-
     },
 
     removeChar: function (ind) {
 
       this._rs.removeChar.apply(this._rs, arguments);
       return this;
-
     },
 
     replaceChar: function (idx, replaceWith) {
@@ -1169,7 +1143,7 @@
         return this._color;
       }
 
-      this._color = parseColor(arguments);
+      this._color = parseColor.apply(null, arguments);
       return this;
     },
 
@@ -1178,7 +1152,7 @@
       if (arguments.length === 0)
         return this._boundingFill;
 
-      this._boundingFill = parseColor(arguments);
+      this._boundingFill = parseColor.apply(null, arguments);
       return this;
     },
 
@@ -1187,7 +1161,7 @@
       if (arguments.length === 0)
         return this._boundingStroke;
 
-      this._boundingStroke = parseColor(arguments);
+      this._boundingStroke = parseColor.apply(null, arguments);
       return this;
     },
 

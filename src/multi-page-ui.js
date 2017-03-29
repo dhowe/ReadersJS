@@ -183,7 +183,7 @@ function createInterface() {
 
     bgColor = dark ? 0 : 232;
     log("[UI] THEME: " + theme, bgColor);
-    
+
     //only change the color
     var color = dark ? COLOR.White : COLOR.Black;
     var style = styleSelect.value();
@@ -233,9 +233,9 @@ function createInterface() {
 
   function clearFocus() {
 
-    var readers = document.getElementsByClassName("reader");
-    for (var i = 0; i < readers.length; i++) {
-      readers[i].className = readers[i].className.replace(" focused", "");
+    var rdrs = document.getElementsByClassName("reader");
+    for (var i = 0; i < rdrs.length; i++) {
+      rdrs[i].className = rdrs[i].className.replace(" focused", "");
     }
   }
 
@@ -259,9 +259,9 @@ function createInterface() {
 
   function renderActiveReadersClass() {
 
-    readers = activeReaderNames();
-    for (var i = 0; i < readers.length; i++) {
-      var readerEle = document.getElementById(toSafeName(readers[i]));
+    var rdrs = activeReaderNames();
+    for (var i = 0; i < rdrs.length; i++) {
+      var readerEle = document.getElementById(toSafeName(rdrs[i]));
       readerEle.className = readerEle.className.replace(" active", "");
     }
   }

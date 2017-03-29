@@ -45,8 +45,8 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
   this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
   this.gridColor = RiText.defaultFill(); // DCH: is this interface-responsive enough?
-  this.leadingFadeToColor = this.gridColor.slice(0);
-  this.trailingFadeToColor = this.gridColor.slice(0);
+  this.leadingFadeToColor = colorToArray(this.gridColor);
+  this.trailingFadeToColor = colorToArray(this.gridColor);
   // DCH: may not work with the other 'theme' can we use alphas instead?
   this.leadingFadeToColor = this.leadingFadeToColor.fill(this.gridColor[0] + (255 - this.gridColor[0]) / 4, 0, 3);
   this.trailingFadeToColor = this.trailingFadeToColor.fill(this.gridColor[0] + (255 - this.gridColor[0]) / 6, 0, 3);
@@ -94,11 +94,11 @@ PerigramReader.prototype.hide = function (v) {
 }
 
 PerigramReader.prototype.textForServer = function () {
-	
+
 	var tfs = "";
-	
+
 	tfs = this.current.text();
-	
+
 	tfs = "\n" + tfs;
 
   return tfs;

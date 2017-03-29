@@ -24,7 +24,7 @@ function setup() {
     // add some readers
     readers['Perigram Reader'] = {
       reader: new PerigramReader(pManager.recto, SPEED.Fluent),
-      off: true
+      off: 0
     };
 
     readers['Mesostic Reader'] = {
@@ -34,17 +34,17 @@ function setup() {
 
     readers['Oblique Perigram Reader'] = {
       reader: new ObliquePerigramReader(pManager.verso, SPEED.Steady),
-      off: true
+      off: 0
     };
 
     readers['Spawning Simple Reader'] = {
       reader: new SpawningSimpleReader(pManager.recto, SPEED.Steady),
-      off: true
+      off: 0
     };
 
     readers['Spawning Perigram Reader'] = {
       reader: new SpawningPerigramReader(pManager.verso, SPEED.Steady),
-      off: true
+      off: 0
     };
 
     pManager.focus(randomReader());
@@ -172,7 +172,22 @@ function textChanged() {
 
   //hide the menu
  document.getElementById("interface").style.display = 'none';
+}
 
+function colorToArray(obj, overrideAlpha) { // takes optional 2nd argument for alpha
+
+  return [obj.r, obj.g, obj.b, (typeof overrideAlpha === 'undefined')
+    ? obj.a || 255 : overrideAlpha];
+}
+
+function cloneColor(obj) {
+
+  return {
+    r: obj.r,
+    g: obj.g,
+    b: obj.b,
+    a: obj.a
+  };
 }
 
 function ifTrigramReady(textName) {
