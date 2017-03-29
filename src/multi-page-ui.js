@@ -23,10 +23,15 @@ var SPEED = {
 };
 
 var STYLE = {
-  Faint: 40,
   Grey: 70,
+  Faint: 40,
   Dark: 0
 };
+
+var COLOR = {
+  Black: 0,
+  White: 255
+}
 
 var uiLogging = true,
   maxFocusLog = Math.floor(window.innerHeight / 30);
@@ -164,9 +169,10 @@ function createInterface() {
 
     var name = styleSelect.value();
     log("[UI] STYLE: " + name + "/" + STYLE[name]);
-    RiText.defaultFill(STYLE[name]);
+
     RiText.instances.forEach(function (rt) {
-      rt.fill(STYLE[name]);
+      //only change the opacity
+      rt.alpha(STYLE[name]);
     });
   }
 
@@ -177,6 +183,14 @@ function createInterface() {
 
     bgColor = dark ? 0 : 232;
     log("[UI] THEME: " + theme, bgColor);
+    
+    //only change the color
+    var color = dark ? COLOR.White : COLOR.Black;
+    var style = styleSelect.value();
+
+    RiText.instances.forEach(function (rt) {
+      rt.fill(color, STYLE[style]);
+    });
 
     $('body').toggleClass("light", !dark);
     $('body').toggleClass("dark", dark);
