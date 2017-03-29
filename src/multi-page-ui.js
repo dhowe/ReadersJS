@@ -23,8 +23,8 @@ var SPEED = {
 };
 
 var STYLE = {
-  Faint: 40,
   Grey: 70,
+  Faint: 40,
   Dark: 0
 };
 
