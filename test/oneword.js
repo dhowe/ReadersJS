@@ -2,7 +2,7 @@ var rt, font, bb;
 
 function preload() {
 
-  font = loadFont('fonts/times.ttf');
+  font = loadFont('../fonts/times.ttf');
 }
 
 function setup() {
@@ -12,13 +12,16 @@ function setup() {
   RiText.defaultFont(font, 48);
   rt =  RiText('Hello there', 30, 50);
   bb = rt.boundingBox();
-  noFill();
+  rt.fill(255,0,0);
+
+  rt.colorTo({r:0,g:0,b:0,a:0},1,1);
 }
 
 
 function draw() {
 
-	background(255);
+	background(0);
   rt.draw();
-  rect(bb.x, bb.y, bb.width, bb.height);
+
+  //rect(bb.x, bb.y, bb.width, bb.height);
 }
