@@ -265,6 +265,14 @@ button:hover {
   display: none;
   font-size: 14px;
 }
+.reader input + label, #focusDisplayTag, #options {
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+}
+
 /* Reader Color Scheme */
 .reader input + label:before {
    /* fake*/
