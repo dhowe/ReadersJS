@@ -26,7 +26,8 @@
       color.r = a[0].r;
       color.g = a[0].g;
       color.b = a[0].b;
-      color.a = a[0].a;
+      if (typeof a[0].a !== 'undefined')
+        color.a = a[0].a
       return color;
     }
 
@@ -357,7 +358,7 @@
   RiText.defaultFill = function (r, g, b, a) {
 
     if (arguments.length) {
-      RiText.defaults.fill = parseColor.apply(RiText, arguments);
+      RiText.defaults.fill = parseColor.apply(null, arguments);
       //console.log(RiText.defaults.fill);
     }
     return RiText.defaults.fill;
@@ -745,16 +746,20 @@
       if (delay <= 0)
         return this.fill(newColor);
 
+      var c = parseColor(newColor);
+      console.log(c);
       var rt = this;
 
       /*rt.faderId = */setTimeout(function() {
         //clearTimeout(rt.faderId);
+
         rt.fader = {
           startTime: millis(),
           duration: seconds * 1000,
           from: rt._color,
-          to: parseColor.apply(null, newColor),
+          to: parseColor(newColor),
         }
+        console.log(rt.fader.to);
 
       }, delay * 1000);
     },

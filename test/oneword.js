@@ -1,4 +1,4 @@
-var rt, font, bb;
+var rt, rt2, font;
 
 function preload() {
 
@@ -10,19 +10,20 @@ function setup() {
   createCanvas(400, 400);
 
   RiText.defaultFont(font, 48);
-  rt =  RiText('Hello there', 30, 50);
-  bb = rt.boundingBox();
-  rt.fill(255,0,0);
+  RiText.defaultFill(255,0,0);
 
-  rt.colorTo({r:0,g:0,b:0,a:0},1,1); // fade to black
-  // OR rt.colorTo([0,0,0,0],1,1);
+  rt =  RiText('Hello', 30, 50);
+  rt2 =  RiText('there', 150, 50);
+
+  rt.colorTo({r:0,g:0,b:0},1,5); // fade to black after 5
+
+  rt2.colorTo([0,0,255,255],5,1); // fade slowly to blue
 }
 
 
 function draw() {
 
 	background(0);
-  rt.draw();
-
-  //rect(bb.x, bb.y, bb.width, bb.height);
+  RiText.drawAll();
+  //console.log(rt2.fill().r, rt2.fill().g, rt2.fill().b);
 }
