@@ -44,12 +44,15 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   this.fadeInTime = this.actualStepTime * this.fadeInFactor;
   this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
   this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
-  this.gridColor = RiText.defaultFill(); // DCH: is this interface-responsive enough?
-  this.leadingFadeToColor = colorToArray(this.gridColor);
-  this.trailingFadeToColor = colorToArray(this.gridColor);
+  this.gridColor = cloneColor(RiText.defaults.fill); // RiText.defaultFill(); // DCH: is this interface-responsive enough?
+  this.leadingFadeToColor = cloneColor(this.gridColor); // colorToArray(this.gridColor);
+  this.trailingFadeToColor = cloneColor(this.gridColor); // colorToArray(this.gridColor);
   // DCH: may not work with the other 'theme' can we use alphas instead?
-  this.leadingFadeToColor = this.leadingFadeToColor.fill(this.gridColor[0] + (255 - this.gridColor[0]) / 4, 0, 3);
-  this.trailingFadeToColor = this.trailingFadeToColor.fill(this.gridColor[0] + (255 - this.gridColor[0]) / 6, 0, 3);
+  this.leadingFadeToColor.a = this.leadingFadeToColor.a / 4;
+  this.trailingFadeToColor.a = this.trailingFadeToColor.a / 6;
+  
+  // this.leadingFadeToColor = this.leadingFadeToColor.fill(this.gridColor[0] + (255 - this.gridColor[0]) / 4, 0, 3);
+  // this.trailingFadeToColor = this.trailingFadeToColor.fill(this.gridColor[0] + (255 - this.gridColor[0]) / 6, 0, 3);
 
   // fading current in and out
   fid = curr.colorTo(this.col, this.fadeInTime);

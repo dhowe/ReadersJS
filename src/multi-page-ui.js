@@ -23,9 +23,9 @@ var SPEED = {
 };
 
 var STYLE = {
-  Grey: 70,
   Faint: 40,
-  Dark: 0
+  Grey: 70,
+  Invisible: 0
 };
 
 var COLOR = {
