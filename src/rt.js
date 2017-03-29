@@ -738,6 +738,9 @@
 
       delay = delay || 0;
 
+      if (!delay <= 0)
+        return this.fill(newColor);
+
       var rt = this;
 
       /*rt.faderId = */setTimeout(function() {

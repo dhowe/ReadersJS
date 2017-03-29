@@ -67,7 +67,7 @@ M.selectNext = function () {
 
       this.letter = letter;
 
-      return next; // retun the cell
+      return next;
     }
   }
 }
@@ -75,46 +75,43 @@ M.selectNext = function () {
 M.onEnterCell = function (curr) {
 
   this.fill = curr.fill();
-  curr.fill(this.col);
+  curr.colorTo(this.col, .3);
 }
 
 M.onExitCell = function (curr) {
 
-//  curr.fill.call(curr, this.fill.r, this.fill.g, this.fill.b, this.fill.a);
-  //curr.colorTo([this.fill.r, this.fill.g, this.fill.b, this.fill.a], 3);
-
-  curr.fill(this.fill);
+  curr.colorTo(this.fill, 1);
   Grid.resetCell(curr, true);
 }
 
 M.textForServer = function () {
 
-    var lett, tfs, txt = this.current.text();
+  var lett, tfs, txt = this.current.text();
 
-    if (!this.letter) return '';
+  if (!this.letter) return '';
 
-    lett = this.letter.toUpperCase();
+  lett = this.letter.toUpperCase();
 
-    tfs = this._pad(txt, lett, txt.indexOf(lett));
+  tfs = this._pad(txt, lett, txt.indexOf(lett));
 
-    if (this.sendLinebreak) {
+  if (this.sendLinebreak) {
 
-      this.sendLinebreak = false;
-      tfs = "\n" + tfs;
-    }
-
-    return tfs;
-  },
-
-  M._pad = function (raw, c, idx) {
-
-    var pre = raw.substring(0, idx),
-      padStr = '';
-    for (var i = 0; i < this.maxWordLen - pre.length - 1; i++)
-      padStr += ' ';
-
-    return padStr + raw;
+    this.sendLinebreak = false;
+    tfs = "\n" + tfs;
   }
+
+  return tfs;
+}
+
+M._pad = function (raw, c, idx) {
+
+  var pre = raw.substring(0, idx),
+    padStr = '';
+  for (var i = 0; i < this.maxWordLen - pre.length - 1; i++)
+    padStr += ' ';
+
+  return padStr + raw;
+}
 
 /* M._resetLine = function(rt) {
 		var cf = Grid.coordsFor(rt);

@@ -1,3 +1,4 @@
+src/*.java
 node_modules
 *.esproj
 *-bak*
