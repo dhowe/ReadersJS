@@ -169,6 +169,10 @@ function textChanged() {
   }
 
   $('#focusDisplay').html("");
+
+  //hide the menu
+ document.getElementById("interface").style.display = 'none';
+
 }
 
 function ifTrigramReady(textName) {
