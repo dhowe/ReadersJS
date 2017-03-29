@@ -94,8 +94,14 @@ PerigramReader.prototype.hide = function (v) {
 }
 
 PerigramReader.prototype.textForServer = function () {
+	
+	var tfs = "";
+	
+	tfs = this.current.text();
+	
+	tfs = "\n" + tfs;
 
-  return this.consoleString;
+  return tfs;
 }
 
 PerigramReader.prototype._determineReadingPath = function (last, neighbors) {

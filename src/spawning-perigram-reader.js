@@ -83,7 +83,7 @@ SpawningPerigramReader.prototype._determineReadingPath = function (last, neighbo
   }
 
   //this._buildConTextForServer(wayToGo, neighbors);
-  conText = neighbors[wayToGo].text().replace("—", "-"); // TEMP!
+  // conText = neighbors[wayToGo].text().replace("—", "-"); // TEMP!
 
   if (neighbors[wayToGo]) {
 //     this.consoleString = (neighbors[wayToGo].text() + " (" + Grid.direction(wayToGo) + ") ");

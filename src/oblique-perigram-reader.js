@@ -149,7 +149,7 @@ ObliquePerigramReader.prototype.determineReadingPath = function (neighbors) {
   if (!nextCell) Readers.error("nextCell is null!");
 
   // build the context based on where we are going
-  buildConTextForServer(nextCell);
+  // buildConTextForServer(nextCell);
 
   //if (printToConsole) printDirection(neighbors, nextCell, nextDir.int);
 
@@ -179,13 +179,6 @@ ObliquePerigramReader.prototype.tryPath = function (cellOnNewPath, theWeighting,
   // using digrams only
   return isDigram(this.currentCell, cellOnNewPath) ?
     (random.nextDouble() < theWeighting ? 1 : 0) : 0;
-}
-
-ObliquePerigramReader.prototype.buildConTextForServer = function (wayToGo)
-{
-  var spacing = "      ",
-    text = wayToGo ? wayToGo.text() : "";
-  conText = spacing + text;
 }
 
 ObliquePerigramReader.prototype.jumpToPage = function (grid)
