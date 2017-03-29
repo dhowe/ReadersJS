@@ -813,16 +813,24 @@ Grid.previousCell = function (rt) {
   return pt.grid.previous(pt.x, pt.y);
 }
 
-/** Resets the cell to its original text, position, and color */
-Grid.resetCell = function (rt, noColor) {
+/** Resets the cell to its original text and position */
+Grid.resetCell = function (rt) {
 
   var cf = Grid.coordsFor(rt),
     data = cf.grid.initial[cf.y][cf.x];
 
   rt.position(data.x, data.y)
   rt.text(data.text);
+}
 
-  noColor || rt.fill(data.fill);
+Grid.resetCellColor = function (rt, fadeTime) {
+
+  fadeTime = fadeTime || 0.001;
+
+  var cf = Grid.coordsFor(rt),
+    data = cf.grid.initial[cf.y][cf.x];
+
+  return rt.colorTo(data.fill, fadeTime);
 }
 
 /** Prints all pages to the console */
@@ -883,7 +891,6 @@ Reader.COLORS = {
   SpawningSimpleReader: [255, 126, 23, 255], // #FFB017
   SpawningPerigramReader: [216, 129, 0, 255], // #D88100
   OnewayPerigramReader: [194, 194, 194, 255] //
-
 }
 
 Reader.DEBUG_CREATES = 0;
@@ -975,8 +982,6 @@ function Reader(g, cx, cy, speed) { // constructor
 
   Reader.instances.push(this);
 
-  var reader = this;
-  var reader = this;
   var reader = this;
   if (this.pman.mode != Reader.CLIENT)
     setTimeout(reader.step.bind(reader), 1);

@@ -172,7 +172,22 @@ function textChanged() {
 
   //hide the menu
  document.getElementById("interface").style.display = 'none';
+}
 
+function colorToArray(obj, overrideAlpha) { // takes optional 2nd argument for alpha
+
+  return [obj.r, obj.g, obj.b, (typeof overrideAlpha === 'undefined')
+    ? obj.a || 255 : overrideAlpha];
+}
+
+function cloneColor(obj) {
+
+  return {
+    r: obj.r,
+    g: obj.g,
+    b: obj.b,
+    a: obj.a
+  };
 }
 
 function ifTrigramReady(textName) {
