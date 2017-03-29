@@ -736,6 +736,10 @@
 
     colorTo: function (newColor, seconds, delay) {
 
+      if (arguments.length > 3) throw Error('colorTo expects a max of 3 arguments,'
+        + ' where the target color is 1 (either an array or an object), followed by'
+        + ' the fade time (in seconds) as 2, and, optionally, the delay time as 3');
+
       delay = delay || 0;
 
       if (delay <= 0)

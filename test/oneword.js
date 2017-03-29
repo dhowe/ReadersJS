@@ -14,7 +14,8 @@ function setup() {
   bb = rt.boundingBox();
   rt.fill(255,0,0);
 
-  rt.colorTo({r:0,g:0,b:0,a:0},1,1);
+  rt.colorTo({r:0,g:0,b:0,a:0},1,1); // fade to black
+  // OR rt.colorTo([0,0,0,0],1,1);
 }
 
 
