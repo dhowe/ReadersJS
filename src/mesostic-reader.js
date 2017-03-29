@@ -81,9 +81,9 @@ M.onEnterCell = function (curr) {
 M.onExitCell = function (curr) {
 
 //  curr.fill.call(curr, this.fill.r, this.fill.g, this.fill.b, this.fill.a);
-  curr.colorTo([this.fill.r, this.fill.g, this.fill.b, this.fill.a], 3);
+  //curr.colorTo([this.fill.r, this.fill.g, this.fill.b, this.fill.a], 3);
 
-  // curr.fill.call(curr, this.fill); // DCH: 2/2/2017
+  curr.fill.call(curr, this.fill); // DCH: 2/2/2017
   Grid.resetCell(curr, true);
 }
 
