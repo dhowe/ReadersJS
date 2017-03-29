@@ -12,16 +12,16 @@
     return !isNaN(parseFloat(n)) && isFinite(n);
   }
 
-  function parseColor() { // FIX: expects to be bound to a RiText
+  /** Returns a color object {r:,g:,b:,a:} for any set of color arguments */
+  function parseColor() {
 
-    var a = arguments, len = a.length,
-      alpha = (this && this.alpha) ? this.alpha() : 255;
+    var a = arguments, len = a.length;
 
     var color = {
       r: 0,
       g: 0,
       b: 0,
-      a: alpha
+      a: 255
     };
 
     if (!len) return color;
@@ -372,35 +372,7 @@
 
     if (arguments.length) {
       RiText.defaults.fill = parseColor.apply(RiText, arguments);
-    }
-    return toColArr(RiText.defaults.fill);
-  }
-
-  RiText.defaultFill2 = function (r, g, b, a) {
-
-    var a =  Array.prototype.slice.call(arguments), len = a.length;
-    if (len) {
-
-      //RiText.defaults.fill = parseColor.apply(RiText, arguments);
-      var color = { r: 0, g: 0, b: 0, a: 255 };
-      if (len >= 3) {
-        color.r = a[0];
-        color.g = a[1];
-        color.b = a[2];
-      }
-      if (len == 4) {
-        color.a = a[3];
-      }
-      if (len <= 2) {
-        if (!a[0]) throw Error("");
-        color.r = a[0];
-        color.g = a[0];
-        color.b = a[0];
-      }
-      if (len == 2) {
-        color.a = a[1];
-      }
-      RiText.defaults.fill = color;
+      console.log(parseColor(arguments));
     }
     return toColArr(RiText.defaults.fill);
   }
@@ -788,7 +760,7 @@
           startTime: millis(),
           duration: seconds * 1000,
           from: rt._color,
-          to: col,
+          to: parseColor(col),
         }
 
       }, delay * 1000);
@@ -1197,8 +1169,7 @@
         return this._color;
       }
 
-      this._color = parseColor.apply(this, arguments);
-
+      this._color = parseColor(arguments);
       return this;
     },
 
@@ -1206,7 +1177,8 @@
 
       if (arguments.length === 0)
         return this._boundingFill;
-      this._boundingFill = parseColor.apply(this, arguments);
+
+      this._boundingFill = parseColor(arguments);
       return this;
     },
 
@@ -1214,7 +1186,8 @@
 
       if (arguments.length === 0)
         return this._boundingStroke;
-      this._boundingStroke = parseColor.apply(this, arguments);
+
+      this._boundingStroke = parseColor(arguments);
       return this;
     },
 

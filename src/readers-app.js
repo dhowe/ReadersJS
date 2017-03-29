@@ -813,16 +813,24 @@ Grid.previousCell = function (rt) {
   return pt.grid.previous(pt.x, pt.y);
 }
 
-/** Resets the cell to its original text, position, and color */
-Grid.resetCell = function (rt, noColor) {
+/** Resets the cell to its original text and position */
+Grid.resetCell = function (rt) {
 
   var cf = Grid.coordsFor(rt),
     data = cf.grid.initial[cf.y][cf.x];
 
   rt.position(data.x, data.y)
   rt.text(data.text);
+}
 
-  noColor || rt.fill(data.fill);
+Grid.resetCellColor = function (rt, fadeTime) {
+
+  fadeTime = fadeTime || 0.001;
+
+  var cf = Grid.coordsFor(rt),
+    data = cf.grid.initial[cf.y][cf.x];
+
+  return rt.colorTo(data.fill, fadeTime);
 }
 
 /** Prints all pages to the console */
