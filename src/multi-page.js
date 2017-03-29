@@ -12,7 +12,7 @@ function setup() {
   createCanvas(1280, 720);
 
   RiText.defaultFont(font, 24);
-  RiText.defaultFill(STYLE.Grey);
+  RiText.defaultFill(COLOR.White, STYLE.Grey);
   RiText.defaults.paragraphIndent = 20;
 
   loadTexts(function () {
