@@ -26,7 +26,8 @@
       color.r = a[0].r;
       color.g = a[0].g;
       color.b = a[0].b;
-      color.a = a[0].a;
+      if (typeof a[0].a !== 'undefined')
+        color.a = a[0].a
       return color;
     }
 
@@ -357,7 +358,7 @@
   RiText.defaultFill = function (r, g, b, a) {
 
     if (arguments.length) {
-      RiText.defaults.fill = parseColor.apply(RiText, arguments);
+      RiText.defaults.fill = parseColor.apply(null, arguments);
       //console.log(RiText.defaults.fill);
     }
     return RiText.defaults.fill;
@@ -736,6 +737,10 @@
 
     colorTo: function (newColor, seconds, delay) {
 
+      if (arguments.length > 3) throw Error('colorTo expects a max of 3 arguments,'
+        + ' where the target color is 1 (either an array or an object), followed by'
+        + ' the fade time (in seconds) as 2, and, optionally, the delay time as 3');
+
       delay = delay || 0;
 
       if (delay <= 0)
@@ -743,14 +748,16 @@
 
       var rt = this;
 
-      /*rt.faderId = */setTimeout(function() {
+      /*rt.faderId = */
+      setTimeout(function() {
         //clearTimeout(rt.faderId);
         rt.fader = {
           startTime: millis(),
           duration: seconds * 1000,
           from: rt._color,
-          to: parseColor.apply(null, newColor),
+          to: parseColor(newColor),
         }
+        //console.log(rt.fader.to);
 
       }, delay * 1000);
     },
