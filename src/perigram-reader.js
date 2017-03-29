@@ -44,19 +44,13 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   this.fadeInTime = this.actualStepTime * this.fadeInFactor;
   this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
   this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
-  this.gridColor = cloneColor(RiText.defaults.fill); // RiText.defaultFill(); // DCH: is this interface-responsive enough?
-  this.leadingFadeToColor = cloneColor(this.gridColor); // colorToArray(this.gridColor);
-  this.trailingFadeToColor = cloneColor(this.gridColor); // colorToArray(this.gridColor);
-  // DCH: may not work with the other 'theme' can we use alphas instead?
-  this.leadingFadeToColor.a = this.leadingFadeToColor.a / 4;
-  this.trailingFadeToColor.a = this.trailingFadeToColor.a / 6;
-  
-  // this.leadingFadeToColor = this.leadingFadeToColor.fill(this.gridColor[0] + (255 - this.gridColor[0]) / 4, 0, 3);
-  // this.trailingFadeToColor = this.trailingFadeToColor.fill(this.gridColor[0] + (255 - this.gridColor[0]) / 6, 0, 3);
+  this.gridColor = RiText.defaultFill();
+  this.leadingFadeToColor = cloneColor(this.gridColor);
+  this.leadingFadeToColor.a = this.leadingFadeToColor.a + 64;
 
   // fading current in and out
   fid = curr.colorTo(this.col, this.fadeInTime);
-  curr.colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime); // 1st arg: this.fill
+  curr.colorTo(colorToArray(this.gridColor), this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime);
 
   // get and fade in neighborhood
   this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
@@ -74,7 +68,7 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   // do the fading
   for (var i = 0; i < this.neighborsToFade.length; i++) {
     this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.leadingFadeToColor, this.fadeInTime);
-    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack);
+    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(colorToArray(this.gridColor), this.fadeOutTime, this.delayBeforeFadeBack);
   }
 }
 

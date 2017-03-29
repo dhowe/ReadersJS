@@ -105,11 +105,11 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
   // do the fading
   for (var i = 0; i < this.neighborsToFade.length; i++) {
     this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.innerFadeToColor, this.fadeInTime);
-    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack);
+    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(colorToArray(this.gridColor), this.fadeOutTime, this.delayBeforeFadeBack);
   }
   for (var i = 0; i < this.outerNeighborsToFade.length; i++) {
     this.outerNeighborsToFade[i] && this.outerNeighborsToFade[i].colorTo(this.outerFadeToColor, this.fadeInTime);
-    this.outerNeighborsToFade[i] && this.outerNeighborsToFade[i].colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack);
+    this.outerNeighborsToFade[i] && this.outerNeighborsToFade[i].colorTo(colorToArray(this.gridColor), this.fadeOutTime, this.delayBeforeFadeBack);
   }
 }
 
