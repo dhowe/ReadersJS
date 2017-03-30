@@ -17,7 +17,8 @@ function setup() {
 
   rt.colorTo({r:255,g:255,b:255,a:0},1,5); // fade to black after 5
 
-  rt2.colorTo([0,0,255,255],2,1); // fade slowly to blue
+  rt2.colorTo([0,0,255,255],2, .00001);
+  rt2.colorTo([255,0,0,255],.01, 1); // fade slowly to blue
 }
 
 
