@@ -29,7 +29,7 @@ function setup() {
 
     readers['Mesostic Reader'] = {
       reader: new MesosticReader(pManager.verso),
-      off: 1
+      off: 0
     };
 
     readers['Oblique Perigram Reader'] = {
@@ -39,12 +39,12 @@ function setup() {
 
     readers['Spawning Simple Reader'] = {
       reader: new SpawningSimpleReader(pManager.recto),
-      off: 1
+      off: 0
     };
 
     readers['Spawning Perigram Reader'] = {
       reader: new SpawningPerigramReader(pManager.verso),
-      off: 1
+      off: 0
     };
 
     pManager.focus(randomReader());
