@@ -44,13 +44,14 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   this.fadeInTime = this.actualStepTime * this.fadeInFactor;
   this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
   this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
-  this.gridColor = RiText.defaultFill();
+  this.gridColor = cloneColor(RiText.defaultFill());
+  // console.warn(this.gridColor);
   this.leadingFadeToColor = cloneColor(this.gridColor);
   this.leadingFadeToColor.a = this.leadingFadeToColor.a + 64;
 
   // fading current in and out
   fid = curr.colorTo(this.col, this.fadeInTime);
-  curr.colorTo(colorToArray(this.gridColor), this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime);
+  curr.colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime);
 
   // get and fade in neighborhood
   this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
@@ -68,7 +69,7 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   // do the fading
   for (var i = 0; i < this.neighborsToFade.length; i++) {
     this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.leadingFadeToColor, this.fadeInTime);
-    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(colorToArray(this.gridColor), this.fadeOutTime, this.delayBeforeFadeBack);
+    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack);
   }
 }
 
@@ -96,7 +97,7 @@ PerigramReader.prototype.textForServer = function () {
 
 	tfs = this.current.text();
 
-	tfs = "\n" + tfs;
+	// tfs = "\n" + tfs;
 
   return tfs;
 }
