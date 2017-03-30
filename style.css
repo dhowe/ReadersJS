@@ -86,7 +86,7 @@ canvas {
 }
 
 #focusDisplay {
-    padding-top: 20px;
+    padding: 20px 10px;
     display:block;
     border-left: solid;
     border-color: rgba(255, 255, 255, .3);
@@ -112,6 +112,10 @@ canvas {
 }
 #focusDisplayTag:hover {
     color:white;
+}
+#status {
+    width: 15px;
+    display: inline-block;
 }
 #focusDisplay span {
     opacity: .5;
