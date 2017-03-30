@@ -1716,14 +1716,14 @@ var Cache = {
 
   cacheData: {},
 
-  get: (key) => {
+  get: function(key) {
     if (Cache.cacheData.hasOwnProperty(key) && Cache.cacheData[key].val) {
       return Cache.cacheData[key].val;
     }
     return false;
   },
 
-  set: (key, value, expiry) => {
+  set: function(key, value, expiry) {
 
     Cache.clear(key);
 
@@ -1741,7 +1741,7 @@ var Cache = {
     };
   },
 
-  clear: (key) => {
+  clear: function(key) {
 
     if (Cache.cacheData.hasOwnProperty(key)) {
       if (Cache.cacheData[key].to) {
