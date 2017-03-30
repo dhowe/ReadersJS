@@ -1,4 +1,5 @@
 src/*.java
 node_modules
+node_modules/*
 *.esproj
 *-bak*

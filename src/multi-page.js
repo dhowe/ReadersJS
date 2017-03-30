@@ -47,8 +47,6 @@ function setup() {
       off: 0
     };
 
-    console.log(RiText.defaultFill());
-
     pManager.focus(randomReader());
 
     createInterface();
