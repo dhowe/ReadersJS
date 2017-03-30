@@ -743,8 +743,7 @@
 
       delay = delay || 0;
 
-      if (delay <= 0)
-        return this.fill(newColor);
+      //if (delay <= 0)return this.fill(newColor);
 
       var rt = this;
 
