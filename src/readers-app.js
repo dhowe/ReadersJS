@@ -885,11 +885,18 @@ Reader.STOP_WORDS = ["a", "about", "above", "across", "after", "afterwards", "ag
 
 Reader.COLORS = {
 
+/* 
   PerigramReader: [189, 5, 4, 255], // #BD0504
   MesosticReader: [20, 10, 219, 255], // #1464DB
   ObliquePerigramReader: [250, 0, 7, 255], // #FA0007
   SpawningSimpleReader: [255, 126, 23, 255], // #FFB017
   SpawningPerigramReader: [216, 129, 0, 255], // #D88100
+ */
+  PerigramReader: [250, 0, 7, 255], // #FA0007
+  MesosticReader: [0, 149, 255, 255], // #0095FF
+  ObliquePerigramReader: [255, 0, 157, 255], // #FF009D
+  SpawningSimpleReader: [255, 233, 0, 255], // #FFE900
+  SpawningPerigramReader: [216, 176, 0, 255], // #FFB000
   OnewayPerigramReader: [194, 194, 194, 255] //
 }
 
