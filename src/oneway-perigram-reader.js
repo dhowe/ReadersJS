@@ -37,7 +37,7 @@ OnewayPerigramReader.prototype.onEnterCell = function (curr) {
   this.fadeInTime = this.actualStepTime * this.fadeInFactor;
   this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
   this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
-  this.gridColor = RiText.defaultFill(); // DCH: is this interface-responsive enough?
+  this.gridColor = cloneColor(RiText.defaultFill()); // DCH: is this interface-responsive enough?
 
   // fading current in and out
   fid = curr.colorTo(this.col, this.fadeInTime);

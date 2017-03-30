@@ -44,16 +44,14 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   this.fadeInTime = this.actualStepTime * this.fadeInFactor;
   this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
   this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
-  this.gridColor = RiText.defaultFill(); // DCH: is this interface-responsive enough?
-  this.leadingFadeToColor = colorToArray(this.gridColor);
-  this.trailingFadeToColor = colorToArray(this.gridColor);
-  // DCH: may not work with the other 'theme' can we use alphas instead?
-  this.leadingFadeToColor = this.leadingFadeToColor.fill(this.gridColor[0] + (255 - this.gridColor[0]) / 4, 0, 3);
-  this.trailingFadeToColor = this.trailingFadeToColor.fill(this.gridColor[0] + (255 - this.gridColor[0]) / 6, 0, 3);
+  this.gridColor = cloneColor(RiText.defaultFill());
+  // console.warn(this.gridColor);
+  this.leadingFadeToColor = cloneColor(this.gridColor);
+  this.leadingFadeToColor.a = this.leadingFadeToColor.a + 64;
 
   // fading current in and out
   fid = curr.colorTo(this.col, this.fadeInTime);
-  curr.colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime); // 1st arg: this.fill
+  curr.colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime);
 
   // get and fade in neighborhood
   this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
@@ -99,7 +97,7 @@ PerigramReader.prototype.textForServer = function () {
 
 	tfs = this.current.text();
 
-	tfs = "\n" + tfs;
+	// tfs = "\n" + tfs;
 
   return tfs;
 }
