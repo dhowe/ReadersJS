@@ -283,73 +283,80 @@ button:hover {
    transition: background-color .5s;
 }
 .reader#Mesostic_Reader input:checked + label:before {
-     background-color: #1464DB;
+     background-color: #0095FF; /* 1464DB; */
 }
 .reader#Perigram_Reader input:checked + label:before {
-     background-color: #BD0504;
+     background-color: #FA0007; /* BD0504; */
 }
 .reader#Oblique_Perigram_Reader input:checked + label:before {
-     background-color: #FA0007;
+     background-color: #FF009D; /* FA0007; */
 }
 .reader#Spawning_Simple_Reader input:checked + label:before {
-     background-color: #FFB017;
+     background-color: #FFE900; /* FFB017; */
 }
 .reader#Spawning_Perigram_Reader input:checked + label:before {
-     background-color: #D88100;
+     background-color: #FF7B00; /* D88100; */
 }
+/* 
+not currently used
 .reader#Oblique_Spawner input:checked + label:before {
      background-color: #FFD000;
 }
+ */
 
 .reader#Mesostic_Reader input + label:hover:before{
-     border-color: #1464DB;
+     border-color: #0095FF;
 }
 .reader#Perigram_Reader input + label:hover:before{
-     border-color: #BD0504;
-}
-.reader#Oblique_Perigram_Reader input + label:hover:before{
      border-color: #FA0007;
 }
+.reader#Oblique_Perigram_Reader input + label:hover:before{
+     border-color: #FF009D;
+}
 .reader#Spawning_Simple_Reader input + label:hover:before{
-     border-color: #FFB017;
+     border-color: #FFE900;
 }
 .reader#Spawning_Perigram_Reader input + label:hover:before{
-     border-color: #D88100;
+     border-color: #FF7B00;
 }
+/* 
 .reader#Oblique_Spawner input + label:hover:before{
      border-color: #FFD000;
 }
+ */
 
 .reader.focused#Mesostic_Reader input:checked + label:before {
-    -webkit-box-shadow: 0px 0px 15px 5px #1464DB;
-    -moz-box-shadow: 0px 0px 15px 5px #1464DB;
-    box-shadow: 0px 0px 15px 5px #1464DB;
+    -webkit-box-shadow: 0px 0px 15px 5px #0095FF;
+    -moz-box-shadow: 0px 0px 15px 5px #0095FF;
+    box-shadow: 0px 0px 15px 5px #0095FF;
 }
 .reader.focused#Perigram_Reader input:checked + label:before {
-    -webkit-box-shadow: 0px 0px 15px 5px #BD0504;
-    -moz-box-shadow: 0px 0px 15px 5px #BD0504;
-    box-shadow: 0px 0px 15px 5px #BD0504;
-}
-.reader.focused#Oblique_Perigram_Reader input:checked + label:before {
     -webkit-box-shadow: 0px 0px 15px 5px #FA0007;
     -moz-box-shadow: 0px 0px 15px 5px #FA0007;
     box-shadow: 0px 0px 15px 5px #FA0007;
 }
+.reader.focused#Oblique_Perigram_Reader input:checked + label:before {
+    -webkit-box-shadow: 0px 0px 15px 5px #FF009D;
+    -moz-box-shadow: 0px 0px 15px 5px #FF009D;
+    box-shadow: 0px 0px 15px 5px #FF009D;
+}
 .reader.focused#Spawning_Simple_Reader input:checked + label:before {
-    -webkit-box-shadow: 0px 0px 15px 5px #FFB017;
-    -moz-box-shadow: 0px 0px 15px 5px #FFB017;
-    box-shadow: 0px 0px 15px 5px #FFB017;
+    -webkit-box-shadow: 0px 0px 15px 5px #FFE900;
+    -moz-box-shadow: 0px 0px 15px 5px #FFE900;
+    box-shadow: 0px 0px 15px 5px #FFE900;
 }
 .reader.focused#Spawning_Perigram_Reader input:checked + label:before {
-    -webkit-box-shadow: 0px 0px 15px 5px #D88100;
-    -moz-box-shadow: 0px 0px 15px 5px #D88100;
-    box-shadow: 0px 0px 15px 5px #D88100;
+    -webkit-box-shadow: 0px 0px 15px 5px #FF7B00;
+    -moz-box-shadow: 0px 0px 15px 5px #FF7B00;
+    box-shadow: 0px 0px 15px 5px #FF7B00;
 }
+/* 
 .reader.focused#Oblique_Spawner input:checked + label:before {
     -webkit-box-shadow: 0px 0px 15px 5px #FFD000;
     -moz-box-shadow: 0px 0px 15px 5px #FFD000;
     box-shadow: 0px 0px 15px 5px #FFD000;
 }
+ */
 .reader input:checked ~ select {
     display: inline-block;
 }

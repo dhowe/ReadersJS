@@ -51,11 +51,11 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
   this.fadeInTime = this.actualStepTime * this.fadeInFactor;
   this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
   this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
-  this.gridColor = RiText.defaultFill();
-  this.innerFadeToColor = colorToArray(this.gridColor);
-  this.outerFadeToColor = colorToArray(this.gridColor);
-  this.innerFadeToColor[3] = this.innerFadeToColor[3] / 2; // halve the alpha of the grid for inner circle
-  this.outerFadeToColor[3] = 0; // and make outer circle transparent (here: black against black background)
+  this.gridColor = cloneColor(RiText.defaultFill());
+  this.innerFadeToColor = cloneColor(this.gridColor);
+  this.outerFadeToColor = cloneColor(this.gridColor);
+  this.innerFadeToColor.a = this.innerFadeToColor.a / 2; // halve the alpha of the grid for inner circle
+  this.outerFadeToColor.a = 0; // and make outer circle transparent (here: black against black background)
 
   // fading current in and out
   fid = curr.colorTo(this.col, this.fadeInTime);

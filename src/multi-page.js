@@ -12,7 +12,7 @@ function setup() {
   createCanvas(1280, 720);
 
   RiText.defaultFont(font, 24);
-  RiText.defaultFill(COLOR.White, STYLE.Grey);
+  RiText.defaultFill(COLOR.White, STYLE.Faint);
   RiText.defaults.paragraphIndent = 20;
 
   loadTexts(function () {
@@ -46,8 +46,6 @@ function setup() {
       reader: new SpawningPerigramReader(pManager.verso),
       off: 0
     };
-
-    console.log(RiText.defaultFill());
 
     pManager.focus(randomReader());
 
@@ -180,24 +178,6 @@ function colorToArray(obj, overrideAlpha) { // takes optional 2nd argument for a
 
   return [obj.r, obj.g, obj.b, (typeof overrideAlpha === 'undefined')
     ? obj.a || 255 : overrideAlpha];
-}
-
-function numsToColor(r,b,g,a) {
-  return {
-    r: r,
-    g: g,
-    b: b,
-    a: a
-  };
-}
-
-function arrayToColor(arrLen4) {
-  return {
-    r: arrLen4.r,
-    g: arrLen4.g,
-    b: arrLen4.b,
-    a: arrLen4.a
-  };
 }
 
 function cloneColor(obj) {

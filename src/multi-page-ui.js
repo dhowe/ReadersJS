@@ -23,15 +23,17 @@ var SPEED = {
 };
 
 var STYLE = {
-  Grey: 70,
   Faint: 40,
-  Dark: 0
+  Grey: 70,
+  Invisible: 0
 };
 
 var COLOR = {
   Black: 0,
   White: 255
 }
+
+var bgColor = 0;
 
 var uiLogging = true,
   maxFocusLog = Math.floor(window.innerHeight / 30);
@@ -170,6 +172,8 @@ function createInterface() {
     var name = styleSelect.value();
     log("[UI] STYLE: " + name + "/" + STYLE[name]);
 
+    var color = (bgColor == 0) ? COLOR.White : COLOR.Black;
+    RiText.defaultFill(color, STYLE[name]); // make the default alpha accessible
     RiText.instances.forEach(function (rt) {
       //only change the opacity
       rt.alpha(STYLE[name]);
@@ -180,7 +184,7 @@ function createInterface() {
 
     var theme = themeSelect.value(),
       dark = (theme === "Dark");
-
+    
     bgColor = dark ? 0 : 232;
     log("[UI] THEME: " + theme, bgColor);
 
