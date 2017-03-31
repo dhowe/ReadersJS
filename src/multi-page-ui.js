@@ -23,8 +23,8 @@ var SPEED = {
 };
 
 var STYLE = {
-  Faint: 40,
   Grey: 70,
+  Faint: 40,
   Invisible: 0
 };
 
@@ -83,6 +83,7 @@ function createInterface() {
     var button = document.getElementById(toSafeName(focusedName));
     button && (button.className += ' focused');
   }
+  styleSelect.value("Faint");
 
   // Append elements to interface
   var descText = ['Text', 'Style', 'Theme'];
@@ -430,7 +431,7 @@ function logToDisplay(msg) {
 
   if (logEntries > maxFocusLog) {
     while (logEntries > maxFocusLog) {
-      display.removeChild(display.childNodes[1]);
+      display.removeChild(display.childNodes[0]);
       logEntries--;
     }
   }
