@@ -15,7 +15,16 @@ body.light {
 }
 
 body.light #focusDisplay {
-    background-color: rgba(0,0,0,.1);
+    background-color: rgb(230,230,230);
+    border-color: rgba(0, 0, 0, .3);
+}
+
+.light #focusDisplayTag {
+    color:#333;
+    border-color: rgba(0, 0, 0, .3);
+}
+.light #focusDisplayTag:hover {
+    color:#AAA;
 }
 
 canvas {
@@ -86,7 +95,7 @@ canvas {
 }
 
 #focusDisplay {
-    padding-top: 20px;
+    padding: 20px 10px;
     display:block;
     border-left: solid;
     border-color: rgba(255, 255, 255, .3);
@@ -99,6 +108,7 @@ canvas {
     -webkit-user-select: none;
     -o-user-select: none;
 }
+
 #focusDisplayTag {
     color:#DDD;
     padding:10px;
@@ -113,6 +123,10 @@ canvas {
 #focusDisplayTag:hover {
     color:white;
 }
+#status {
+    width: 15px;
+    display: inline-block;
+}
 #focusDisplay span {
     opacity: .5;
     margin-left:10px;
@@ -124,10 +138,15 @@ canvas {
     font-family: monospace;
 }
 
-@media only screen and (min-width: 1500px) {
-    #focusDisplay, #focusDisplayTag {
-        border-color: rgba(255, 255, 255, 0);
-        background-color: rgba(255, 255, 255, .15);
+@media only screen and (min-width: 1550px) {
+    #focusDisplay, #focusDisplayTag{
+        border-color: rgba(255, 255, 255, 0) !important;
+        background-color: rgba(255, 255, 255, .15) !important;
+    }
+
+     .light #focusDisplay, .light #focusDisplayTag {
+        border-color: rgba(255, 255, 255, 0) !important;
+        background-color: rgba(0, 0, 0, .05) !important;
     }
 
 }

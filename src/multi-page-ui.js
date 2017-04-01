@@ -23,8 +23,8 @@ var SPEED = {
 };
 
 var STYLE = {
-  Faint: 40,
   Grey: 70,
+  Faint: 40,
   Invisible: 0
 };
 
@@ -69,7 +69,9 @@ function createInterface() {
   ];
 
   // set initial class
+  styleSelect.value("Faint");
   var focused = pManager.focus();
+  
   if (focused) {
 
     if (focused.hidden) {
@@ -79,10 +81,9 @@ function createInterface() {
         " failed: "+(allReaders(true).length + " readers"))); // FIX ME
     }
 
-    var focusedName = nameFromReader(focused) || '';
-    var button = document.getElementById(toSafeName(focusedName));
-    button && (button.className += ' focused');
+    focusChanged(focused);
   }
+  
 
   // Append elements to interface
   var descText = ['Text', 'Style', 'Theme'];
@@ -216,6 +217,7 @@ function createInterface() {
     if (focused && focused.hidden) {
       assignFocus();
     }
+    
   }
 
   function assignFocus(focused) {
@@ -233,6 +235,11 @@ function createInterface() {
       pManager.makeFocusedReaderVisible();
       // focusSelect.value(nameFromReader(focused)) && focusChanged();
     }
+
+    //clear focusDisplay, change color
+    $('#focusDisplay').html("");
+    var c = Reader.COLORS[nameFromReader(focused).replace(/ /g,"")];
+    $('#focusDisplayTag').css("color", getCSSFromColor(c));
   }
 
   function clearFocus() {
@@ -257,8 +264,8 @@ function createInterface() {
     focused && pManager.focus(focused);
 
     assignFocus(focused);
-    //clear focusDisplay
-    $('#focusDisplay').html("");
+  
+    
   }
 
   function renderActiveReadersClass() {
@@ -268,6 +275,10 @@ function createInterface() {
       var readerEle = document.getElementById(toSafeName(rdrs[i]));
       readerEle.className = readerEle.className.replace(" active", "");
     }
+  }
+
+  function getCSSFromColor(color) {
+    return "rgb(" + color[0] + "," + color[1] + "," + color[2] + ")";
   }
 
   function activeReaderNames() {
@@ -430,7 +441,7 @@ function logToDisplay(msg) {
 
   if (logEntries > maxFocusLog) {
     while (logEntries > maxFocusLog) {
-      display.removeChild(display.childNodes[1]);
+      display.removeChild(display.childNodes[0]);
       logEntries--;
     }
   }
