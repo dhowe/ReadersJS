@@ -894,9 +894,9 @@ Reader.COLORS = {
  */
   PerigramReader: [250, 0, 7, 255], // #FA0007
   MesosticReader: [0, 149, 255, 255], // #0095FF
-  ObliquePerigramReader: [255, 0, 157, 255], // #FF009D
-  SpawningSimpleReader: [255, 233, 0, 255], // #FFE900
-  SpawningPerigramReader: [216, 176, 0, 255], // #FFB000
+  ObliquePerigramReader: [255, 0, 157, 255], // #FF009D 
+  SpawningSimpleReader: [255, 252, 0, 255], // #FFFD00
+  SpawningPerigramReader: [255, 81, 0, 255], // #FF5100
   OnewayPerigramReader: [194, 194, 194, 255] //
 }
 
