@@ -115,6 +115,7 @@ canvas {
     line-height: 24px;
     border-left: solid;
     border-color: rgba(255, 255, 255, .3);
+    cursor: default;
 }
 #focusDisplayTag #closeButton {
     font-size: 24px;
@@ -312,7 +313,7 @@ button:hover {
 .reader#Spawning_Perigram_Reader input:checked + label:before {
      background-color: #FF7B00; /* D88100; */
 }
-/* 
+/*
 not currently used
 .reader#Oblique_Spawner input:checked + label:before {
      background-color: #FFD000;
@@ -334,7 +335,7 @@ not currently used
 .reader#Spawning_Perigram_Reader input + label:hover:before{
      border-color: #FF7B00;
 }
-/* 
+/*
 .reader#Oblique_Spawner input + label:hover:before{
      border-color: #FFD000;
 }
@@ -365,7 +366,7 @@ not currently used
     -moz-box-shadow: 0px 0px 15px 5px #FF7B00;
     box-shadow: 0px 0px 15px 5px #FF7B00;
 }
-/* 
+/*
 .reader.focused#Oblique_Spawner input:checked + label:before {
     -webkit-box-shadow: 0px 0px 15px 5px #FFD000;
     -moz-box-shadow: 0px 0px 15px 5px #FFD000;
