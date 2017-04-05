@@ -885,7 +885,7 @@ Reader.STOP_WORDS = ["a", "about", "above", "across", "after", "afterwards", "ag
 
 Reader.COLORS = {
 
-/* 
+/*
   PerigramReader: [189, 5, 4, 255], // #BD0504
   MesosticReader: [20, 10, 219, 255], // #1464DB
   ObliquePerigramReader: [250, 0, 7, 255], // #FA0007
@@ -894,7 +894,7 @@ Reader.COLORS = {
  */
   PerigramReader: [250, 0, 7, 255], // #FA0007
   MesosticReader: [0, 149, 255, 255], // #0095FF
-  ObliquePerigramReader: [255, 0, 157, 255], // #FF009D 
+  ObliquePerigramReader: [255, 0, 157, 255], // #FF009D
   SpawningSimpleReader: [255, 252, 0, 255], // #FFFD00
   SpawningPerigramReader: [255, 81, 0, 255], // #FF5100
   OnewayPerigramReader: [194, 194, 194, 255] //
@@ -1521,7 +1521,9 @@ var PageManager = function PageManager(host, port) {
 
           Grid.resetCell(reader.current);
           reader.position(this.verso, -1, 0); // randomize x-pos
-          uiLogging && console.log("[UI] Reposition: " + reader.type);
+          
+          //uiLogging && console.log("[UI] Reposition: " + reader.type);
+          focusJump(reader,this.verso);
         }
       }
     },

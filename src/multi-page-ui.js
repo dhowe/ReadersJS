@@ -71,7 +71,7 @@ function createInterface() {
   // set initial class
   styleSelect.value("Faint");
   var focused = pManager.focus();
-  
+
   if (focused) {
 
     if (focused.hidden) {
@@ -83,7 +83,7 @@ function createInterface() {
 
     focusChanged(focused);
   }
-  
+
 
   // Append elements to interface
   var descText = ['Text', 'Style', 'Theme'];
@@ -185,7 +185,7 @@ function createInterface() {
 
     var theme = themeSelect.value(),
       dark = (theme === "Dark");
-    
+
     bgColor = dark ? 0 : 232;
     log("[UI] THEME: " + theme, bgColor);
 
@@ -208,7 +208,6 @@ function createInterface() {
     // if only one reader is active, give it focus
     var actives = activeReaders();
     if (actives.length == 1) {
-
       assignFocus(actives[0]);
     }
 
@@ -217,7 +216,6 @@ function createInterface() {
     if (focused && focused.hidden) {
       assignFocus();
     }
-    
   }
 
   function assignFocus(focused) {
@@ -236,7 +234,7 @@ function createInterface() {
       // focusSelect.value(nameFromReader(focused)) && focusChanged();
     }
 
-    //clear focusDisplay, change color
+    // clear focusDisplay, change color
     $('#focusDisplay').html("");
     var c = Reader.COLORS[nameFromReader(focused).replace(/ /g,"")];
     $('#focusDisplayTag').css("color", getCSSFromColor(c));
@@ -264,8 +262,8 @@ function createInterface() {
     focused && pManager.focus(focused);
 
     assignFocus(focused);
-  
-    
+
+
   }
 
   function renderActiveReadersClass() {
@@ -316,11 +314,8 @@ function createInterface() {
   }
 
   function log() {
-
     uiLogging && console.log.apply(console, arguments);
   }
-
-  var UI = { log: log };
 
   ////////////////////////////////////////////////////////////////////
 
@@ -331,6 +326,7 @@ function createInterface() {
   }
 
   document.getElementById('options').addEventListener('click', function () {
+
     if (menu.offsetHeight === 0) {
       menu.style.display = 'block';
       instructions.style.visibility = 'hidden';
@@ -429,8 +425,12 @@ function createInterface() {
 
 } // end createInterface
 
-////////////////////////////////////////////////////////////////////
-///
+
+function focusJump(focused) {
+
+  $('#focusDisplay').html("");
+}
+
 function logToDisplay(msg) {
 
   createP(msg).parent('focusDisplay');
