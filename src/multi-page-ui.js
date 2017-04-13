@@ -199,8 +199,6 @@ function createInterface() {
 
     $('body').toggleClass("light", !dark);
     $('body').toggleClass("dark", dark);
-
-    // TODO: need to change reader colors ?
   }
 
   function resetFocus() {
@@ -238,7 +236,7 @@ function createInterface() {
 
     // clear focusDisplay, change color
     $('#focusDisplay').html('');
-    $('#focusDisplayTag').css("color", getCSSFromColor(Reader.COLORS[focused.type]));
+    $('#focusDisplayTag').css("color", getCSSFromColor(focused.color));
   }
 
   function clearFocus() {

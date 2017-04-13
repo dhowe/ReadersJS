@@ -15,15 +15,13 @@ function SpawningPerigramReader(g, rx, ry, speed) {
   this.fill = RiText.defaultFill(); // or another color?
   if (!speed) this.speed = SPEED.Fluent; // default speed for SpawningPerigramReaders
 
-  //Perigram Reader Color
-  this.col = Reader.COLORS[this.type]; // orange
+  this.col = [255, 81, 0, 255], // orange #FF5100
   // this.neighborCol = [127, 10, 30, 255];
 
   // factors
   this.fadeInFactor = .8;
   this.fadeOutFactor = 10;
   this.delayFactor = 2.5;
-
 }
 
 SpawningPerigramReader.prototype.selectNext = function () {

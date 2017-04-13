@@ -140,16 +140,16 @@ function readerFromName(name) {
     return readers[name].reader;
 }
 
-function nameFromReader(reader) {
-
-  var result = '';
-  Object.keys(readers).forEach(function (name) {
-    var rdr = readers[name].reader;
-    if (rdr === reader) result = name;
-  });
-
-  return result;
-}
+// function nameFromReader(reader) {
+//
+//   var result = '';
+//   Object.keys(readers).forEach(function (name) {
+//     var rdr = readers[name].reader;
+//     if (rdr === reader) result = name;
+//   });
+//
+//   return result;
+// }
 
 function textChanged() {
 

@@ -13,10 +13,9 @@ function SpawningSimpleReader(g, rx, ry, speed) {
   this.upWeighting = .12;
 
   this.fill = RiText.defaultFill(); // or another color?
-  if (!speed) this.speed = SPEED.Fluent; // default speed for SpawningSimpleReaders
+  if (!speed) this.speed = SPEED.Fluent; // default speed for SpawningSimpleReaders (DH shouldn't be needed)
 
-  //Perigram Reader Color
-  this.col = Reader.COLORS[this.type];
+  this.col =  [255, 252, 0, 255], // #FFFD00
   // this.neighborCol = [127, 10, 30, 255];
 
   // factors

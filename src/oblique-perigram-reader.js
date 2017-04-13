@@ -30,9 +30,7 @@ function ObliquePerigramReader(g, rx, ry, speed) {
   this.fill = RiText.defaultFill(); // or another color?
   if (!speed) this.speed = SPEED.Steady; // default speed for ObliquePerigramReaders
 
-  //Perigram Reader Color
-  this.col = Reader.COLORS[this.type]; // red
-
+  this.col = [255, 0, 157, 255], // #FF009D
 
   // factors
   this.fadeInFactor = .8;

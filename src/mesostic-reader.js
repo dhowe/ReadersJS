@@ -13,9 +13,7 @@ function MesosticReader(g, rx, ry, speed) {
   this.upperCasing = true;
   this.letterIdx = 0;
   this.letter = null;
-
-  // Mesostic Reader color
-  this.col = Reader.COLORS[this.type];
+  this.col = [0, 149, 255, 255]; // #0095FF
 }
 
 var M = MesosticReader.prototype;

@@ -21,9 +21,7 @@ function OnewayPerigramReader(g, rx, ry, speed, dir, parent) {
   this.freeCount = 0;
   this.maxFreeCount = 5;
   this.neighbors = [];
-
-  // Perigram Reader Color
-  this.col = Reader.COLORS[this.type]; // [194, 194, 194, 255] light grey
+  this.col = [194, 194, 194, 255]; // light grey
 
   // factors
   this.fadeInFactor = .8;

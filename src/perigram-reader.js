@@ -15,8 +15,7 @@ function PerigramReader(g, rx, ry, speed) {
   this.fill = RiText.defaultFill(); // or another color?
   if (!speed) this.speed = SPEED.Fluent; // default speed for PerigramReaders
 
-  //Perigram Reader Color
-  this.col = Reader.COLORS[this.type]; // red
+  this.col = [250, 0, 7, 255] // red #FA0007
   // this.neighborCol = [127, 10, 30, 255];
 
   // factors
