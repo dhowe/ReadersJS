@@ -205,9 +205,10 @@ function createInterface() {
 
   function resetFocus() {
 
-    // if only one reader is active, give it focus
-    var actives = activeReaders();
-    if (actives.length == 1) {
+    var focused = pManager.focus(), actives = activeReaders();
+
+    // if only one reader is active and its not focused, give it focus
+    if (actives.length == 1 && actives[0] !== focused) {
       assignFocus(actives[0]);
     }
 
@@ -229,15 +230,16 @@ function createInterface() {
     clearFocus();
 
     if (focused) { // only if we have an active reader
+
       document.getElementById(toSafeName(nameFromReader(focused))).className += " focused";
+      pManager.focus(focused);
       pManager.makeFocusedReaderVisible();
       // focusSelect.value(nameFromReader(focused)) && focusChanged();
     }
 
     // clear focusDisplay, change color
     $('#focusDisplay').html("");
-    var c = Reader.COLORS[nameFromReader(focused).replace(/ /g,"")];
-    $('#focusDisplayTag').css("color", getCSSFromColor(c));
+    $('#focusDisplayTag').css("color", getCSSFromColor(Reader.COLORS[focused.type]));
   }
 
   function clearFocus() {
@@ -260,10 +262,7 @@ function createInterface() {
 
     log("[UI] Focus: " + nameFromReader(focused));
     focused && pManager.focus(focused);
-
     assignFocus(focused);
-
-
   }
 
   function renderActiveReadersClass() {
