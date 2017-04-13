@@ -12,10 +12,9 @@ function SpawningPerigramReader(g, rx, ry, speed) {
   this.downWeighting = .6;
   this.upWeighting = .12;
 
-  this.fill = RiText.defaultFill(); // or another color?
   if (!speed) this.speed = SPEED.Fluent; // default speed for SpawningPerigramReaders
 
-  this.col = [255, 81, 0, 255], // orange #FF5100
+  this.color = colorToObject(255, 81, 0, 255); // orange #FF5100
   // this.neighborCol = [127, 10, 30, 255];
 
   // factors

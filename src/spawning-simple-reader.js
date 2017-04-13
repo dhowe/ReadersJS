@@ -12,10 +12,9 @@ function SpawningSimpleReader(g, rx, ry, speed) {
   this.downWeighting = .6;
   this.upWeighting = .12;
 
-  this.fill = RiText.defaultFill(); // or another color?
   if (!speed) this.speed = SPEED.Fluent; // default speed for SpawningSimpleReaders (DH shouldn't be needed)
 
-  this.col =  [255, 252, 0, 255], // #FFFD00
+  this.color =  colorToObject(255, 252, 0, 255); // #FFFD00
   // this.neighborCol = [127, 10, 30, 255];
 
   // factors
@@ -36,11 +35,10 @@ SpawningSimpleReader.prototype.onEnterCell = function (curr) {
   this.fadeInTime = this.actualStepTime * this.fadeInFactor;
   this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
   this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
-  this.gridColor = cloneColor(RiText.defaultFill()); // DCH: is this interface-responsive enough?
 
   // fading current in and out
-  fid = curr.colorTo(this.col, this.fadeInTime);
-  curr.colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime); // 1st arg: this.fill
+  fid = curr.colorTo(this.color, this.fadeInTime);
+  curr.colorTo(this.fill, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime); // 1st arg: this.fill
 
   var coords, spawned, g = Grid.gridFor(curr), neighbors = g.neighborhood(curr);
 

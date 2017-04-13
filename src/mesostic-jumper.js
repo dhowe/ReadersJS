@@ -13,8 +13,7 @@ function MesosticJumper(g, rx, ry, speed) {
   this.upperCasing = true;
   this.letterIdx = 0;
   this.letter = null;
-
-  this.col = [0, 149, 255, 255], // #0095FF
+  this.color = colorToObject(0, 149, 255, 255); // #0095FF
 }
 
 var M = MesosticReader.prototype;
@@ -147,16 +146,13 @@ M.selectLetter = function() {
 M.onEnterCell = function (curr) {
 
   this.fill = curr.fill();
-  curr.fill(this.col);
+  curr.fill(this.color);
 }
 
 M.onExitCell = function (curr) {
 
-  curr.colorTo([this.fill.r, this.fill.g, this.fill.b, this.fill.a], 1);
-
-  //curr.fill.call(curr, this.fill.r, this.fill.g, this.fill.b, this.fill.a);
-  // curr.fill.call(curr, this.fill); // DCH: 2/2/2017
-  Grid.resetCell(curr);
+  curr.colorTo(this.fill, 1);
+  Grid.resetCell(curr, true);
 }
 
 M.textForServer = function () {

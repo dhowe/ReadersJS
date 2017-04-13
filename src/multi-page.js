@@ -21,36 +21,11 @@ function setup() {
     pManager = PageManager.getInstance(Reader.APP);
     pManager.layout(TEXTS[0], 25, 40, 580, 650);
 
-    new PerigramReader(pManager.recto, SPEED.Fluent);
-    new MesosticReader(pManager.verso);
-    new ObliquePerigramReader(pManager.verso);
-    new SpawningSimpleReader(pManager.recto);
-    new SpawningPerigramReader(pManager.verso);
-    /* add some readers
-    readers['Perigram Reader'] = {
-      reader: new PerigramReader(pManager.recto, SPEED.Fluent),
-      off: 0
-    };
-
-    readers['Mesostic Reader'] = {
-      reader: new MesosticReader(pManager.verso),
-      off: 0
-    };
-
-    readers['Oblique Perigram Reader'] = {
-      reader: new ObliquePerigramReader(pManager.verso),
-      off: 0
-    };
-
-    readers['Spawning Simple Reader'] = {
-      reader: new SpawningSimpleReader(pManager.recto),
-      off: 0
-    };
-
-    readers['Spawning Perigram Reader'] = {
-      reader: new SpawningPerigramReader(pManager.verso),
-      off: 0
-    };*/
+    new PerigramReader(pManager.recto, SPEED.Fluent).hide(0);
+    new MesosticReader(pManager.verso).hide(1);
+    new ObliquePerigramReader(pManager.verso).hide(1);
+    new SpawningSimpleReader(pManager.recto).hide(1);
+    new SpawningPerigramReader(pManager.verso).hide(1);
 
     pManager.focus(randomReader());
 
@@ -95,7 +70,7 @@ function resetText(textName) {
   var textObj = textFromName(textName);
   pManager.layout(textObj, 25, 40, 580, 650);
 
-  allReaders().forEach(function (r) {
+  Reader.instances.forEach(function (r) {
 
     // focused reader on verso, others distributed across pages
     var idx = (r.hasFocus()) ? 0 : (r.id % Grid.instances.length);
@@ -118,18 +93,6 @@ function allReaders(activeOnly) {
   return all;
 }
 
-function allReadersOld(activeOnly) {
-
-  var all = [];
-  Object.keys(readers).forEach(function (name) {
-    var reader = readerFromName(name);
-    //console.log(reader.type,reader.hidden);
-    if (!activeOnly || !reader.hidden)
-      all.push(reader);
-  })
-  return all;
-}
-
 function randomReader() {
 
   var rdrs = allReaders(true);
@@ -149,28 +112,12 @@ function textFromName(textName) {
 }
 
 function readerFromName(name) {
+
   for (var i = 0; i < Reader.instances.length; i++) {
     if (name === Reader.instances[i].type)
       return Reader.instances[i];
   }
 }
-
-function readerFromNameOld(name) {
-
-  if (name && readers[name])
-    return readers[name].reader;
-}
-
-// function nameFromReader(reader) {
-//
-//   var result = '';
-//   Object.keys(readers).forEach(function (name) {
-//     var rdr = readers[name].reader;
-//     if (rdr === reader) result = name;
-//   });
-//
-//   return result;
-// }
 
 function textChanged() {
 
@@ -199,6 +146,21 @@ function colorToArray(obj, overrideAlpha) { // takes optional 2nd argument for a
 
   return [obj.r, obj.g, obj.b, (typeof overrideAlpha === 'undefined')
     ? obj.a || 255 : overrideAlpha];
+}
+
+function colorToObject(r,g,b,a) {
+  if (arguments.length === 1) {
+    a = arguments[3];
+    b = arguments[2];
+    g = arguments[1];
+    r = arguments[0];
+  }
+  return {
+    r: r,
+    g: g,
+    b: b,
+    a: a || 255
+  };
 }
 
 function cloneColor(obj) {

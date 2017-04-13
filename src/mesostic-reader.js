@@ -13,7 +13,7 @@ function MesosticReader(g, rx, ry, speed) {
   this.upperCasing = true;
   this.letterIdx = 0;
   this.letter = null;
-  this.col = [0, 149, 255, 255]; // #0095FF
+  this.color = colorToObject(0, 149, 255, 255); // #0095FF
 }
 
 var M = MesosticReader.prototype;
@@ -73,7 +73,7 @@ M.selectNext = function () {
 M.onEnterCell = function (curr) {
 
   this.fill = curr.fill();
-  curr.colorTo(this.col, .3);
+  curr.colorTo(this.color, .3);
 }
 
 M.onExitCell = function (curr) {

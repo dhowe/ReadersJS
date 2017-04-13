@@ -27,16 +27,14 @@ function ObliquePerigramReader(g, rx, ry, speed) {
   PerigramReader.call(this, g, rx, ry, speed); // superclass constructor
   this.type = 'ObliquePerigramReader'; //  superclass variable(s)
 
-  this.fill = RiText.defaultFill(); // or another color?
   if (!speed) this.speed = SPEED.Steady; // default speed for ObliquePerigramReaders
 
-  this.col = [255, 0, 157, 255], // #FF009D
+  this.color = colorToObject(255, 0, 157, 255); // #FF009D
 
   // factors
   this.fadeInFactor = .8;
   this.fadeOutFactor = 2;
   this.delayFactor = 2;
-
 }
 
 ObliquePerigramReader.prototype.onEnterCell = function (curr) {
@@ -49,15 +47,14 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
   this.fadeInTime = this.actualStepTime * this.fadeInFactor;
   this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
   this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
-  this.gridColor = cloneColor(RiText.defaultFill());
-  this.innerFadeToColor = cloneColor(this.gridColor);
-  this.outerFadeToColor = cloneColor(this.gridColor);
+  this.innerFadeToColor = cloneColor(this.fill);
+  this.outerFadeToColor = cloneColor(this.fill);
   this.innerFadeToColor.a = this.innerFadeToColor.a / 2; // halve the alpha of the grid for inner circle
   this.outerFadeToColor.a = 0; // and make outer circle transparent (here: black against black background)
 
   // fading current in and out
-  fid = curr.colorTo(this.col, this.fadeInTime);
-  curr.colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack);
+  fid = curr.colorTo(this.color, this.fadeInTime);
+  curr.colorTo(this.fill, this.fadeOutTime, this.delayBeforeFadeBack);
 
   // get neighborhood
   this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
@@ -65,7 +62,8 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
   for  (var i = 0; i < this.neighborhood.length; i++) {
     // console.log(this.neighborhood[i]);
     if (this.neighborhood[i]) {
-            if (this.neighborsToFade.indexOf(this.neighborhood[i]) < 0) this.neighborsToFade.push(this.neighborhood[i]);
+      if (this.neighborsToFade.indexOf(this.neighborhood[i]) < 0)
+        this.neighborsToFade.push(this.neighborhood[i]);
   	}
 	}
 
@@ -80,6 +78,7 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
       }
     }
   }
+
   // filtering for any already active neighbors
   var i = this.outerNeighborsToFade.length;
   while (i--) {
@@ -103,11 +102,11 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
   // do the fading
   for (var i = 0; i < this.neighborsToFade.length; i++) {
     this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.innerFadeToColor, this.fadeInTime);
-    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack);
+    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.fill, this.fadeOutTime, this.delayBeforeFadeBack);
   }
   for (var i = 0; i < this.outerNeighborsToFade.length; i++) {
     this.outerNeighborsToFade[i] && this.outerNeighborsToFade[i].colorTo(this.outerFadeToColor, this.fadeInTime);
-    this.outerNeighborsToFade[i] && this.outerNeighborsToFade[i].colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack);
+    this.outerNeighborsToFade[i] && this.outerNeighborsToFade[i].colorTo(this.fill, this.fadeOutTime, this.delayBeforeFadeBack);
   }
 }
 

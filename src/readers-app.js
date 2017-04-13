@@ -823,7 +823,7 @@ Grid.resetCell = function (rt) {
   rt.text(data.text);
 }
 
-Grid.resetCellColor = function (rt, fadeTime) {
+/*Grid.resetCellColor = function (rt, fadeTime) {
 
   fadeTime = fadeTime || 0.001;
 
@@ -831,7 +831,7 @@ Grid.resetCellColor = function (rt, fadeTime) {
     data = cf.grid.initial[cf.y][cf.x];
 
   return rt.colorTo(data.fill, fadeTime);
-}
+}*/
 
 /** Prints all pages to the console */
 Grid.dumpPages = function (rt) {
@@ -959,7 +959,8 @@ function Reader(g, cx, cy, speed) { // constructor
   this.neighborhood = [];
   this.showNeighbors = true;
   this.waitForNetwork = false;
-  this.color = [ 255, 255, 255, 255];
+  this.fill = RiText.defaultFill();
+  this.color = colorToObject(255, 255, 255, 255);
   this.speed = speed || SPEED.Steady; // default to Steady
   this.pman = PageManager.getInstance();
 
@@ -1024,12 +1025,23 @@ Reader.prototype = {
     this.hidden = b;
     if (this.hidden && this.current)
       this.onExitCell(this.current);
+    return this;
   },
 
   pause: function (b) {
 
     this.paused = b;
     if (b) this.steps = 0;
+    return this;
+  },
+
+  alpha: function (a) {
+
+    if (arguments.length) {
+      this.fill.a = a;
+      return this;
+    }
+    return this.fill.a;
   },
 
   step: function () {

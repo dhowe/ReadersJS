@@ -40,13 +40,16 @@ var uiLogging = true,
 
 function createInterface() {
 
+  var toSnakeCase = function(s){
+  	return s.replace(/([A-Z])/g, function($1){ return ' '+$1 });
+  };
+
   // Object.keys(readers).forEach(function (name) {
   Reader.instances.forEach(function (reader) {
 
     var rb, readerDef = { reader: reader };
 
-    reader.hidden = readerDef.off || false;
-    rb = createCheckbox(name, !reader.hidden);
+    rb = createCheckbox(toSnakeCase(reader.type), !reader.hidden);
 
     // rb.changed(readerOnOffEvent);
     rb.parent('interface');
@@ -57,8 +60,6 @@ function createInterface() {
     readerDef.speedSelect = initSelect('speedSelect', 'full', Object.keys(SPEED), speedChanged, rb);
     readerDef.speedSelect.source = reader;
     readerDef.speedSelect.value(speedToName(reader.speed));
-
-    console.log(readerDef);
 
     // onhover message
     rb.child(document.getElementById('hoverTextWrapper').cloneNode(true));
@@ -127,13 +128,12 @@ function createInterface() {
     ul.setAttribute('id', id);
     ul.setAttribute('class', "select");
 
-    //init
     var li = document.createElement('li');
     li.setAttribute('class', "init");
     ul.appendChild(li);
     li.innerHTML = li.innerHTML + options[0];
 
-    function renderList(element, index, arr) {
+    function renderList(element, index, arr) { // yuck
 
       var li = document.createElement('li');
       ul.appendChild(li);
@@ -171,35 +171,36 @@ function createInterface() {
 
   function styleChanged() {
 
-    var name = styleSelect.value();
-    log("[UI] STYLE: " + name + "/" + STYLE[name]);
+    var color, name = styleSelect.value();
 
-    var color = (bgColor == 0) ? COLOR.White : COLOR.Black;
-    RiText.defaultFill(color, STYLE[name]); // make the default alpha accessible
-    RiText.instances.forEach(function (rt) {
-      //only change the opacity
-      rt.alpha(STYLE[name]);
-    });
+    color = (bgColor == 0) ? COLOR.White : COLOR.Black;
+
+    log("[UI] STYLE: " + name + "/" + STYLE[name], color);
+
+    // only change the opacity
+    Reader.instances.forEach(function (r) { r.alpha(STYLE[name])});
+    RiText.instances.forEach(function (rt) { rt.alpha(STYLE[name])});
   }
 
   function themeChanged() {
 
-    var theme = themeSelect.value(),
-      dark = (theme === "Dark");
+    var style = styleSelect.value(),
+      theme = themeSelect.value(),
+      dark = (theme === "Dark"),
+      color = dark ? COLOR.White : COLOR.Black,
+      bgColor = dark ? 0 : 232;
 
-    bgColor = dark ? 0 : 232;
     log("[UI] THEME: " + theme, bgColor);
 
-    //only change the color
-    var color = dark ? COLOR.White : COLOR.Black;
-    var style = styleSelect.value();
-
+    // only change the color
+    Reader.instances.forEach(function (r) {
+      r.fill = [color, color, color, STYLE[style]];
+    });
     RiText.instances.forEach(function (rt) {
       rt.fill(color, STYLE[style]);
     });
 
-    $('body').toggleClass("light", !dark);
-    $('body').toggleClass("dark", dark);
+    $('body').toggleClass("light", !dark).toggleClass("dark", dark);
   }
 
   function resetFocus() {
@@ -263,29 +264,9 @@ function createInterface() {
     assignFocus(focused);
   }
 
-  /*function renderActiveReadersClass() {
-
-    var rdrs = activeReaderNames();
-    for (var i = 0; i < rdrs.length; i++) {
-      console.log(i,rdrs[i].type);
-      var readerEle = document.getElementById(rdrs[i].type);
-      readerEle.className = readerEle.className.replace(" active", '');
-    }
-  }*/
-
   function getCSSFromColor(color) {
     return "rgb(" + color[0] + "," + color[1] + "," + color[2] + ")";
   }
-
-  // function activeReaderNames() {
-  //
-  //   var actives = [];
-  //   Object.keys(readers).forEach(function (name) {
-  //     if (!readers[name].reader.hidden)
-  //       actives.push(name);
-  //   });
-  //   return actives;
-  // }
 
   function activeReaders() {
 
@@ -348,7 +329,7 @@ function createInterface() {
 
   function onReaderSingleClick(ele) {
 
-    readerOnOffEvent(readerFromName(ele.innerHTML),
+    readerOnOffEvent(readerFromName(ele.parentNode.id),
       ele.parentNode.getElementsByTagName('input')[0].checked);
   }
 
@@ -356,12 +337,12 @@ function createInterface() {
      //if it is off, turn it on
     var input = ele.parentNode.children[0];
     if (input.checked) {
-       readerOnOffEvent(readerFromName(ele.innerHTML), true);
+       readerOnOffEvent(readerFromName(ele.parentNode.id), true);
        input.checked = false;
     }
 
     if (!ele.parentNode.matches('.focused'))
-      focusChanged(readerFromName(ele.innerHTML));
+      focusChanged(readerFromName(ele.parentNode.id));
   }
 
   menu.addEventListener('click', function (event) {
@@ -464,7 +445,8 @@ $(document).ready(function () {
 $(document).ready(function () {
 
   $("body").on("click", "ul.select li.init", function () {
-    //hide other select list if opened
+
+    // hide other select list if opened
     $('ul').children('li:not(.init)').hide();
     $('ul').children('li.init').show();
     $(this).closest("ul").children('li').toggle();

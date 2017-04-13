@@ -12,10 +12,9 @@ function PerigramReader(g, rx, ry, speed) {
   this.downWeighting = .6;
   this.upWeighting = .12;
 
-  this.fill = RiText.defaultFill(); // or another color?
   if (!speed) this.speed = SPEED.Fluent; // default speed for PerigramReaders
 
-  this.col = [250, 0, 7, 255] // red #FA0007
+  this.color = colorToObject(250, 0, 7, 255) // red #FA0007
   // this.neighborCol = [127, 10, 30, 255];
 
   // factors
@@ -43,14 +42,12 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   this.fadeInTime = this.actualStepTime * this.fadeInFactor;
   this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
   this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
-  this.gridColor = cloneColor(RiText.defaultFill());
-  // console.warn(this.gridColor);
-  this.leadingFadeToColor = cloneColor(this.gridColor);
+  this.leadingFadeToColor = cloneColor(this.fill);
   this.leadingFadeToColor.a = this.leadingFadeToColor.a + 64;
 
   // fading current in and out
-  fid = curr.colorTo(this.col, this.fadeInTime);
-  curr.colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime);
+  fid = curr.colorTo(this.color, this.fadeInTime);
+  curr.colorTo(this.fill, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime);
 
   // get and fade in neighborhood
   this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
@@ -68,7 +65,7 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   // do the fading
   for (var i = 0; i < this.neighborsToFade.length; i++) {
     this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.leadingFadeToColor, this.fadeInTime);
-    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack);
+    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.fill, this.fadeOutTime, this.delayBeforeFadeBack);
   }
 }
 
@@ -79,7 +76,7 @@ PerigramReader.prototype.onExitCell = function (curr) {
   //curr.showBounds(0);
 }
 
-PerigramReader.prototype.hide = function (v) {
+/*PerigramReader.prototype.hide = function (v) {
 
 	this.hidden = v;
 	if (this.hidden) {
@@ -88,7 +85,7 @@ PerigramReader.prototype.hide = function (v) {
 		this.current.stopBehaviors();
 	  this.current.fill(c);
 	}
-}
+}*/
 
 PerigramReader.prototype.textForServer = function () {
 

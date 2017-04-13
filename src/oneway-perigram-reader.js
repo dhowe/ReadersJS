@@ -17,11 +17,10 @@ function OnewayPerigramReader(g, rx, ry, speed, dir, parent) {
   this.parentLast = parent;
   this.selectedLast = null;
   this.consoleString = '';
-  this.fill = RiText.defaultFill();
   this.freeCount = 0;
   this.maxFreeCount = 5;
   this.neighbors = [];
-  this.col = [194, 194, 194, 255]; // light grey
+  this.color = colorToObject(194, 194, 194, 255); // light grey
 
   // factors
   this.fadeInFactor = .8;
@@ -35,11 +34,10 @@ OnewayPerigramReader.prototype.onEnterCell = function (curr) {
   this.fadeInTime = this.actualStepTime * this.fadeInFactor;
   this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
   this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
-  this.gridColor = cloneColor(RiText.defaultFill()); // DCH: is this interface-responsive enough?
 
   // fading current in and out
-  fid = curr.colorTo(this.col, this.fadeInTime);
-  curr.colorTo(this.gridColor, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime); // 1st arg: this.fill
+  fid = curr.colorTo(this.color, this.fadeInTime);
+  curr.colorTo(this.fill, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime);
 }
 
 OnewayPerigramReader.prototype.selectNext = function () {
