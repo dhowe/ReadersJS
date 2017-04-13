@@ -81,7 +81,7 @@ function createInterface() {
 
       focused = randomReader();
       warn("Focus repair"+(focused ? ': ' + focused.type :
-        " failed: "+(allReaders(true).length + " readers"))); // FIX ME
+        " failed: "+(activeReaders().length + " readers"))); // FIX ME
     }
 
     focusChanged(focused);
@@ -171,14 +171,13 @@ function createInterface() {
 
   function styleChanged() {
 
-    var color, name = styleSelect.value();
-
-    color = (bgColor == 0) ? COLOR.White : COLOR.Black;
+    var name = styleSelect.value(),
+      color = (bgColor === 0) ? COLOR.White : COLOR.Black;
 
     log("[UI] STYLE: " + name + "/" + STYLE[name], color);
 
     // only change the opacity
-    Reader.instances.forEach(function (r) { r.alpha(STYLE[name])});
+    Reader.instances.forEach(function (r)  { r.alpha(STYLE[name])});
     RiText.instances.forEach(function (rt) { rt.alpha(STYLE[name])});
   }
 
@@ -187,17 +186,18 @@ function createInterface() {
     var style = styleSelect.value(),
       theme = themeSelect.value(),
       dark = (theme === "Dark"),
-      color = dark ? COLOR.White : COLOR.Black,
-      bgColor = dark ? 0 : 232;
+      color = dark ? COLOR.White : COLOR.Black;
+
+    bgColor = dark ? 0 : 232;
 
     log("[UI] THEME: " + theme, bgColor);
 
     // only change the color
     Reader.instances.forEach(function (r) {
-      r.fill = [color, color, color, STYLE[style]];
+      r.fill = colorToObject(color, color, color, STYLE[style]);
     });
     RiText.instances.forEach(function (rt) {
-      rt.fill(color, STYLE[style]);
+      rt.fill(colorToObject(color, color, color, STYLE[style]));
     });
 
     $('body').toggleClass("light", !dark).toggleClass("dark", dark);
@@ -225,6 +225,7 @@ function createInterface() {
 
       var actives = activeReaders(); // pick a random reader for focus
       focused = actives.length && actives[floor(random(actives.length))];
+      console.log("RESET", focused.type);
     }
 
     clearFocus();
@@ -266,11 +267,6 @@ function createInterface() {
 
   function getCSSFromColor(color) {
     return "rgb(" + color[0] + "," + color[1] + "," + color[2] + ")";
-  }
-
-  function activeReaders() {
-
-    return allReaders(true);
   }
 
   function speedToName(spd) {
@@ -329,7 +325,7 @@ function createInterface() {
 
   function onReaderSingleClick(ele) {
 
-    readerOnOffEvent(readerFromName(ele.parentNode.id),
+    readerOnOffEvent(Reader.firstOfType(ele.parentNode.id),
       ele.parentNode.getElementsByTagName('input')[0].checked);
   }
 
@@ -337,12 +333,12 @@ function createInterface() {
      //if it is off, turn it on
     var input = ele.parentNode.children[0];
     if (input.checked) {
-       readerOnOffEvent(readerFromName(ele.parentNode.id), true);
+       readerOnOffEvent(Reader.firstOfType(ele.parentNode.id), true);
        input.checked = false;
     }
 
     if (!ele.parentNode.matches('.focused'))
-      focusChanged(readerFromName(ele.parentNode.id));
+      focusChanged(Reader.firstOfType(ele.parentNode.id));
   }
 
   menu.addEventListener('click', function (event) {

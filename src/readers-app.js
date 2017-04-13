@@ -926,11 +926,20 @@ Reader.findByType = function (type) {
 
   var result = [];
   for (var i = 0, j = Reader.instances.length; i < j; i++) {
-    if (Reader.instances[i].type == type)
+    if (Reader.instances[i].type === type)
       result.push(Reader.instances[i]);
   }
   return result;
 }
+
+Reader.firstOfType = function (type) {
+
+  for (var i = 0, j = Reader.instances.length; i < j; i++) {
+    if (Reader.instances[i].type === type)
+      return Reader.instances[i];
+  }
+}
+
 
 Reader.findById = function (id) {
 

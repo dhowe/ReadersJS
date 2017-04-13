@@ -76,8 +76,7 @@ PerigramReader.prototype.onExitCell = function (curr) {
   //curr.showBounds(0);
 }
 
-/*PerigramReader.prototype.hide = function (v) {
-
+/*PerigramReader.prototype.hide = function (v) { // needed?
 	this.hidden = v;
 	if (this.hidden) {
 		var c = RiText.defaultFill();

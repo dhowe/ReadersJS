@@ -21,12 +21,14 @@ function setup() {
     pManager = PageManager.getInstance(Reader.APP);
     pManager.layout(TEXTS[0], 25, 40, 580, 650);
 
-    new PerigramReader(pManager.recto, SPEED.Fluent).hide(0);
+    // add some readers
+    new PerigramReader(pManager.recto, SPEED.Fluent)
     new MesosticReader(pManager.verso).hide(1);
-    new ObliquePerigramReader(pManager.verso).hide(1);
-    new SpawningSimpleReader(pManager.recto).hide(1);
-    new SpawningPerigramReader(pManager.verso).hide(1);
+    new ObliquePerigramReader(pManager.verso);
+    new SpawningSimpleReader(pManager.recto);
+    new SpawningPerigramReader(pManager.verso);
 
+    // pick one to get focus
     pManager.focus(randomReader());
 
     createInterface();
@@ -70,24 +72,24 @@ function resetText(textName) {
   var textObj = textFromName(textName);
   pManager.layout(textObj, 25, 40, 580, 650);
 
-  Reader.instances.forEach(function (r) {
+  activeReaders().forEach(function (r) {
 
     // focused reader on verso, others distributed across pages
     var idx = (r.hasFocus()) ? 0 : (r.id % Grid.instances.length);
     r.position(Grid.instances[idx], 0, 0);
   });
 
-  var meso = readerFromName('Mesostic Reader');
+  var meso = Reader.firstOfType('MesosticReader');
   meso && (meso.mesostic = textObj.mesostic);
 
   Reader.pauseAll(false);
 }
 
-function allReaders(activeOnly) {
+function activeReaders() {
 
   var all = []; // use filter
   for (var i = 0; i < Reader.instances.length; i++) {
-    if (!activeOnly || !Reader.instances[i].hidden)
+    if (!Reader.instances[i].hidden && Reader.instances[i].type !== 'OnewayPerigramReader')
       all.push(Reader.instances[i]);
   }
   return all;
@@ -95,7 +97,7 @@ function allReaders(activeOnly) {
 
 function randomReader() {
 
-  var rdrs = allReaders(true);
+  var rdrs = activeReaders();
   if (rdrs && rdrs.length) {
     return rdrs[Math.floor(random(rdrs.length))];
   }
@@ -109,14 +111,6 @@ function textFromName(textName) {
       result = text;
   });
   return result;
-}
-
-function readerFromName(name) {
-
-  for (var i = 0; i < Reader.instances.length; i++) {
-    if (name === Reader.instances[i].type)
-      return Reader.instances[i];
-  }
 }
 
 function textChanged() {
@@ -149,6 +143,7 @@ function colorToArray(obj, overrideAlpha) { // takes optional 2nd argument for a
 }
 
 function colorToObject(r,g,b,a) {
+
   if (arguments.length === 1) {
     a = arguments[3];
     b = arguments[2];
