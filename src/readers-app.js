@@ -1209,7 +1209,7 @@ var PageManager = function PageManager(host, port) {
 
       if (typeof txt === 'object') {
 
-        this.perigrams[3] = Trigrams[toSafeName(txt.title)];
+        this.perigrams[3] = Trigrams[txt.title.replace(/ /, '')];
         console.log('[PMAN] Stored ' + Object.keys(this.perigrams[3]).length + ' 3-grams');
         txt = txt.contents;
       }
@@ -1521,7 +1521,7 @@ var PageManager = function PageManager(host, port) {
 
           Grid.resetCell(reader.current);
           reader.position(this.verso, -1, 0); // randomize x-pos
-          
+
           //uiLogging && console.log("[UI] Reposition: " + reader.type);
           focusJump(reader,this.verso);
         }
@@ -1768,12 +1768,12 @@ var Cache = {
 ///////////////// GLOBALS (no node) ///////////////////
 
 function toSafeName(name) {
-  return name.replace(/ /g, '_');
+  return name.replace(/ /g, '');
 }
-
-function fromSafeName(name) {
-  return name.replace(/_/g, ' ');
-}
+//
+// function fromSafeName(name) {
+//   return name.replace(/_/g, ' ');
+// }
 
 /////////////////// EXPORTS /////////////////////
 

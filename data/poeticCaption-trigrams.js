@@ -1,5 +1,5 @@
 if (typeof Trigrams === 'undefined') var Trigrams = {};
-Trigrams.Poetic_Caption = {
+Trigrams.PoeticCaption = {
 'there because echoing': 1,
 'but then so': 1960,
 'more than collage': 18,

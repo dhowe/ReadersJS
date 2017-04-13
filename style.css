@@ -298,19 +298,19 @@ button:hover {
    /* fake*/
    transition: background-color .5s;
 }
-.reader#Mesostic_Reader input:checked + label:before {
+.reader#MesosticReader input:checked + label:before {
      background-color: #0095FF; /* 1464DB; */
 }
-.reader#Perigram_Reader input:checked + label:before {
+.reader#PerigramReader input:checked + label:before {
      background-color: #FA0007; /* BD0504; */
 }
-.reader#Oblique_Perigram_Reader input:checked + label:before {
+.reader#ObliquePerigramReader input:checked + label:before {
      background-color: #FF009D; /* FA0007; */
 }
-.reader#Spawning_Simple_Reader input:checked + label:before {
+.reader#SpawningSimpleReader input:checked + label:before {
      background-color: #FFFD00; /* FFB017; */
 }
-.reader#Spawning_Perigram_Reader input:checked + label:before {
+.reader#SpawningPerigramReader input:checked + label:before {
      background-color: #FF5100; /* D88100; */
 }
 /*
@@ -320,19 +320,19 @@ not currently used
 }
  */
 
-.reader#Mesostic_Reader input + label:hover:before{
+.reader#MesosticReader input + label:hover:before{
      border-color: #0095FF;
 }
-.reader#Perigram_Reader input + label:hover:before{
+.reader#PerigramReader input + label:hover:before{
      border-color: #FA0007;
 }
-.reader#Oblique_Perigram_Reader input + label:hover:before{
+.reader#ObliquePerigram_Reader input + label:hover:before{
      border-color: #FF009D;
 }
-.reader#Spawning_Simple_Reader input + label:hover:before{
+.reader#SpawningSimpleReader input + label:hover:before{
      border-color: #FFFD00;
 }
-.reader#Spawning_Perigram_Reader input + label:hover:before{
+.reader#SpawningPerigramReader input + label:hover:before{
      border-color: #FF5100;
 }
 /*
@@ -341,33 +341,33 @@ not currently used
 }
  */
 
-.reader.focused#Mesostic_Reader input:checked + label:before {
+.reader.focused#MesosticReader input:checked + label:before {
     -webkit-box-shadow: 0px 0px 15px 5px #0095FF;
     -moz-box-shadow: 0px 0px 15px 5px #0095FF;
     box-shadow: 0px 0px 15px 5px #0095FF;
 }
-.reader.focused#Perigram_Reader input:checked + label:before {
+.reader.focused#PerigramReader input:checked + label:before {
     -webkit-box-shadow: 0px 0px 15px 5px #FA0007;
     -moz-box-shadow: 0px 0px 15px 5px #FA0007;
     box-shadow: 0px 0px 15px 5px #FA0007;
 }
-.reader.focused#Oblique_Perigram_Reader input:checked + label:before {
+.reader.focused#ObliquePerigramReader input:checked + label:before {
     -webkit-box-shadow: 0px 0px 15px 5px #FF009D;
     -moz-box-shadow: 0px 0px 15px 5px #FF009D;
     box-shadow: 0px 0px 15px 5px #FF009D;
 }
-.reader.focused#Spawning_Simple_Reader input:checked + label:before {
+.reader.focused#SpawningSimpleReader input:checked + label:before {
     -webkit-box-shadow: 0px 0px 15px 5px #FFFD00;
     -moz-box-shadow: 0px 0px 15px 5px #FFFD00;
     box-shadow: 0px 0px 15px 5px #FFFD00;
 }
-.reader.focused#Spawning_Perigram_Reader input:checked + label:before {
+.reader.focused#SpawningPerigramReader input:checked + label:before {
     -webkit-box-shadow: 0px 0px 15px 5px #FF5100;
     -moz-box-shadow: 0px 0px 15px 5px #FF5100;
     box-shadow: 0px 0px 15px 5px #FF5100;
 }
 /*
-.reader.focused#Oblique_Spawner input:checked + label:before {
+.reader.focused#ObliqueSpawner input:checked + label:before {
     -webkit-box-shadow: 0px 0px 15px 5px #FFD000;
     -moz-box-shadow: 0px 0px 15px 5px #FFD000;
     box-shadow: 0px 0px 15px 5px #FFD000;

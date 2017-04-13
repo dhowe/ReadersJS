@@ -51,7 +51,7 @@ function createInterface() {
     // rb.changed(readerOnOffEvent);
     rb.parent('interface');
     rb.class("reader");
-    rb.id(toSafeName(name));
+    rb.id(reader.type);
 
     readerDef.radioButton = rb;
     readerDef.speedSelect = initSelect('speedSelect', 'full', Object.keys(SPEED), speedChanged, rb);
@@ -231,14 +231,13 @@ function createInterface() {
 
     if (focused) { // only if we have an active reader
 
-      document.getElementById(toSafeName(nameFromReader(focused))).className += " focused";
+      document.getElementById(focused.type).className += " focused";
       pManager.focus(focused);
       pManager.makeFocusedReaderVisible();
-      // focusSelect.value(nameFromReader(focused)) && focusChanged();
     }
 
     // clear focusDisplay, change color
-    $('#focusDisplay').html("");
+    $('#focusDisplay').html('');
     $('#focusDisplayTag').css("color", getCSSFromColor(Reader.COLORS[focused.type]));
   }
 
@@ -246,7 +245,7 @@ function createInterface() {
 
     var rdrs = document.getElementsByClassName("reader");
     for (var i = 0; i < rdrs.length; i++) {
-      rdrs[i].className = rdrs[i].className.replace(" focused", "");
+      rdrs[i].className = rdrs[i].className.replace(" focused", '');
     }
   }
 
@@ -255,38 +254,39 @@ function createInterface() {
     reader.hide(!onOffSwitch);
     resetFocus();
 
-    log("[UI] " + nameFromReader(reader) + (reader.hidden ? ': Off' : ': On'));
+    log("[UI] " + reader.type + (reader.hidden ? ': Off' : ': On'));
   }
 
   function focusChanged(focused) {
 
-    log("[UI] Focus: " + nameFromReader(focused));
+    log("[UI] Focus: " + focused.type);
     focused && pManager.focus(focused);
     assignFocus(focused);
   }
 
-  function renderActiveReadersClass() {
+  /*function renderActiveReadersClass() {
 
     var rdrs = activeReaderNames();
     for (var i = 0; i < rdrs.length; i++) {
-      var readerEle = document.getElementById(toSafeName(rdrs[i]));
-      readerEle.className = readerEle.className.replace(" active", "");
+      console.log(i,rdrs[i].type);
+      var readerEle = document.getElementById(rdrs[i].type);
+      readerEle.className = readerEle.className.replace(" active", '');
     }
-  }
+  }*/
 
   function getCSSFromColor(color) {
     return "rgb(" + color[0] + "," + color[1] + "," + color[2] + ")";
   }
 
-  function activeReaderNames() {
-
-    var actives = [];
-    Object.keys(readers).forEach(function (name) {
-      if (!readers[name].reader.hidden)
-        actives.push(name);
-    });
-    return actives;
-  }
+  // function activeReaderNames() {
+  //
+  //   var actives = [];
+  //   Object.keys(readers).forEach(function (name) {
+  //     if (!readers[name].reader.hidden)
+  //       actives.push(name);
+  //   });
+  //   return actives;
+  // }
 
   function activeReaders() {
 
@@ -308,8 +308,7 @@ function createInterface() {
 
     var spd = this.value();
     this.source.speed = SPEED[spd];
-    log("[UI] SPEED: " + nameFromReader(this.source)
-      + '/' + this.source.speed);
+    log("[UI] SPEED: " + this.source.type + '/' + this.source.speed);
   }
 
   function log() {
@@ -329,7 +328,7 @@ function createInterface() {
     if (menu.offsetHeight === 0) {
       menu.style.display = 'block';
       instructions.style.visibility = 'hidden';
-      options.classList = "";
+      options.classList = '';
 
     } else {
       menu.style.display = 'none';
@@ -427,7 +426,7 @@ function createInterface() {
 
 function focusJump(focused) {
 
-  $('#focusDisplay').html("");
+  $('#focusDisplay').html('');
 }
 
 function logToDisplay(msg) {

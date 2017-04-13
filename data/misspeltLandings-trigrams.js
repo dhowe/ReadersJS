@@ -1,5 +1,5 @@
 if (typeof Trigrams === 'undefined') var Trigrams = {};
-Trigrams.Misspelt_Landings = {
+Trigrams.MisspeltLandings = {
 '— and 1620':1239,
 '— the 1620':1110,
 'pilgrim 1620 —':79,
