@@ -21,7 +21,12 @@ function setup() {
     pManager = PageManager.getInstance(Reader.APP);
     pManager.layout(TEXTS[0], 25, 40, 580, 650);
 
-    // add some readers
+    new PerigramReader(pManager.recto, SPEED.Fluent);
+    new MesosticReader(pManager.verso);
+    new ObliquePerigramReader(pManager.verso);
+    new SpawningSimpleReader(pManager.recto);
+    new SpawningPerigramReader(pManager.verso);
+    /* add some readers
     readers['Perigram Reader'] = {
       reader: new PerigramReader(pManager.recto, SPEED.Fluent),
       off: 0
@@ -45,7 +50,7 @@ function setup() {
     readers['Spawning Perigram Reader'] = {
       reader: new SpawningPerigramReader(pManager.verso),
       off: 0
-    };
+    };*/
 
     pManager.focus(randomReader());
 
@@ -86,7 +91,6 @@ function resetText(textName) {
 
   Reader.pauseAll(true);
   Reader.findByType('OnewayPerigramReader').forEach(Reader.dispose);
-  //Reader.disposeByType();
 
   var textObj = textFromName(textName);
   pManager.layout(textObj, 25, 40, 580, 650);
@@ -105,6 +109,16 @@ function resetText(textName) {
 }
 
 function allReaders(activeOnly) {
+
+  var all = []; // use filter
+  for (var i = 0; i < Reader.instances.length; i++) {
+    if (!activeOnly || !Reader.instances[i].hidden)
+      all.push(Reader.instances[i]);
+  }
+  return all;
+}
+
+function allReadersOld(activeOnly) {
 
   var all = [];
   Object.keys(readers).forEach(function (name) {
@@ -135,6 +149,13 @@ function textFromName(textName) {
 }
 
 function readerFromName(name) {
+  for (var i = 0; i < Reader.instances.length; i++) {
+    if (name === Reader.instances[i].type)
+      return Reader.instances[i];
+  }
+}
+
+function readerFromNameOld(name) {
 
   if (name && readers[name])
     return readers[name].reader;
@@ -170,8 +191,8 @@ function textChanged() {
 
   $('#focusDisplay').html("");
 
-  //hide the menu
- document.getElementById("interface").style.display = 'none';
+  // hide the menu
+  document.getElementById("interface").style.display = 'none';
 }
 
 function colorToArray(obj, overrideAlpha) { // takes optional 2nd argument for alpha
@@ -193,10 +214,10 @@ function cloneColor(obj) {
 function ifTrigramReady(textName) {
 
   if (textLoaded.indexOf(textName) != -1) {
-    log("[Check Trigram] true", textName);
+    //log("[Check Trigram] true", textName);
     return true;
   } else {
-    log("[Check Trigram] false");
+    //log("[Check Trigram] false");
     notify = textName;
     return false;
   }

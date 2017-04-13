@@ -40,10 +40,10 @@ var uiLogging = true,
 
 function createInterface() {
 
-  Object.keys(readers).forEach(function (name) {
+  // Object.keys(readers).forEach(function (name) {
+  Reader.instances.forEach(function (reader) {
 
-    var rb, readerDef = readers[name],
-      reader = readerDef.reader;
+    var rb, readerDef = { reader: reader };
 
     reader.hidden = readerDef.off || false;
     rb = createCheckbox(name, !reader.hidden);
@@ -57,6 +57,8 @@ function createInterface() {
     readerDef.speedSelect = initSelect('speedSelect', 'full', Object.keys(SPEED), speedChanged, rb);
     readerDef.speedSelect.source = reader;
     readerDef.speedSelect.value(speedToName(reader.speed));
+
+    console.log(readerDef);
 
     // onhover message
     rb.child(document.getElementById('hoverTextWrapper').cloneNode(true));
@@ -83,7 +85,6 @@ function createInterface() {
 
     focusChanged(focused);
   }
-
 
   // Append elements to interface
   var descText = ['Text', 'Style', 'Theme'];
@@ -444,6 +445,7 @@ function logToDisplay(msg) {
 }
 
 $(document).ready(function () {
+
   $('#focusDisplayTag').click(function() {
     var tag = $('#focusDisplay:visible').length === 0 ? " - " : " + ";
     $('#focusDisplay').toggle("slide");
@@ -460,6 +462,7 @@ $(document).ready(function () {
 //    ul[i].addEventListener('click', onSelectClicked, false);
 
 $(document).ready(function () {
+
   $("body").on("click", "ul.select li.init", function () {
     //hide other select list if opened
     $('ul').children('li:not(.init)').hide();
@@ -468,6 +471,7 @@ $(document).ready(function () {
   });
 
   $("body").on("click", "ul.select li:not(.init)", function () {
+
     var allOptions = $("ul").children('li:not(.init)');
     allOptions.removeClass('selected');
     $(this).addClass('selected');
