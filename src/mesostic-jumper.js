@@ -13,7 +13,7 @@ function MesosticJumper(g, rx, ry, speed) {
   this.upperCasing = true;
   this.letterIdx = 0;
   this.letter = null;
-  this.color = colorToObject(0, 149, 255, 255); // #0095FF
+  this.activeFill = colorToObject(0, 149, 255, 255); // #0095FF
 }
 
 var M = MesosticReader.prototype;
@@ -145,13 +145,13 @@ M.selectLetter = function() {
 
 M.onEnterCell = function (curr) {
 
-  this.fill = curr.fill();
-  curr.fill(this.color);
+  this.pman.defaultFill = curr.fill();
+  curr.fill(this.activeFill);
 }
 
 M.onExitCell = function (curr) {
 
-  curr.colorTo(this.fill, 1);
+  curr.colorTo(this.pman.defaultFill, 1);
   Grid.resetCell(curr, true);
 }
 

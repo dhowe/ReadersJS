@@ -29,7 +29,7 @@ function ObliquePerigramReader(g, rx, ry, speed) {
 
   if (!speed) this.speed = SPEED.Steady; // default speed for ObliquePerigramReaders
 
-  this.color = colorToObject(255, 0, 157, 255); // #FF009D
+  this.activeFill = colorToObject(255, 0, 157, 255); // #FF009D
 
   // factors
   this.fadeInFactor = .8;
@@ -47,14 +47,14 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
   this.fadeInTime = this.actualStepTime * this.fadeInFactor;
   this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
   this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
-  this.innerFadeToColor = cloneColor(this.fill);
-  this.outerFadeToColor = cloneColor(this.fill);
+  this.innerFadeToColor = cloneColor(this.pman.defaultFill);
+  this.outerFadeToColor = cloneColor(this.pman.defaultFill);
   this.innerFadeToColor.a = this.innerFadeToColor.a / 2; // halve the alpha of the grid for inner circle
   this.outerFadeToColor.a = 0; // and make outer circle transparent (here: black against black background)
 
   // fading current in and out
-  fid = curr.colorTo(this.color, this.fadeInTime);
-  curr.colorTo(this.fill, this.fadeOutTime, this.delayBeforeFadeBack);
+  fid = curr.colorTo(this.activeFill, this.fadeInTime);
+  curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack);
 
   // get neighborhood
   this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
@@ -102,11 +102,11 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
   // do the fading
   for (var i = 0; i < this.neighborsToFade.length; i++) {
     this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.innerFadeToColor, this.fadeInTime);
-    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.fill, this.fadeOutTime, this.delayBeforeFadeBack);
+    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack);
   }
   for (var i = 0; i < this.outerNeighborsToFade.length; i++) {
     this.outerNeighborsToFade[i] && this.outerNeighborsToFade[i].colorTo(this.outerFadeToColor, this.fadeInTime);
-    this.outerNeighborsToFade[i] && this.outerNeighborsToFade[i].colorTo(this.fill, this.fadeOutTime, this.delayBeforeFadeBack);
+    this.outerNeighborsToFade[i] && this.outerNeighborsToFade[i].colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack);
   }
 }
 

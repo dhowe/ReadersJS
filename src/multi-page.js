@@ -12,7 +12,6 @@ function setup() {
   createCanvas(1280, 720);
 
   RiText.defaultFont(font, 24);
-  RiText.defaultFill(COLOR.White, STYLE.Faint);
   RiText.defaults.paragraphIndent = 20;
 
   loadTexts(function () {
@@ -20,10 +19,11 @@ function setup() {
     // do the layout
     pManager = PageManager.getInstance(Reader.APP);
     pManager.layout(TEXTS[0], 25, 40, 580, 650);
+    pManager.gridFill(colorToObject(255,255,255,40));
 
     // add some readers
-    new PerigramReader(pManager.recto, SPEED.Fluent)
-    new MesosticReader(pManager.verso).hide(1);
+    new PerigramReader(pManager.recto, SPEED.Fluent);
+    new MesosticReader(pManager.verso);
     new ObliquePerigramReader(pManager.verso);
     new SpawningSimpleReader(pManager.recto);
     new SpawningPerigramReader(pManager.verso);
@@ -86,13 +86,9 @@ function resetText(textName) {
 }
 
 function activeReaders() {
-
-  var all = []; // use filter
-  for (var i = 0; i < Reader.instances.length; i++) {
-    if (!Reader.instances[i].hidden && Reader.instances[i].type !== 'OnewayPerigramReader')
-      all.push(Reader.instances[i]);
-  }
-  return all;
+  return Reader.instances.filter(function(r){
+    return (!r.hidden && r.type !== 'OnewayPerigramReader')
+  });
 }
 
 function randomReader() {
@@ -118,9 +114,24 @@ function textChanged() {
   var e = document.getElementById('textSelect'),
     textName = e.options[e.selectedIndex].value;
 
+  var trigramsReady = function(textName) {
+
+    if (textLoaded.indexOf(textName) != -1) {
+
+      log("[Check Trigram] true", textName);
+      return true;
+
+    } else {
+
+      log("[Check Trigram] false");
+      notify = textName;
+      return false;
+    }
+  }
+
   log("[UI] TEXT: " + textName);
 
-  if (ifTrigramReady(textName)) {
+  if (trigramsReady(textName)) {
 
     resetText(textName);
 
@@ -144,7 +155,7 @@ function colorToArray(obj, overrideAlpha) { // takes optional 2nd argument for a
 
 function colorToObject(r,g,b,a) {
 
-  if (arguments.length === 1) {
+  if (arguments.length === 1 && r.length) {
     a = arguments[3];
     b = arguments[2];
     g = arguments[1];
@@ -166,18 +177,6 @@ function cloneColor(obj) {
     b: obj.b,
     a: obj.a
   };
-}
-
-function ifTrigramReady(textName) {
-
-  if (textLoaded.indexOf(textName) != -1) {
-    //log("[Check Trigram] true", textName);
-    return true;
-  } else {
-    //log("[Check Trigram] false");
-    notify = textName;
-    return false;
-  }
 }
 
 function dumpMem() {

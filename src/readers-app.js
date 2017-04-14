@@ -45,6 +45,8 @@ endsWith = function (str, ending) {
 
 ////////////////////////////// GRID ////////////////////////////////
 
+Grid.HEADERS = false;
+Grid.FOOTERS = false;
 Grid.SINGLE_GRID_MODE = false;
 
 // see Grid.neighborhood comment for explanation
@@ -60,10 +62,7 @@ Grid.ALLOW_ACROSTIC_NEIGHBORS = false;
 
 Grid.SLOP = 3;
 
-Grid.instances = [];
-
 Grid.DIRECTION = {
-
   NW: 0,
   N: 1,
   NE: 2,
@@ -75,6 +74,8 @@ Grid.DIRECTION = {
   SE: 8
 }
 
+Grid.instances = [];
+
 function Grid(c, x, y, w, h) {
 
   this.id = Grid.instances.length;
@@ -84,10 +85,12 @@ function Grid(c, x, y, w, h) {
   this.x = x;
   this.y = y;
 
-  this.header = RiText('', x + w / 2, y / 2);
-  this.footer = RiText('' + (this.id + 1), x + w / 2, y + h + 15);
+  if (Grid.HEADERS)
+    this.header = RiText('', x + w / 2, y / 2);
 
-  this.allRiTexts = this.storeRiTexts(); // a 1d array of RiTexts
+  if (Grid.FOOTERS)
+    this.footer = RiText('' + (this.id + 1), x + w / 2, y + h + 15);
+
   this.initial = this.storeInitial(); // a 2d array of objects {word,x,y,fill}
 
   Grid.instances.push(this);
@@ -97,7 +100,9 @@ Grid.prototype = {
 
   dispose: function () {
 
-    RiText.disposeAll(this.allRiTexts);
+    for (var i = 0; i < this.cells.length; i++)
+      RiText.disposeAll(this.cells[i]);
+
     RiText.disposeAll([this.header, this.footer]);
   },
 
@@ -500,11 +505,20 @@ Grid.prototype = {
       p2, l = new Array();
 
     if (p1.y < this.numLines() - 1) {
-      for (var i = 0; i < this.allRiTexts.length; i++) {
+      /*for (var i = 0; i < this.allRiTexts.length; i++) {
         var test = this.allRiTexts[i];
         p2 = Grid.coordsFor(test);
         if ((p1.y == (p2.y - 1)) && this.intersectsOnX(rt, test, slop)) {
           l.push(test);
+        }
+      }*/
+      for (var i = 0; i < this.cells.length; i++) {
+        for (var j = 0; j < this.cells[i].length; j++) {
+          var test = this.cells[i][j];
+          p2 = Grid.coordsFor(test);
+          if ((p1.y == (p2.y - 1)) && this.intersectsOnX(rt, test, slop)) {
+            l.push(test);
+          }
         }
       }
     }
@@ -548,11 +562,20 @@ Grid.prototype = {
       p2;
 
     if (p1.y > 0) {
-      for (var i = 0; i < this.allRiTexts.length; i++) {
+      /*for (var i = 0; i < this.allRiTexts.length; i++) {
         var test = this.allRiTexts[i];
         p2 = Grid.coordsFor(test);
         if ((p1.y == (p2.y + 1)) && this.intersectsOnX(rt, test, slop)) {
           l.push(test);
+        }
+      }*/
+      for (var i = 0; i < this.cells.length; i++) {
+        for (var j = 0; j < this.cells[i].length; j++) {
+          var test = this.cells[i][j];
+          p2 = Grid.coordsFor(test);
+          if ((p1.y == (p2.y + 1)) && this.intersectsOnX(rt, test, slop)) {
+            l.push(test);
+          }
         }
       }
     }
@@ -688,7 +711,7 @@ Grid.prototype = {
   },
 
   // returns a single dimensional array of all rts on the grid
-  storeRiTexts: function () {
+  /*storeRiTexts: function () {
 
     if (!this.allRiTexts) {
 
@@ -700,7 +723,7 @@ Grid.prototype = {
     }
 
     return this.allRiTexts;
-  },
+  },*/
 
   // returns a 2d string array of all cells at time of grid creation
   storeInitial: function () {
@@ -711,8 +734,8 @@ Grid.prototype = {
       return {
         x: rt.x,
         y: rt.y,
-        text: rt.text(),
-        fill: rt._color
+        text: rt.text()
+        //fill: rt._color
       };
     }
 
@@ -940,7 +963,6 @@ Reader.firstOfType = function (type) {
   }
 }
 
-
 Reader.findById = function (id) {
 
   for (var i = 0, j = Reader.instances.length; i < j; i++) {
@@ -966,11 +988,10 @@ function Reader(g, cx, cy, speed) { // constructor
   this.hidden = false;
   this.type = 'Reader';
   this.neighborhood = [];
-  this.showNeighbors = true;
+  this.showNeighbors = false;
   this.waitForNetwork = false;
-  this.fill = RiText.defaultFill();
-  this.color = colorToObject(255, 255, 255, 255);
-  this.speed = speed || SPEED.Steady; // default to Steady
+  this.activeFill = colorToObject(255, 255, 255);
+  this.speed = speed || SPEED.Steady;
   this.pman = PageManager.getInstance();
 
   if (cx && typeof cy === 'undefined' && typeof speed === 'undefined') {
@@ -995,8 +1016,7 @@ Reader.prototype = {
 
     //console.log(this.type+'.onEnterCell('+curr+')');
     curr.showBounds(false);
-    this.fill = curr.fill();
-    curr.fill(255, 0, 0, 255);
+    curr.fill(this.activeFill);
 
     if (this.showNeighbors) {
       this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
@@ -1012,8 +1032,7 @@ Reader.prototype = {
 
     if (curr) {
       curr.showBounds(false);
-      //curr.fill.call(curr, this.fill); // DCH: 2/2/2017
-      curr.fill.call(curr, this.fill.r, this.fill.g, this.fill.b, this.fill.a);
+      curr.fill(this.pman.defaultFill);
     }
   },
 
@@ -1047,10 +1066,10 @@ Reader.prototype = {
   alpha: function (a) {
 
     if (arguments.length) {
-      this.fill.a = a;
+      this.pman.defaultFill.a = a;
       return this;
     }
-    return this.fill.a;
+    return this.pman.defaultFill.a;
   },
 
   step: function () {
@@ -1164,11 +1183,12 @@ Reader.prototype = {
 //////// singleton: use PageManager.getInstance();
 //////////////////////////////////////////////////////////////////////////
 
-var PageManager = function PageManager(host, port) {
+var PageManager = function (host, port) {
 
   // constructor
   this.socket = null;
   this.perigrams = {};
+  this.defaultFill = colorToObject(0, 255, 0);
 
   // tmp-hack to force mode (TODO: fix me)
   if (host && !port && host == Reader.APP || host == Reader.CLIENT) {
@@ -1181,538 +1201,556 @@ var PageManager = function PageManager(host, port) {
   this.host = host || 'localhost';
 
   this.mode = this.mode || Reader.CLIENT;
-  if (inNode()) this.mode = Reader.SERVER
+  if (inNode()) this.mode = Reader.SERVER;
 
   this.notifyServer = this.mode != Reader.APP;
 
   var msg = "PageManager.mode=" + Reader.modeName(this.mode);
   info(this.notifyServer ? msg += " [http://" + this.host + ":" + this.port + "]" : msg);
 
-  // instance functions
+  this.gridAlpha = function (a) {
+
+    if (!arguments.length)
+      return this.defaultFill.a;
+
+    this.defaultFill.a = a;
+    return this.gridFill(this.defaultFill);
+  };
+
+  this.gridFill = function (c) {
+
+    if (!arguments.length)
+      return this.defaultFill;
+
+    this.defaultFill = c;
+
+    for (var h = 0; h < Grid.instances.length; h++) {
+      var cells = Grid.instances[h].cells;
+      for (var i = 0; i < cells.length; i++) {
+        for (var j = 0; j < cells[i].length; j++) {
+          if (cells[i][j]) {
+            cells[i][j].stopBehaviors().fill(c);
+          }
+        }
+      }
+    }
+  };
 
   this.layout = function (txt, x, y, w, h, leading) {
 
-      var addToStack = function (txt, words) {
-        var tmp = txt.split(' ');
-        for (var i = tmp.length - 1; i >= 0; i--)
-          words.push(tmp[i]);
-      };
+    var fill = this.defaultFill;
 
-      var withinBoundsY = function (currentY, leading, maxY, descent, firstLine) {
-        if (!firstLine)
-          return currentY + leading <= maxY - descent;
-        return currentY <= maxY - descent;
-      };
+    var addToStack = function (txt, words) {
+      var tmp = txt.split(' ');
+      for (var i = tmp.length - 1; i >= 0; i--)
+        words.push(tmp[i]);
+    };
 
-      var newRiTextLine = function (s, pf, xPos, nextY) {
-        // strip trailing spaces
-        while (s && s.length > 0 && endsWith(s, ' '))
-          s = s.substring(0, s.length - 1);
-        return new RiText(s, xPos, nextY, pf);
-      };
+    var withinBoundsY = function (currentY, leading, maxY, descent, firstLine) {
+      if (!firstLine)
+        return currentY + leading <= maxY - descent;
+      return currentY <= maxY - descent;
+    };
 
-      this.clear();
+    var newRiTextLine = function (s, pf, xPos, nextY) {
 
-      if (typeof txt === 'object') {
+      // strip trailing spaces
+      while (s && s.length > 0 && endsWith(s, ' '))
+        s = s.substring(0, s.length - 1);
 
-        this.perigrams[3] = Trigrams[txt.title.replace(/ /, '')];
-        console.log('[PMAN] Stored ' + Object.keys(this.perigrams[3]).length + ' 3-grams');
-        txt = txt.contents;
+      return new RiText(s, xPos, nextY, pf).fill(fill.r, fill.g, fill.b, fill.a);
+    };
+
+    this.clear();
+
+    if (typeof txt === 'object') {
+
+      this.perigrams[3] = Trigrams[txt.title.replace(/ /, '')];
+      console.log('[PMAN] Stored ' + Object.keys(this.perigrams[3]).length + ' 3-grams');
+      txt = txt.contents;
+    }
+
+    this.perigrams[2] = this._loadBigrams(txt);
+
+    this.x = x;
+    this.y = y;
+    this.width = w;
+    this.height = h;
+
+    var pfont = RiText.defaultFont(),
+      PAGE_BREAK = '<pb/>',
+      SP = ' ',
+      E = '';
+
+    if (!pfont) throw new Error("No font set");
+
+    if (!txt || !txt.length) throw Error("No text!");
+
+    w = w || Number.MAX_VALUE - x, h = h || Number.MAX_VALUE,
+      leading = leading || ((pfont.size || RiText.defaults.fontSize) * RiText.defaults.leadingFactor);
+
+    var ascent, descent, leading, startX = x,
+      currentX = 0,
+      yPos = 0,
+      currentY = y,
+      rlines = [],
+      sb = E,
+      maxW = x + w,
+      maxH = y + h,
+      words = [],
+      next, dbug = 0,
+      paraBreak = false,
+      pageBreak = false,
+      lineBreak = false,
+      firstLine = true;
+
+    var ascent = pfont._textAscent(RiText.defaults.fontSize),
+      descent = pfont._textDescent(RiText.defaults.fontSize);
+
+    // remove line breaks & add spaces around html
+    txt = txt.replace(/&gt;/g, '>').replace(/&lt;/g, '<');
+    txt = txt.replace(/ ?(<[^>]+>) ?/g, " $1 ").replace(/[\r\n]/g, SP);
+
+    // split into reversed array of words
+    addToStack(txt, words);
+
+    if (RiText.defaults.indentFirstParagraph)
+      startX += RiText.defaults.paragraphIndent;
+
+    while (words.length > 0) {
+      next = words.pop();
+
+      if (!next.length) continue;
+
+      // check for HTML-style tags
+      if (/<[^>]+>/.test(next)) {
+
+        //info("html:"+next);
+        if (next == RiText.NON_BREAKING_SPACE)
+          sb += SP;
+
+        else if (next == RiText.PARAGRAPH_BREAK)
+          paraBreak = true;
+
+        else if (next == RiText.LINE_BREAK)
+          lineBreak = true;
+
+        else if (next == PAGE_BREAK)
+          pageBreak = true;
+
+        continue;
       }
 
-      this.perigrams[2] = this._loadBigrams(txt);
+      // re-calculate our X position
+      currentX = startX + pfont._textWidth(sb + next, RiText.defaults.fontSize);
 
-      this.x = x;
-      this.y = y;
-      this.width = w;
-      this.height = h;
+      //info(g._type()+" -> "+g._textWidth(pfont, sb + next)+" for "+(sb+next));
 
-      var pfont = RiText.defaultFont(),
-        PAGE_BREAK = '<pb/>',
-        SP = ' ',
-        E = '';
+      // check it against the line-width
+      if (!paraBreak && !lineBreak && !pageBreak && currentX < maxW) {
 
-      if (!pfont) throw new Error("No font set");
+        sb += next + SP; // add-word
 
-      if (!txt || !txt.length) throw Error("No text!");
+      } else {
 
-      w = w || Number.MAX_VALUE - x, h = h || Number.MAX_VALUE,
-        leading = leading || ((pfont.size || RiText.defaults.fontSize) * RiText.defaults.leadingFactor);
+        // check yPosition for line break
 
-      var ascent, descent, leading, startX = x,
-        currentX = 0,
-        yPos = 0,
-        currentY = y,
-        rlines = [],
-        sb = E,
-        maxW = x + w,
-        maxH = y + h,
-        words = [],
-        next, dbug = 0,
-        paraBreak = false,
-        pageBreak = false,
-        lineBreak = false,
-        firstLine = true;
+        if (!pageBreak && withinBoundsY(currentY, leading, maxH, descent)) {
 
-      var ascent = pfont._textAscent(RiText.defaults.fontSize),
-        descent = pfont._textDescent(RiText.defaults.fontSize);
+          yPos = firstLine ? currentY : currentY + leading;
+          rt = newRiTextLine(sb, pfont, startX, yPos);
+          if (dbug) info("add1: " + rt + " currentY=" + currentY + " yPos=" + yPos);
+          rlines.push(rt);
 
-      // remove line breaks & add spaces around html
-      txt = txt.replace(/&gt;/g, '>').replace(/&lt;/g, '<');
-      txt = txt.replace(/ ?(<[^>]+>) ?/g, " $1 ").replace(/[\r\n]/g, SP);
+          currentY = paraBreak ? rt.y + RiText.defaults.paragraphLeading : rt.y;
+          startX = x;
 
-      // split into reversed array of words
-      addToStack(txt, words);
+          // reset
+          if (paraBreak) startX += RiText.defaults.paragraphIndent;
 
-      if (RiText.defaults.indentFirstParagraph)
-        startX += RiText.defaults.paragraphIndent;
+          sb = next + SP;
 
-      while (words.length > 0) {
-        next = words.pop();
-
-        if (!next.length) continue;
-
-        // check for HTML-style tags
-        if (/<[^>]+>/.test(next)) {
-
-          //info("html:"+next);
-          if (next == RiText.NON_BREAKING_SPACE)
-            sb += SP;
-
-          else if (next == RiText.PARAGRAPH_BREAK)
-            paraBreak = true;
-
-          else if (next == RiText.LINE_BREAK)
-            lineBreak = true;
-
-          else if (next == PAGE_BREAK)
-            pageBreak = true;
-
-          continue;
-        }
-
-        // re-calculate our X position
-        currentX = startX + pfont._textWidth(sb + next, RiText.defaults.fontSize);
-
-        //info(g._type()+" -> "+g._textWidth(pfont, sb + next)+" for "+(sb+next));
-
-        // check it against the line-width
-        if (!paraBreak && !lineBreak && !pageBreak && currentX < maxW) {
-
-          sb += next + SP; // add-word
+          // reset with next word
+          paraBreak = lineBreak = firstLine = false;
 
         } else {
 
-          // check yPosition for line break
+          if (pageBreak) {
 
-          if (!pageBreak && withinBoundsY(currentY, leading, maxH, descent)) {
-
-            yPos = firstLine ? currentY : currentY + leading;
-            rt = newRiTextLine(sb, pfont, startX, yPos);
-            if (dbug) info("add1: " + rt + " currentY=" + currentY + " yPos=" + yPos);
+            pageBreak = false;
+            rt = newRiTextLine(sb, pfont, startX, yPos + leading);
+            if (dbug) info("add2: " + rt + " currentY=" + currentY + " yPos=" + yPos);
             rlines.push(rt);
-
-            currentY = paraBreak ? rt.y + RiText.defaults.paragraphLeading : rt.y;
-            startX = x;
-
-            // reset
-            if (paraBreak) startX += RiText.defaults.paragraphIndent;
-
-            sb = next + SP;
-
-            // reset with next word
-            paraBreak = lineBreak = firstLine = false;
-
-          } else {
-
-            if (pageBreak) {
-
-              pageBreak = false;
-              rt = newRiTextLine(sb, pfont, startX, yPos + leading);
-              if (dbug) info("add2: " + rt + " currentY=" + currentY + " yPos=" + yPos);
-              rlines.push(rt);
-              sb = E;
-            }
-            words.push(next);
-
-            // create a new grid from existing lines
-            if (dbug) info("------ new grid(a) -------");
-            this._createGrid(rlines);
-            firstLine = true;
-
-            // reset everything for next grid
-            currentX = startX;
-            currentY = y;
-            yPos = 0;
-            rlines = [];
+            sb = E;
           }
+          words.push(next);
+
+          // create a new grid from existing lines
+          if (dbug) info("------ new grid(a) -------");
+          this._createGrid(rlines);
+          firstLine = true;
+
+          // reset everything for next grid
+          currentX = startX;
+          currentY = y;
+          yPos = 0;
+          rlines = [];
         }
       }
-
-      // check if leftover words can make a new line
-      if (withinBoundsY(currentY, leading, maxH, descent)) {
-
-        rlines.push(rt = newRiTextLine(sb, pfont, x, leading + currentY));
-
-        if (dbug) info("add3: " + rt);
-        sb = E;
-
-      } else if (words.length) { // IF ADDED: (DCH) 12.4.13
-
-        rlines.push(rt = newRiTextLine(words.join(SP).trim(), pfont, x, leading));
-
-        if (dbug) info("add4: " + rt);
-      }
-
-      // create the last grid with the leftovers
-      if (rlines.length) this._createGrid(rlines);
-
-      if (Grid.instances.length < 1)
-        throw Error("No enough text for multi-page layout");
-
-      this.verso = Grid.instances[0];
-      this.recto = Grid.instances[1];
-
-      //Grid.dumpPages(); // print the layout to console(s)
-
-      return this;
-    },
-
-    this.clear = function () {
-
-      while (Grid.instances.length) {
-
-        Grid.instances.pop().dispose();
-      }
-    },
-
-    this.storePerigrams = function (n, obj) {
-
-      if (this.mode == Reader.CLIENT) return; // dumb-client, no need for data
-
-      if (this.perigrams[n])
-        throw Error('Attempt at storing >1 sets of ' + n + '-grams');
-
-      console.log('[PMAN] Stored ' + Object.keys(obj).length + ' ' + n + '-grams');
-
-      this.perigrams[n] = obj;
-    },
-
-    this.isTrigram = function (rts, threshold) {
-
-      var key = rts,
-        count, words = [],
-        S = ' ',
-        trigrams = this.perigrams[3];
-
-      if (!trigrams) throw Error("No 3-grams loaded!");
-
-      if (is(rts, 'array')) {
-
-        if (!(rts && rts.length == 3)) throw Error("fail: rts=" + rts);
-
-        key = RiTa.stripPunctuation((rts[0].text() + S +
-          rts[1].text() + S + rts[2].text()).toLowerCase());
-      }
-
-      threshold = threshold || 0;
-      count = trigrams[key] || 0;
-      //info(key+' -> '+count);
-
-      return count > threshold;
-    },
-
-    this.isBigram = function (rts, threshold) {
-
-      var key = rts,
-        count, words = [],
-        S = ' ',
-        bigrams = this.perigrams[2];
-
-      if (!bigrams) throw Error("No 2-grams loaded!");
-      //       else {
-      //       	console.log(bigrams);
-      //       	debugger;
-      //       }
-
-      if (is(rts, 'array')) {
-
-        if (!(rts && rts.length == 2)) throw Error("fail: rts=" + rts);
-
-        key = RiTa.stripPunctuation((rts[0].text() + S +
-          rts[1].text()).toLowerCase());
-      }
-      threshold = threshold || 0;
-      count = bigrams[key] || 0;
-
-      return count > threshold;
-    },
-
-    // this seems only to work in the browser for smaller files
-    // better to include the file as a regular JS-object
-    this.loadTrigrams = function (pfile, callback) {
-
-      if (this.mode == Reader.CLIENT) return; // dumb-client, no need for data
-
-      var pMan = this,
-        bn = '\n',
-        msg = 'Load/hash trigrams';
-
-      console.time(msg);
-
-      RiTa.loadString(pfile, function (txt) {
-
-        var rows = txt.split(bn);
-
-        this.trigrams = {}, num = 0;
-        for (var i = 0, j = rows.length; i < j; i++) {
-
-          if (!(rows[i] && rows[i].length && /^[a-z]/.test(rows[i]))) {
-            info('Skipping trigram line: "' + rows[i] + '"');
-            continue;
-          }
-
-          var words = rows[i].split(/ +(\d+)/);
-
-          if (!(words.length && words[0].length && words[1].length))
-            throw Error("Bad trigram: '" + rows[i] + "'");
-
-          this.perigrams[3][words[0]] = Number(words[1]);
-          num++
-        }
-
-        console.log("[PMAN] Loaded " + num + " trigrams");
-        console.timeEnd(msg);
-
-        callback.call(this, pMan.perigrams);
-
-      }, bn);
-    },
-
-    this.footers = function () {
-      var result = [];
-      for (var i = 0, j = Grid.instances.length; i < j; i++)
-        result.push(Grid.instances[i].footer);
-      return result;
-    },
-
-    this.headers = function () {
-      var result = [];
-      for (var i = 0, j = Grid.instances.length; i < j; i++)
-        result.push(Grid.instances[i].header);
-      return result;
-    },
-
-    // optional boolean arg makes sure reader is on recto/verso after switch
-    this.nextPage = function (ensureFocusedReaderIsVisible) {
-
-      var next = this.recto.getNext();
-      this.verso = this.recto;
-      this.recto = next;
-
-      ensureFocusedReaderIsVisible && this.makeFocusedReaderVisible();
-
-      return this;
-    },
-
-    this.makeFocusedReaderVisible = function () {
-
-      var reader = PageManager.getInstance().focus();
-      if (reader) {
-
-        var grid = Grid.gridFor(reader.current);
-
-        // only position if not already visible
-        if (grid !== this.recto && grid !== this.verso) {
-
-          Grid.resetCell(reader.current);
-          reader.position(this.verso, -1, 0); // randomize x-pos
-
-          //uiLogging && console.log("[UI] Reposition: " + reader.type);
-          focusJump(reader,this.verso);
-        }
-      }
-    },
-
-    // optional boolean arg makes sure reader is on recto/verso after switch
-    this.lastPage = function (makeFocusedReaderVisible) {
-
-      var back = this.verso.getPrevious();
-      this.recto = this.verso;
-      this.verso = back;
-
-      if (makeFocusedReaderVisible)
-        this.makeFocusedReaderVisible();
-
-      return this;
-    },
-
-    this.focus = function (reader) {
-
-      if (arguments.length) {
-
-        this.focused = reader;
-        return this;
-      }
-
-      return this.focused;
-    },
-
-    this.draw = function () {
-
-      Grid.updateAll();
-
-      this.verso && (this.verso.draw(0));
-      this.recto && (this.recto.draw(1));
-
-      return this;
-    },
-
-    this._createGrid = function (lines) {
-
-      new Grid(this._toCells(lines), this.x, this.y, this.width, this.height);
-      RiText.dispose(lines);
-    },
-
-    this._toCells = function (rt) {
-
-      var cells = [];
-      for (var y = 0; y < rt.length; y++)
-        cells.push(rt[y].splitWords());
-      return cells;
-    },
-
-    this._computeBigramsCounts = function (bigrams, trigrams) {
-
     }
+
+    // check if leftover words can make a new line
+    if (withinBoundsY(currentY, leading, maxH, descent)) {
+
+      rlines.push(rt = newRiTextLine(sb, pfont, x, leading + currentY));
+
+      if (dbug) info("add3: " + rt);
+      sb = E;
+
+    } else if (words.length) { // IF ADDED: (DCH) 12.4.13
+
+      rlines.push(rt = newRiTextLine(words.join(SP).trim(), pfont, x, leading));
+
+      if (dbug) info("add4: " + rt);
+    }
+
+    // create the last grid with the leftovers
+    if (rlines.length) this._createGrid(rlines);
+
+    if (Grid.instances.length < 1)
+      throw Error("No enough text for multi-page layout");
+
+    this.verso = Grid.instances[0];
+    this.recto = Grid.instances[1];
+
+    //Grid.dumpPages(); // print the layout to console(s)
+
+    return this;
+  };
+
+  this.clear = function () {
+
+    while (Grid.instances.length) {
+
+      Grid.instances.pop().dispose();
+    }
+  };
+
+  this.storePerigrams = function (n, obj) {
+
+    if (this.mode == Reader.CLIENT) return; // dumb-client, no need for data
+
+    if (this.perigrams[n])
+      throw Error('Attempt at storing >1 sets of ' + n + '-grams');
+
+    console.log('[PMAN] Stored ' + Object.keys(obj).length + ' ' + n + '-grams');
+
+    this.perigrams[n] = obj;
+  };
+
+  this.isTrigram = function (rts, threshold) {
+
+    var key = rts,
+      count, words = [],
+      trigrams = this.perigrams[3];
+
+    if (!trigrams) throw Error("No 3-grams loaded!");
+
+    if (is(rts, 'array')) {
+
+      if (!(rts && rts.length == 3)) throw Error("fail: rts=" + rts);
+
+      key = RiTa.stripPunctuation((rts[0].text() + ' ' +
+        rts[1].text() + S + rts[2].text()).toLowerCase());
+    }
+
+    threshold = threshold || 0;
+    count = trigrams[key] || 0;
+    //info(key+' -> '+count);
+
+    return count > threshold;
+  };
+
+  this.isBigram = function (rts, threshold) {
+
+    var count, key = rts, words = [], bigrams = this.perigrams[2];
+
+    if (!bigrams) throw Error("No 2-grams loaded!");
+
+    if (is(rts, 'array')) {
+
+      if (!(rts && rts.length == 2)) throw Error("fail: rts=" + rts);
+
+      key = RiTa.stripPunctuation((rts[0].text() + ' ' +
+        rts[1].text()).toLowerCase());
+    }
+
+    threshold = threshold || 0;
+    count = bigrams[key] || 0;
+
+    return count > threshold;
+  };
+
+  // this seems only to work in the browser for smaller files
+  // better to include the file as a regular JS-object
+  this.loadTrigrams = function (pfile, callback) {
+
+    if (this.mode == Reader.CLIENT) return; // dumb-client, no need for data
+
+    var pMan = this,
+      msg = 'Load/hash trigrams';
+
+    console.time(msg);
+
+    RiTa.loadString(pfile, function (txt) {
+
+      var rows = txt.split('\n');
+
+      this.trigrams = {}, num = 0;
+      for (var i = 0, j = rows.length; i < j; i++) {
+
+        if (!(rows[i] && rows[i].length && /^[a-z]/.test(rows[i]))) {
+          info('Skipping trigram line: "' + rows[i] + '"');
+          continue;
+        }
+
+        var words = rows[i].split(/ +(\d+)/);
+
+        if (!(words.length && words[0].length && words[1].length))
+          throw Error("Bad trigram: '" + rows[i] + "'");
+
+        this.perigrams[3][words[0]] = Number(words[1]);
+        num++
+      }
+
+      console.log("[PMAN] Loaded " + num + " trigrams");
+      console.timeEnd(msg);
+
+      callback.call(this, pMan.perigrams);
+
+    }, '\n');
+  };
+
+  this.footers = function () {
+    var result = [];
+    for (var i = 0, j = Grid.instances.length; i < j; i++)
+      result.push(Grid.instances[i].footer);
+    return result;
+  };
+
+  this.headers = function () {
+    var result = [];
+    for (var i = 0, j = Grid.instances.length; i < j; i++)
+      result.push(Grid.instances[i].header);
+    return result;
+  };
+
+  // optional boolean arg makes sure reader is on recto/verso after switch
+  this.nextPage = function (ensureFocusedReaderIsVisible) {
+
+    var next = this.recto.getNext();
+    this.verso = this.recto;
+    this.recto = next;
+
+    ensureFocusedReaderIsVisible && this.makeFocusedReaderVisible();
+
+    return this;
+  };
+
+  this.makeFocusedReaderVisible = function () {
+
+    var reader = PageManager.getInstance().focus();
+    if (reader) {
+
+      var grid = Grid.gridFor(reader.current);
+
+      // only position if not already visible
+      if (grid !== this.recto && grid !== this.verso) {
+
+        Grid.resetCell(reader.current);
+        reader.position(this.verso, -1, 0); // randomize x-pos
+
+        //uiLogging && console.log("[UI] Reposition: " + reader.type);
+        focusJump(reader, this.verso);
+      }
+    }
+  };
+
+  // optional boolean arg makes sure reader is on recto/verso after switch
+  this.lastPage = function (makeFocusedReaderVisible) {
+
+    var back = this.verso.getPrevious();
+    this.recto = this.verso;
+    this.verso = back;
+
+    if (makeFocusedReaderVisible)
+      this.makeFocusedReaderVisible();
+
+    return this;
+  };
+
+  this.focus = function (reader) {
+
+    if (arguments.length) {
+
+      this.focused = reader;
+      return this;
+    }
+
+    return this.focused;
+  };
+
+  this.draw = function () {
+
+    Grid.updateAll();
+
+    this.verso && (this.verso.draw(0));
+    this.recto && (this.recto.draw(1));
+
+    return this;
+  };
+
+  this._createGrid = function (lines) {
+
+    new Grid(this._toCells(lines), this.x, this.y, this.width, this.height);
+    RiText.dispose(lines);
+  };
+
+  this._toCells = function (rt) {
+
+    var cells = [];
+    for (var y = 0; y < rt.length; y++)
+      cells.push(rt[y].splitWords());
+    return cells;
+  };
 
   this._loadBigrams = function (txt) {
 
-      if (this.mode == Reader.CLIENT) return; // dumb-client, no need for data
+    if (this.mode == Reader.CLIENT) return; // dumb-client, no need for data
 
-      var num = 0,
-        words = txt.split(/\s+/),
-        last = words[0],
-        bigrams = {};
+    var num = 0,
+      words = txt.split(/\s+/),
+      last = words[0],
+      bigrams = {};
 
-      for (var i = 1, j = words.length; i < j; i++) {
+    for (var i = 1, j = words.length; i < j; i++) {
 
-        if (!words[i].length || words[i].match(/<pb?\/?>/)) { // <p/> or <pb/>
-          continue;
-        }
-        var key = RiTa.stripPunctuation((last + ' ' + words[i]).toLowerCase());
-        bigrams[key] = 1; // JHC changed this: a minimal count
-        //console.log(last+' '+words[i]);
-        last = words[i];
-        num++;
-      };
+      if (!words[i].length || words[i].match(/<pb?\/?>/)) { // <p/> or <pb/>
+        continue;
+      }
+      var key = RiTa.stripPunctuation((last + ' ' + words[i]).toLowerCase());
+      bigrams[key] = 1; // JHC changed this: a minimal count
+      //console.log(last+' '+words[i]);
+      last = words[i];
+      num++;
+    };
 
-      console.log("[PMAN] Stored " + num + " 2-grams");
+    console.log("[PMAN] Stored " + num + " 2-grams");
 
-      return bigrams;
-    },
+    return bigrams;
+  };
 
-    this.listenForUpdates = function () {
+  this.listenForUpdates = function () {
 
-      var grid, lastGrid, reader, lastCell, pman = this;
+    var grid, lastGrid, reader, lastCell, pman = this;
 
-      if (!this.socket)
-        this.socket = io.connect('http://' + this.host + ':' + this.port);
+    if (!this.socket)
+      this.socket = io.connect('http://' + this.host + ':' + this.port);
 
-      this.socket.on('message', function (data) {
+    this.socket.on('message', function (data) {
 
-        grid = Grid.findById(data.grid);
-        reader = Reader.findById(data.id);
+      grid = Grid.findById(data.grid);
+      reader = Reader.findById(data.id);
 
-        if (reader.current) {
+      if (reader.current) {
 
-          lastCell = reader.current; // tmp-remove
+        lastCell = reader.current; // tmp-remove
 
-          reader.onExitCell(reader.current);
-          lastGrid = Grid.gridFor(reader.current);
-        }
-
-        reader.current = grid.cellAt(data.x, data.y);
-
-        // TMP: hack for changing cell text in mesostic
-        if (data.type === 'MesosticReader')
-          reader.current.text(data.text.replace(/[\s\r\n]+/, ''));
-
-        if (!reader.current) {
-
-          var pt = Grid.coordsFor(lastCell);
-          info('left: ' + pt.x + ',' + pt.y + ", '" + lastCell.text() + "'");
-          err('no cell for: ' + data.x + ',' + data.y);
-        }
-
-        reader.onEnterCell(reader.current);
-        reader.steps++;
-
-        if (data.focused) {
-
-          pman.focused = this;
-          if (lastGrid != grid) {
-
-            //info("Listener.nextPage()");
-            pman.nextPage();
-          }
-        }
-      });
-    },
-
-    this.sendUpdate = function (reader, text) {
-
-      if (Reader.WAIT_FOR_NETWORK) return;
-
-      var cf, data;
-
-      if (typeof io == 'undefined') {
-        warn('no io!');
-        this.warnAndWait(reader);
-        return;
+        reader.onExitCell(reader.current);
+        lastGrid = Grid.gridFor(reader.current);
       }
 
-      if (!this.socket)
-        this.socket = io.connect('http://' + this.host + ':' + this.port);
+      reader.current = grid.cellAt(data.x, data.y);
 
-      if (!this.socket) {
-        warn('no socket!');
-        this.warnAndWait(reader);
-        return;
+      // TMP: hack for changing cell text in mesostic
+      if (data.type === 'MesosticReader')
+        reader.current.text(data.text.replace(/[\s\r\n]+/, ''));
+
+      if (!reader.current) {
+
+        var pt = Grid.coordsFor(lastCell);
+        info('left: ' + pt.x + ',' + pt.y + ", '" + lastCell.text() + "'");
+        err('no cell for: ' + data.x + ',' + data.y);
       }
 
-      cf = Grid.coordsFor(reader.current);
+      reader.onEnterCell(reader.current);
+      reader.steps++;
 
-      data = {
-        x: cf.x,
-        y: cf.y,
-        text: text,
-        id: reader.id,
-        type: reader.type,
-        grid: cf.grid.id,
-        focused: this.focused === reader
-      };
-      //info(this.type+': '+JSON.stringify(data));
+      if (data.focused) {
 
-      this.socket.emit("reader-update", data);
-      // this.socket.emit(this.type, data); // better
-    },
+        pman.focused = this;
+        if (lastGrid != grid) {
 
-    this.warnAndWait = function (reader, ms) {
+          //info("Listener.nextPage()");
+          pman.nextPage();
+        }
+      }
+    });
+  };
 
-      if (!reader) err('no reader!');
+  this.sendUpdate = function (reader, text) {
 
-      ms = ms || Reader.NETWORK_PAUSE;
+    if (Reader.WAIT_FOR_NETWORK) return;
 
-      Reader.WAIT_FOR_NETWORK = true;
+    var cf, data;
 
-      var msg = reader.type + '.socket: failed, waiting for ' + ms + "ms\n";
-      warn(msg);
-
-      setTimeout(function () {
-        Reader.WAIT_FOR_NETWORK = false;
-      }, ms);
+    if (typeof io == 'undefined') {
+      warn('no io!');
+      this.warnAndWait(reader);
+      return;
     }
+
+    if (!this.socket)
+      this.socket = io.connect('http://' + this.host + ':' + this.port);
+
+    if (!this.socket) {
+      warn('no socket!');
+      this.warnAndWait(reader);
+      return;
+    }
+
+    cf = Grid.coordsFor(reader.current);
+
+    data = {
+      x: cf.x,
+      y: cf.y,
+      text: text,
+      id: reader.id,
+      type: reader.type,
+      grid: cf.grid.id,
+      focused: this.focused === reader
+    };
+    //info(this.type+': '+JSON.stringify(data));
+
+    this.socket.emit("reader-update", data);
+    // this.socket.emit(this.type, data); // better
+  };
+
+  this.warnAndWait = function (reader, ms) {
+
+    if (!reader) err('no reader!');
+
+    ms = ms || Reader.NETWORK_PAUSE;
+
+    Reader.WAIT_FOR_NETWORK = true;
+
+    var msg = reader.type + '.socket: failed, waiting for ' + ms + "ms\n";
+    warn(msg);
+
+    setTimeout(function () {
+      Reader.WAIT_FOR_NETWORK = false;
+    }, ms);
+  };
 
   if (this.mode === Reader.CLIENT) this.listenForUpdates();
 }
@@ -1731,14 +1769,14 @@ var Cache = {
 
   cacheData: {},
 
-  get: function(key) {
+  get: function (key) {
     if (Cache.cacheData.hasOwnProperty(key) && Cache.cacheData[key].val) {
       return Cache.cacheData[key].val;
     }
     return false;
   },
 
-  set: function(key, value, expiry) {
+  set: function (key, value, expiry) {
 
     Cache.clear(key);
 
@@ -1756,7 +1794,7 @@ var Cache = {
     };
   },
 
-  clear: function(key) {
+  clear: function (key) {
 
     if (Cache.cacheData.hasOwnProperty(key)) {
       if (Cache.cacheData[key].to) {

@@ -14,7 +14,7 @@ function SpawningSimpleReader(g, rx, ry, speed) {
 
   if (!speed) this.speed = SPEED.Fluent; // default speed for SpawningSimpleReaders (DH shouldn't be needed)
 
-  this.color =  colorToObject(255, 252, 0, 255); // #FFFD00
+  this.activeFill =  colorToObject(255, 252, 0, 255); // #FFFD00
   // this.neighborCol = [127, 10, 30, 255];
 
   // factors
@@ -37,8 +37,8 @@ SpawningSimpleReader.prototype.onEnterCell = function (curr) {
   this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
 
   // fading current in and out
-  fid = curr.colorTo(this.color, this.fadeInTime);
-  curr.colorTo(this.fill, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime); // 1st arg: this.fill
+  fid = curr.colorTo(this.activeFill, this.fadeInTime);
+  curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime); // 1st arg: this.pman.defaultFill
 
   var coords, spawned, g = Grid.gridFor(curr), neighbors = g.neighborhood(curr);
 

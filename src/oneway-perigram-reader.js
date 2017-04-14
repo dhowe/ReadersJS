@@ -20,7 +20,7 @@ function OnewayPerigramReader(g, rx, ry, speed, dir, parent) {
   this.freeCount = 0;
   this.maxFreeCount = 5;
   this.neighbors = [];
-  this.color = colorToObject(194, 194, 194, 255); // light grey
+  this.activeFill = colorToObject(194, 194, 194, 255); // light grey
 
   // factors
   this.fadeInFactor = .8;
@@ -36,8 +36,8 @@ OnewayPerigramReader.prototype.onEnterCell = function (curr) {
   this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
 
   // fading current in and out
-  fid = curr.colorTo(this.color, this.fadeInTime);
-  curr.colorTo(this.fill, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime);
+  fid = curr.colorTo(this.activeFill, this.fadeInTime);
+  curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime);
 }
 
 OnewayPerigramReader.prototype.selectNext = function () {
@@ -103,7 +103,7 @@ OnewayPerigramReader.prototype._isViableDirection = function (curr, neighbor) {
   var key = RiTa.stripPunctuation((curr.text() + ' ' + neighbor.text()).toLowerCase()),
     countThreshold = 0; // this._adjustForStopWords(0, key.split(S));
 
-  return PageManager.getInstance().isBigram(key, countThreshold);
+  return this.pman.isBigram(key, countThreshold);
 }
 
 //////////////////////// Exports ////////////////////////

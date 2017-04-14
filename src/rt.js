@@ -733,6 +733,8 @@
         from: {},
         to: {}
       };
+
+      return this;
     },
 
     colorTo: function (newColor, seconds, delay) {
@@ -742,8 +744,6 @@
         + ' the fade time (in seconds) as 2, and, optionally, the delay time as 3');
 
       delay = delay || 0;
-
-      //if (delay <= 0)return this.fill(newColor);
 
       var rt = this;
 

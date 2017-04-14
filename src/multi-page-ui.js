@@ -40,16 +40,15 @@ var uiLogging = true,
 
 function createInterface() {
 
-  var toSnakeCase = function(s){
+  var toName = function(s) {
   	return s.replace(/([A-Z])/g, function($1){ return ' '+$1 });
   };
 
-  // Object.keys(readers).forEach(function (name) {
   Reader.instances.forEach(function (reader) {
 
     var rb, readerDef = { reader: reader };
 
-    rb = createCheckbox(toSnakeCase(reader.type), !reader.hidden);
+    rb = createCheckbox(toName(reader.type), !reader.hidden);
 
     // rb.changed(readerOnOffEvent);
     rb.parent('interface');
@@ -154,51 +153,26 @@ function createInterface() {
     return ul;
   }
 
-  function ifTrigramReady(textName) {
-
-    if (textLoaded.indexOf(textName) != -1) {
-
-      log("[Check Trigram] true", textName);
-      return true;
-
-    } else {
-
-      log("[Check Trigram] false");
-      notify = textName;
-      return false;
-    }
-  }
-
   function styleChanged() {
 
     var name = styleSelect.value(),
-      color = (bgColor === 0) ? COLOR.White : COLOR.Black;
-
-    log("[UI] STYLE: " + name + "/" + STYLE[name], color);
-
-    // only change the opacity
-    Reader.instances.forEach(function (r)  { r.alpha(STYLE[name])});
-    RiText.instances.forEach(function (rt) { rt.alpha(STYLE[name])});
+      style = STYLE[name];
+    log("[UI] STYLE: " + name + "/" + style);
+    pManager.gridAlpha(style);
   }
 
   function themeChanged() {
 
-    var style = styleSelect.value(),
-      theme = themeSelect.value(),
+    var theme = themeSelect.value(),
       dark = (theme === "Dark"),
-      color = dark ? COLOR.White : COLOR.Black;
+      style = STYLE[styleSelect.value()],
+      col = dark ? COLOR.White : COLOR.Black;
 
-    bgColor = dark ? 0 : 232;
+    bgColor = dark ? 0 : 232; // global
 
     log("[UI] THEME: " + theme, bgColor);
 
-    // only change the color
-    Reader.instances.forEach(function (r) {
-      r.fill = colorToObject(color, color, color, STYLE[style]);
-    });
-    RiText.instances.forEach(function (rt) {
-      rt.fill(colorToObject(color, color, color, STYLE[style]));
-    });
+    pManager.gridFill(colorToObject(col, col, col, style));
 
     $('body').toggleClass("light", !dark).toggleClass("dark", dark);
   }
@@ -225,7 +199,6 @@ function createInterface() {
 
       var actives = activeReaders(); // pick a random reader for focus
       focused = actives.length && actives[floor(random(actives.length))];
-      console.log("RESET", focused.type);
     }
 
     clearFocus();
@@ -239,7 +212,7 @@ function createInterface() {
 
     // clear focusDisplay, change color
     $('#focusDisplay').html('');
-    $('#focusDisplayTag').css("color", getCSSFromColor(focused.color));
+    $('#focusDisplayTag').css("color", getCSSFromColor(focused.activeFill));
   }
 
   function clearFocus() {
@@ -265,8 +238,8 @@ function createInterface() {
     assignFocus(focused);
   }
 
-  function getCSSFromColor(color) {
-    return "rgb(" + color[0] + "," + color[1] + "," + color[2] + ")";
+  function getCSSFromColor(colorObj) {
+    return "rgb(" + colorObj.r + "," + colorObj.g + "," + colorObj.b + ")";
   }
 
   function speedToName(spd) {

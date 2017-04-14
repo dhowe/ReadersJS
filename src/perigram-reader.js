@@ -14,7 +14,7 @@ function PerigramReader(g, rx, ry, speed) {
 
   if (!speed) this.speed = SPEED.Fluent; // default speed for PerigramReaders
 
-  this.color = colorToObject(250, 0, 7, 255) // red #FA0007
+  this.activeFill = colorToObject(250, 0, 7, 255) // red #FA0007
   // this.neighborCol = [127, 10, 30, 255];
 
   // factors
@@ -42,12 +42,12 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   this.fadeInTime = this.actualStepTime * this.fadeInFactor;
   this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
   this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
-  this.leadingFadeToColor = cloneColor(this.fill);
+  this.leadingFadeToColor = cloneColor(this.pman.defaultFill);
   this.leadingFadeToColor.a = this.leadingFadeToColor.a + 64;
 
   // fading current in and out
-  fid = curr.colorTo(this.color, this.fadeInTime);
-  curr.colorTo(this.fill, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime);
+  fid = curr.colorTo(this.activeFill, this.fadeInTime);
+  curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime);
 
   // get and fade in neighborhood
   this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
@@ -65,7 +65,7 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   // do the fading
   for (var i = 0; i < this.neighborsToFade.length; i++) {
     this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.leadingFadeToColor, this.fadeInTime);
-    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.fill, this.fadeOutTime, this.delayBeforeFadeBack);
+    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack);
   }
 }
 
@@ -181,7 +181,7 @@ PerigramReader.prototype._isViableDirection = function (last, curr, neighbor, di
 
   countThreshold = this._adjustForStopWords(0, key.split(S));
 
-  result = PageManager.getInstance().isTrigram(key, countThreshold);
+  result = this.pman.isTrigram(key, countThreshold);
 
   if (result) {
    //info("Perigram_isViable found: " + key + " (" + Grid.direction(dir) + ") " + countThreshold);
