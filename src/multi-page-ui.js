@@ -121,38 +121,6 @@ function createInterface() {
     return sel.id(id).changed(onChanged);
   }
 
-  function initStylizedSelect(id, style, options, onChanged, parent) { // used?
-
-    var ul = document.createElement('ul');
-    ul.setAttribute('id', id);
-    ul.setAttribute('class', "select");
-
-    var li = document.createElement('li');
-    li.setAttribute('class', "init");
-    ul.appendChild(li);
-    li.innerHTML = li.innerHTML + options[0];
-
-    function renderList(element, index, arr) { // yuck
-
-      var li = document.createElement('li');
-      ul.appendChild(li);
-      if (index === 0) li.setAttribute('class', "selected");
-      li.innerHTML = li.innerHTML + element;
-    }
-
-    if (style === "half") {
-      ul.className += " half";
-    }
-
-    parent && ul.parent(parent);
-    options.forEach(renderList);
-
-    //console.log(typeof onChanged);
-    ul.addEventListener("change", onChanged);
-
-    return ul;
-  }
-
   function styleChanged() {
 
     var name = styleSelect.value(),
