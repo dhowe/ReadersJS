@@ -12,7 +12,8 @@ function setup() {
   createCanvas(1280, 720);
 
   RiText.defaultFont(font, 24);
-  RiText.defaults.paragraphIndent = 20;
+  RiText.defaults.paragraphLeading = 10;
+  RiText.defaults.paragraphIndent = 0;
 
   loadTexts(function () {
 
