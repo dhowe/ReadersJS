@@ -155,17 +155,31 @@ function colorToArray(obj, overrideAlpha) { // takes optional 2nd argument for a
 
 function colorToObject(r,g,b,a) {
 
-  if (arguments.length === 1 && r.length) {
-    a = arguments[3];
-    b = arguments[2];
-    g = arguments[1];
+  if (arguments.length === 1) {
+    if (r.length) {
+      a = arguments[3];
+      b = arguments[2];
+      g = arguments[1];
+      r = arguments[0];
+    }
+    else {
+      a = 255;
+      b = arguments[0];
+      g = arguments[0];
+      r = arguments[0];
+    }
+  }
+  else if (arguments.length === 2) {
+    a = arguments[1];
+    b = arguments[0];
+    g = arguments[0];
     r = arguments[0];
   }
   return {
     r: r,
     g: g,
     b: b,
-    a: a || 255
+    a: typeof a !== 'undefined' ? a : 255
   };
 }
 

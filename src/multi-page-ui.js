@@ -123,10 +123,12 @@ function createInterface() {
 
   function styleChanged() {
 
-    var name = styleSelect.value(),
+    var col = (bgColor == 0) ? COLOR.White : COLOR.Black,
+      name = styleSelect.value(),
       style = STYLE[name];
-    log("[UI] STYLE: " + name + "/" + style);
-    pManager.gridAlpha(style);
+    log("[UI] STYLE: " + name + "/" + style, col);
+    //pManager.gridAlpha(style);
+    pManager.gridFill(colorToObject(col, style));
   }
 
   function themeChanged() {
@@ -140,7 +142,7 @@ function createInterface() {
 
     log("[UI] THEME: " + theme, bgColor);
 
-    pManager.gridFill(colorToObject(col, col, col, style));
+    pManager.gridFill(colorToObject(col, style));
 
     $('body').toggleClass("light", !dark).toggleClass("dark", dark);
   }
