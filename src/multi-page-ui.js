@@ -46,22 +46,16 @@ function createInterface() {
 
   Reader.instances.forEach(function (reader) {
 
-    var rb, readerDef = { reader: reader };
-
-    rb = createCheckbox(toName(reader.type), !reader.hidden);
-
-    // rb.changed(readerOnOffEvent);
+    var rb = createCheckbox(toName(reader.type), !reader.hidden);
     rb.parent('interface');
     rb.class("reader");
     rb.id(reader.type);
 
-    readerDef.radioButton = rb;
-    readerDef.speedSelect = initSelect('speedSelect', 'full', Object.keys(SPEED), speedChanged, rb);
-    readerDef.speedSelect.source = reader;
-    readerDef.speedSelect.value(speedToName(reader.speed));
+    var speedSelect = initSelect('speedSelect', 'full', Object.keys(SPEED), speedChanged, rb);
+    speedSelect.value(speedToName(reader.speed));
+    speedSelect.source = reader;
 
-    // onhover message
-    rb.child(document.getElementById('hoverTextWrapper').cloneNode(true));
+    rb.child(document.getElementById('hoverTextWrapper').cloneNode(true)); // onhover message
   });
 
   var textSelect, styleSelect, themeSelect, uiElements = [
@@ -126,7 +120,7 @@ function createInterface() {
     var col = (bgColor == 0) ? COLOR.White : COLOR.Black,
       name = styleSelect.value(),
       style = STYLE[name];
-    log("[UI] STYLE: " + name + "/" + style, col);
+    log("[UI] Style: " + name + "/" + style);
     //pManager.gridAlpha(style);
     pManager.gridFill(colorToObject(col, style));
   }
@@ -140,7 +134,7 @@ function createInterface() {
 
     bgColor = dark ? 0 : 232; // global
 
-    log("[UI] THEME: " + theme, bgColor);
+    log("[UI] Theme: " + theme);
 
     pManager.gridFill(colorToObject(col, style));
 
@@ -227,7 +221,7 @@ function createInterface() {
 
     var spd = this.value();
     this.source.speed = SPEED[spd];
-    log("[UI] SPEED: " + this.source.type + '/' + this.source.speed);
+    log('[UI] ' + this.source.type + '.speed=' + this.source.speed);
   }
 
   function log() {
