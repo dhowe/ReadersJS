@@ -330,7 +330,7 @@ function pauseInterface(val) {
 }
 
 // handle cases where tab is not the active tab, sleep, screensaver
-document.addEventListener('visibilitychangexxx', function() {
+document.addEventListener('visibilitychange', function() {
   !document.hidden && console.log('[UI] Tab reactivated');
   pauseInterface(document.hidden);
 })
