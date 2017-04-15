@@ -324,13 +324,11 @@ function logToDisplay(msg) {
   }
 }
 
+// handle cases where tab is not the active tab
 document.addEventListener('visibilitychange', function() {
-    //document.title = document.hidden; // change tab text for demo
-    console.log("VISIBILITY: ", document.hidden);
-    Reader.pauseAll(document.hidden);
-    // if (document.hidden) {
-    //   Reader.findByType('OnewayPerigramReader').forEach(Reader.dispose);
-    // }
+  console.log(document.hidden, document.visibilityState);
+  Reader.pauseAll(document.hidden);
+  if (!document.hidden) themeChanged();
 })
 
 $(document).ready(function () {
