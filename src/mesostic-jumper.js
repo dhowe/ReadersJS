@@ -145,7 +145,7 @@ M.selectLetter = function() {
 
 M.onEnterCell = function (curr) {
 
-  this.pman.defaultFill = curr.fill();
+  // this.pman.defaultFill = curr.fill();
   curr.fill(this.activeFill);
 }
 

@@ -49,9 +49,14 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
   this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
   this.innerFadeToColor = cloneColor(this.pman.defaultFill);
   this.outerFadeToColor = cloneColor(this.pman.defaultFill);
-  this.innerFadeToColor.a = this.innerFadeToColor.a / 2; // halve the alpha of the grid for inner circle
-  this.outerFadeToColor.a = 0; // and make outer circle transparent (here: black against black background)
-
+  // info("bgColor: " + bgColor);
+  if (bgColor > 0) { // assumes Dark theme is absolute black
+		this.innerFadeToColor.a = this.innerFadeToColor.a / 2; // halve the alpha of the grid for inner circle
+		this.outerFadeToColor.a = 0; // and make outer circle transparent (here: black against black background)
+	else {
+		this.innerFadeToColor.a = this.innerFadeToColor.a / 2; // halve the alpha of the grid for inner circle
+		this.outerFadeToColor.a = 0; // and make outer circle transparent (here: black against black background)
+	}
   // fading current in and out
   fid = curr.colorTo(this.activeFill, this.fadeInTime);
   curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.speed * this.delayFactor); // delayBeforeFadeBack
