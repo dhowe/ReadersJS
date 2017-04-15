@@ -335,6 +335,7 @@ document.addEventListener('visibilitychange', function() {
   pauseInterface(document.hidden);
 })
 
+/*
 // handle cases where window loses focus
 $(window).blur(function() {
   console.log('[UI] Window lost focus');
@@ -346,6 +347,7 @@ $(window).focus(function() {
   console.log('[UI] Window regained focus');
   pauseInterface(false);
 });
+*/
 
 $(document).ready(function () {
 
