@@ -9,6 +9,8 @@ function preload() {
 
 function setup() {
 
+  if(isFirefox) return;
+
   createCanvas(1280, 720);
 
   RiText.defaultFont(font, 24);
@@ -37,9 +39,10 @@ function setup() {
 };
 
 function draw() {
-
-  background(bgColor || 0);
-  pManager && (pManager.draw());
+  if(!isFirefox) {
+    background(bgColor || 0);
+    pManager && (pManager.draw());
+  }
 }
 
 function keyPressed() {
@@ -225,3 +228,4 @@ function dumpMem() {
   }
   console.log("[MEM] Count:", Reader.instances.length, stats, ids);
 }
+

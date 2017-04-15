@@ -438,8 +438,9 @@ ul.select li:not(.init):hover {
 #overlay p {
   position: absolute;
   margin: 370px auto 0;
-  width: 100px;
+  width: 200px;
   height: 20px;
+  line-height:24px;
   left: 0;
   right: 0;
   text-align: center;

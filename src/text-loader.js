@@ -18,7 +18,12 @@ var TEXTS = [{
 var notify, timerStart = Date.now(),
   textLoaded = [ TEXTS[0].title ];
 
+//tmp
+var isFirefox = typeof InstallTrigger !== 'undefined'; 
+
 function loadTexts() {
+  //tmp
+  if(isFirefox) return;
 
   var menu = document.getElementById('interface'),
     overlay = document.getElementById('overlay');
