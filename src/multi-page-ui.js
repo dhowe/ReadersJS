@@ -324,12 +324,28 @@ function logToDisplay(msg) {
   }
 }
 
-// handle cases where tab is not the active tab
-document.addEventListener('visibilitychange', function() {
-  console.log(document.hidden, document.visibilityState);
-  Reader.pauseAll(document.hidden);
-  if (!document.hidden) themeChanged();
+function pauseInterface(val) {
+  Reader.pauseAll(val);
+  if (!val) themeChanged();
+}
+
+// handle cases where tab is not the active tab, sleep, screensaver
+document.addEventListener('visibilitychangexxx', function() {
+  !document.hidden && console.log('[UI] Tab reactivated');
+  pauseInterface(document.hidden);
 })
+
+// handle cases where window loses focus
+$(window).blur(function() {
+  console.log('[UI] Window lost focus');
+  pauseInterface(true);
+});
+
+// handle cases where window regains focus
+$(window).focus(function() {
+  console.log('[UI] Window regained focus');
+  pauseInterface(false);
+});
 
 $(document).ready(function () {
 
