@@ -39,9 +39,10 @@ function setup() {
 };
 
 function draw() {
-
-  background(bgColor || 0);
-  pManager && (pManager.draw());
+  if(!isFirefox) {
+    background(bgColor || 0);
+    pManager && (pManager.draw());
+  }
 }
 
 function keyPressed() {
