@@ -38,7 +38,7 @@ SpawningSimpleReader.prototype.onEnterCell = function (curr) {
 
   // fading current in and out
   fid = curr.colorTo(this.activeFill, this.fadeInTime);
-  curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime); // 1st arg: this.pman.defaultFill
+  curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.speed * this.delayFactor + this.fadeInTime); // 1st arg: this.pman.defaultFill
 
   var coords, spawned, g = Grid.gridFor(curr), neighbors = g.neighborhood(curr);
 
