@@ -1237,7 +1237,6 @@ var PageManager = function (host, port) {
   this.layout = function (txt, x, y, w, h, leading) {
 
     var fill = this.defaultFill;
-    console.log("FILL:",fill);
 
     var addToStack = function (txt, words) {
       var tmp = txt.split(' ');
