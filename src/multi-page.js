@@ -82,6 +82,7 @@ function resetText(textName) {
   var meso = Reader.firstOfType('MesosticReader');
   meso && (meso.mesostic = textObj.mesostic);
 
+  themeChanged();
   Reader.pauseAll(false);
 }
 
@@ -107,6 +108,26 @@ function textFromName(textName) {
       result = text;
   });
   return result;
+}
+
+function themeChanged() {
+
+  var e1 = document.getElementById('styleSelect'),
+    styleName = e1.options[e1.selectedIndex].value;
+
+  var e2 = document.getElementById('themeSelect'),
+    themeName = e2.options[e2.selectedIndex].value;
+
+  var dark = (themeName === "Dark"),
+    style = STYLE[styleName],
+    col = dark ? COLOR.White : COLOR.Black;
+
+  bgColor = dark ? 0 : 232; // global
+
+  log("[UI] Theme/style: "+themeName+"/"+styleName);
+  pManager.gridFill(colorToObject(col, style));
+
+  $('body').toggleClass("light", !dark).toggleClass("dark", dark);
 }
 
 function textChanged() {

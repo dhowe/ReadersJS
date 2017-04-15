@@ -42,7 +42,7 @@ function createInterface() {
 
   var textSelect, styleSelect, themeSelect, uiElements = [
     textSelect = initSelect('textSelect', 'full', textNames(), textChanged),
-    styleSelect = initSelect('styleSelect', 'half', Object.keys(STYLE), styleChanged),
+    styleSelect = initSelect('styleSelect', 'half', Object.keys(STYLE), themeChanged),
     themeSelect = initSelect('themeSelect', 'half', ['Dark', 'Light'], themeChanged),
   ];
 
@@ -97,31 +97,15 @@ function createInterface() {
     return sel.id(id).changed(onChanged);
   }
 
-  function styleChanged() {
-
-    var col = (bgColor == 0) ? COLOR.White : COLOR.Black,
-      name = styleSelect.value(),
-      style = STYLE[name];
-    log("[UI] Style: " + name + "/" + style);
-    //pManager.gridAlpha(style);
-    pManager.gridFill(colorToObject(col, style));
-  }
-
-  function themeChanged() {
-
-    var theme = themeSelect.value(),
-      dark = (theme === "Dark"),
-      style = STYLE[styleSelect.value()],
-      col = dark ? COLOR.White : COLOR.Black;
-
-    bgColor = dark ? 0 : 232; // global
-
-    log("[UI] Theme: " + theme);
-
-    pManager.gridFill(colorToObject(col, style));
-
-    $('body').toggleClass("light", !dark).toggleClass("dark", dark);
-  }
+  // function styleChanged() {
+  //
+  //   var col = (bgColor == 0) ? COLOR.White : COLOR.Black,
+  //     name = styleSelect.value(),
+  //     style = STYLE[name];
+  //
+  //   log("[UI] Style: " + name + "/" + style);
+  //   pManager.gridFill(colorToObject(col, style));
+  // }
 
   function resetFocus() {
 
@@ -340,6 +324,15 @@ function logToDisplay(msg) {
   }
 }
 
+document.addEventListener('visibilitychange', function() {
+    //document.title = document.hidden; // change tab text for demo
+    console.log("VISIBILITY: ", document.hidden);
+    Reader.pauseAll(document.hidden);
+    // if (document.hidden) {
+    //   Reader.findByType('OnewayPerigramReader').forEach(Reader.dispose);
+    // }
+})
+
 $(document).ready(function () {
 
   $('#focusDisplayTag').click(function () {
@@ -347,10 +340,6 @@ $(document).ready(function () {
     $('#focusDisplay').toggle("slide");
     $('#status').html(tag);
   })
-
-});
-
-$(document).ready(function () {
 
   $("body").on("click", "ul.select li.init", function () {
 

@@ -1215,15 +1215,6 @@ var PageManager = function (host, port) {
   var msg = "PageManager.mode=" + Reader.modeName(this.mode);
   info(this.notifyServer ? msg += " [http://" + this.host + ":" + this.port + "]" : msg);
 
-  this.gridAlpha = function (a) {
-
-    if (!arguments.length)
-      return this.defaultFill.a;
-
-    this.defaultFill.a = a;
-    return this.gridFill(this.defaultFill);
-  };
-
   this.gridFill = function (c) {
 
     if (!arguments.length)
@@ -1246,6 +1237,7 @@ var PageManager = function (host, port) {
   this.layout = function (txt, x, y, w, h, leading) {
 
     var fill = this.defaultFill;
+    console.log("FILL:",fill);
 
     var addToStack = function (txt, words) {
       var tmp = txt.split(' ');
@@ -1265,7 +1257,7 @@ var PageManager = function (host, port) {
       while (s && s.length > 0 && endsWith(s, ' '))
         s = s.substring(0, s.length - 1);
 
-      return new RiText(s, xPos, nextY, pf).fill(fill.r, fill.g, fill.b, fill.a);
+      return new RiText(s, xPos, nextY, pf).fill(fill);
     };
 
     this.clear();
