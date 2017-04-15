@@ -1072,6 +1072,13 @@ Reader.prototype = {
     return this.pman.defaultFill.a;
   },
 
+  name: function () {
+
+    return this.type.replace(/([A-Z])/g, function ($1) {
+      return ' ' + $1;
+    });
+  },
+
   step: function () {
 
     var grid, msg, reader = this; // for anonymous function

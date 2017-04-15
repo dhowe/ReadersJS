@@ -1,17 +1,4 @@
-
-var TEXTS = [{
-  title: 'Misspelt Landings',
-  file: 'data/misspeltLandings.txt',
-  mesostic: 'reaching out falling through circling over landing on turning within spelling as'
-}, {
-  title: 'Poetic Caption',
-  file: 'data/poeticCaption.txt',
-  mesostic: 'reading as writing through'
-}, {
-  title: 'The Image',
-  file: 'data/image.txt',
-  mesostic: 'comes in is over goes out is done lolls in stays there is had no more'
-}];
+// Interface options (for texts, see src/text-loader.js)
 
 var SPEED = {
   Fluent: 0.4,
@@ -33,20 +20,15 @@ var COLOR = {
   White: 255
 }
 
-var bgColor = 0;
-
-var uiLogging = true,
+var bgColor = 0,
+  uiLogging = true,
   maxFocusLog = Math.floor(window.innerHeight / 30);
 
 function createInterface() {
 
-  var toName = function(s) {
-  	return s.replace(/([A-Z])/g, function($1){ return ' '+$1 });
-  };
-
   Reader.instances.forEach(function (reader) {
 
-    var rb = createCheckbox(toName(reader.type), !reader.hidden);
+    var rb = createCheckbox(reader.name(), !reader.hidden);
     rb.parent('interface');
     rb.class("reader");
     rb.id(reader.type);
@@ -73,8 +55,8 @@ function createInterface() {
     if (focused.hidden) {
 
       focused = randomReader();
-      warn("Focus repair"+(focused ? ': ' + focused.type :
-        " failed: "+(activeReaders().length + " readers"))); // FIX ME
+      warn("Focus repair" + (focused ? ': ' + focused.type :
+        " failed: " + (activeReaders().length + " readers"))); // FIX ME
     }
 
     focusChanged(focused);
@@ -143,7 +125,8 @@ function createInterface() {
 
   function resetFocus() {
 
-    var focused = pManager.focus(), actives = activeReaders();
+    var focused = pManager.focus(),
+      actives = activeReaders();
 
     // if only one reader is active and its not focused, give it focus
     if (actives.length == 1 && actives[0] !== focused) {
@@ -267,11 +250,11 @@ function createInterface() {
   }
 
   function onReaderDoubleClick(ele) {
-     //if it is off, turn it on
+    //if it is off, turn it on
     var input = ele.parentNode.children[0];
     if (input.checked) {
-       readerOnOffEvent(Reader.firstOfType(ele.parentNode.id), true);
-       input.checked = false;
+      readerOnOffEvent(Reader.firstOfType(ele.parentNode.id), true);
+      input.checked = false;
     }
 
     if (!ele.parentNode.matches('.focused'))
@@ -336,7 +319,6 @@ function createInterface() {
 
 } // end createInterface
 
-
 function focusJump(focused) {
 
   $('#focusDisplay').html('');
@@ -360,20 +342,13 @@ function logToDisplay(msg) {
 
 $(document).ready(function () {
 
-  $('#focusDisplayTag').click(function() {
+  $('#focusDisplayTag').click(function () {
     var tag = $('#focusDisplay:visible').length === 0 ? " - " : " + ";
     $('#focusDisplay').toggle("slide");
     $('#status').html(tag);
   })
-});
 
-////////////////////////////////////////////////////////////////////
-// Customized select list : Not used yet
-// var ul = document.getElementsByClassName('ul');
-//   console.log(ul);
-// var onSelectClicked = function () {console.log("click");}
-// for (var i = 0; i < ul.length; i++)
-//    ul[i].addEventListener('click', onSelectClicked, false);
+});
 
 $(document).ready(function () {
 

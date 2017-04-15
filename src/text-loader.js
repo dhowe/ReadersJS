@@ -1,11 +1,27 @@
-var timerStart = Date.now();
+var TEXTS = [{
+  title: 'Misspelt Landings',
+  file: 'data/misspeltLandings.txt',
+  mesostic: 'reaching out falling through circling over landing on turning within spelling as'
+}, {
+  title: 'Poetic Caption',
+  file: 'data/poeticCaption.txt',
+  mesostic: 'reading as writing through'
+}, {
+  title: 'The Image',
+  file: 'data/image.txt',
+  mesostic: 'comes in is over goes out is done lolls in stays there is had no more'
+}];
+
+var notify, timerStart = Date.now(),
+  textLoaded = ["Misspelt Landings"];
 
 function loadTexts() {
 
   var menu = document.getElementById('interface'),
     overlay = document.getElementById('overlay');
 
-  function monitor(element, callback) {
+  var monitor = function(element, callback) {
+
     var self = element;
     var h = self.clientHeight;
     var w = self.clientWidth;

@@ -2,16 +2,15 @@
 <html>
 
 <head>
-
   <meta charset="UTF-8">
   <title>The Readers Project</title>
-
-  <script src="src/loader.js"></script>
+  <script src="src/text-loader.js"></script>
   <link rel="stylesheet" href="fonts/webfont/font.css">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+
   <!-- Top Text Section -->
   <p id="instructions">Use left/right arrow-keys to change pages</p>
   <div id="options">Readers <span>Options</span></div>
@@ -26,7 +25,7 @@
   <!-- Interface -->
   <div id="interface"></div>
   <div id="hoverTextWrapper">
-    <!-- <div id="hoverText-unchecked" class="hoverText">click to enable</div> -->
+
     <div id="hoverText-checked" class="hoverText">
       click to disable/enable<span>, double-click for focus <a class="help">[?]</a></span>
       <span class="helpInfo">The 'focused' reader is always visible and able to display the text that it is reading. The words it has read recently are monitored separately on the right.</span>
@@ -57,8 +56,5 @@
 <script src="data/misspeltLandings-trigrams.js"></script>
 <script src="src/multi-page.js"></script>
 <script src="src/multi-page-ui.js"></script>
-
-<!-- <script src="data/poeticCaption-trigrams.js"  defer onload="finishLoading('poeticCaption')"></script>
-<script src="data/theImage-trigrams.js"  defer onload="finishLoading('theImage')"></script> -->
 
 </html>
