@@ -13,7 +13,7 @@ var TEXTS = [{
 }];
 
 var notify, timerStart = Date.now(),
-  textLoaded = ["Misspelt Landings"];
+  textLoaded = [ TEXTS[0].title ];
 
 function loadTexts() {
 
@@ -73,19 +73,14 @@ function finishLoading(text) {
 
 function reloadTheRest() {
 
-  var trigramScripts = {
-    'Poetic Caption': "data/poeticCaption-trigrams.js",
-    'The Image': "data/theImage-trigrams.js"
-  }
+  for (var i = 1; i < TEXTS.length; i++) { // skip the first text
 
-  for (key in trigramScripts) {
-    var script = document.createElement("script"),
-      html = document.getElementsByTagName("html")[0];
+    var script = document.createElement("script");
 
-    script.src = trigramScripts[key];
-    script.id = key;
+    script.src = TEXTS[i].file;
+    script.id = TEXTS[i].title;
 
-    html.appendChild(script);
+    document.getElementsByTagName("html")[0].appendChild(script);
     script.onload = function () {
       finishLoading(this.id);
     };

@@ -52,8 +52,7 @@ function keyPressed() {
 
 function loadTexts(callback) {
 
-  var count = 0;
-  var total = TEXTS.length;
+  var count = 0, total = TEXTS.length;
   TEXTS.forEach(function (text) {
     RiTa.loadString(text.file, function (txt) {
       text.contents = txt;
