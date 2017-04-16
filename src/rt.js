@@ -460,17 +460,6 @@
 
     console.error('[RiTa] No default font loaded: use loadFont && RiText.defaultFont(f) first');
     return;
-
-    textFont(fontName);
-    textSize(fontSize);
-
-    this.font = {
-      "name": fontName,
-      "size": fontSize
-      // add textAscent,textDescent,widths?
-    }
-
-    return this.font;
   },
 
   RiText.disposeAll = function () {

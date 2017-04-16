@@ -1,6 +1,4 @@
-var pManager, font, bgColor, disabled = true, readers = {};
-
-///////////////////////////////////////////////////////////////////////
+var pManager, font, bgColor, readers = {};
 
 function preload() {
 
@@ -8,8 +6,6 @@ function preload() {
 }
 
 function setup() {
-
-  if(isFirefox) return;
 
   createCanvas(1280, 720);
 
@@ -22,11 +18,11 @@ function setup() {
     // do the layout
     pManager = PageManager.getInstance(Reader.APP);
     pManager.layout(TEXTS[0], 25, 40, 580, 650);
-    pManager.gridFill(colorToObject(255,255,255,40));
+    pManager.gridFill(colorToObject(255, 255, 255, 40));
 
     // add some readers
     new PerigramReader(pManager.recto, SPEED.Fluent);
-    new MesosticReader(pManager.verso);
+    new MesosticReader(pManager.verso).hide(1);
     new ObliquePerigramReader(pManager.verso);
     new SpawningSimpleReader(pManager.recto);
     new SpawningPerigramReader(pManager.verso);
@@ -39,10 +35,9 @@ function setup() {
 };
 
 function draw() {
-  if(!isFirefox) {
-    background(bgColor || 0);
-    pManager && (pManager.draw());
-  }
+
+  background(bgColor || 0);
+  pManager && (pManager.draw());
 }
 
 function keyPressed() {
@@ -55,7 +50,8 @@ function keyPressed() {
 
 function loadTexts(callback) {
 
-  var count = 0, total = TEXTS.length;
+  var count = 0,
+    total = TEXTS.length;
   TEXTS.forEach(function (text) {
     RiTa.loadString(text.file, function (txt) {
       text.contents = txt;
@@ -90,7 +86,7 @@ function resetText(textName) {
 }
 
 function activeReaders() {
-  return Reader.instances.filter(function(r){
+  return Reader.instances.filter(function (r) {
     return (!r.hidden && r.type !== 'OnewayPerigramReader')
   });
 }
@@ -127,7 +123,7 @@ function themeChanged() {
 
   bgColor = dark ? 0 : 232; // global
 
-  log("[UI] Theme/style: "+themeName+"/"+styleName);
+  log("[UI] Theme/style: " + themeName + "/" + styleName);
   pManager.gridFill(colorToObject(col, style));
 
   $('body').toggleClass("light", !dark).toggleClass("dark", dark);
@@ -138,7 +134,7 @@ function textChanged() {
   var e = document.getElementById('textSelect'),
     textName = e.options[e.selectedIndex].value;
 
-  var trigramsReady = function(textName) {
+  var trigramsReady = function (textName) {
 
     if (textLoaded.indexOf(textName) != -1) {
 
@@ -173,11 +169,12 @@ function textChanged() {
 
 function colorToArray(obj, overrideAlpha) { // takes optional 2nd argument for alpha
 
-  return [obj.r, obj.g, obj.b, (typeof overrideAlpha === 'undefined')
-    ? obj.a || 255 : overrideAlpha];
+  return [obj.r, obj.g, obj.b, (typeof overrideAlpha === 'undefined') ?
+    obj.a || 255 : overrideAlpha
+  ];
 }
 
-function colorToObject(r,g,b,a) {
+function colorToObject(r, g, b, a) {
 
   if (arguments.length === 1) {
     if (r.length) {
@@ -185,15 +182,13 @@ function colorToObject(r,g,b,a) {
       b = arguments[2];
       g = arguments[1];
       r = arguments[0];
-    }
-    else {
+    } else {
       a = 255;
       b = arguments[0];
       g = arguments[0];
       r = arguments[0];
     }
-  }
-  else if (arguments.length === 2) {
+  } else if (arguments.length === 2) {
     a = arguments[1];
     b = arguments[0];
     g = arguments[0];
@@ -219,7 +214,8 @@ function cloneColor(obj) {
 
 function dumpMem() {
 
-  var stats = {}, ids = [];
+  var stats = {},
+    ids = [];
   for (var i = 0; i < Reader.instances.length; i++) {
     ids.push(Reader.instances[i].id + "/" + (Reader.instances[i].freeCount || '-'));
     if (!stats[Reader.instances[i].type])
@@ -228,4 +224,3 @@ function dumpMem() {
   }
   console.log("[MEM] Count:", Reader.instances.length, stats, ids);
 }
-

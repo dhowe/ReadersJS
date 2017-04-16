@@ -18,12 +18,13 @@ var TEXTS = [{
 var notify, timerStart = Date.now(),
   textLoaded = [ TEXTS[0].title ];
 
-//tmp
-var isFirefox = typeof InstallTrigger !== 'undefined'; 
-
 function loadTexts() {
-  //tmp
-  if(isFirefox) return;
+
+  if (typeof InstallTrigger !== 'undefined' && location.href.includes('localhost')) {// tmp: Firefox
+    document.getElementById('overlay').innerHTML = "<br>Currently runs only in Chromium browsers</p>";
+    window.mocha = 1; // disable p5.js
+    return;
+  }
 
   var menu = document.getElementById('interface'),
     overlay = document.getElementById('overlay');
