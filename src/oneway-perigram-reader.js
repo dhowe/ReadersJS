@@ -20,7 +20,9 @@ function OnewayPerigramReader(g, rx, ry, speed, dir, parent) {
   this.freeCount = 0;
   this.maxFreeCount = 5;
   this.neighbors = [];
-  this.activeFill = colorToObject(194, 194, 194, 255); // light grey
+  this.darkThemeFade = colorToObject(191, 191, 191, 255);
+  this.lightThemeFade = colorToObject(63, 63, 63, 255);
+  this.activeFill = this.darkThemeFade; // light grey
 
   // factors
   this.fadeInFactor = .8;
@@ -34,6 +36,10 @@ OnewayPerigramReader.prototype.onEnterCell = function (curr) {
   this.fadeInTime = this.actualStepTime * this.fadeInFactor;
   this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
   this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
+  if (bgColor != 0)
+  	this.activeFill = this.lightThemeFade;
+  else
+  	this.activeFill = this.darkThemeFade;
 
   // fading current in and out
   fid = curr.colorTo(this.activeFill, this.fadeInTime);
