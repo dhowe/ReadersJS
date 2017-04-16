@@ -18,9 +18,9 @@ function PerigramReader(g, rx, ry, speed) {
   // this.neighborCol = [127, 10, 30, 255];
 
   // factors
-  this.fadeInFactor = .8;
+  this.fadeInFactor = .9;
   this.fadeOutFactor = 10;
-  this.delayFactor = 2.5;
+  this.delayFactor = 3;
 }
 
 PerigramReader.prototype.selectNext = function () {
@@ -39,15 +39,12 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   // ---- based on Java VB NeighborFadingVisual ---- //
   // variables needed individually for instances of perigram readers:
   this.actualStepTime = this.stepTime / 1000;
+  info("Perigram actualStepTime: " + this.actualStepTime);
   this.fadeInTime = this.actualStepTime * this.fadeInFactor;
-  this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
-  this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor; // 
+  this.fadeOutTime = this.speed * this.fadeOutFactor + 1; // actualStepTime or speed
+  this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
   this.leadingFadeToColor = cloneColor(this.pman.defaultFill);
   this.leadingFadeToColor.a = this.leadingFadeToColor.a + 64;
-
-  // fading current in and out
-  fid = curr.colorTo(this.activeFill, this.fadeInTime);
-  curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.speed * this.delayFactor + this.fadeInTime); // delayBeforeFadeBack
 
   // get and fade in neighborhood
   this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
@@ -67,6 +64,11 @@ PerigramReader.prototype.onEnterCell = function (curr) {
     this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.leadingFadeToColor, this.fadeInTime);
     this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime);
   }
+
+  // fading current in and out
+  fid = curr.colorTo(this.activeFill, this.fadeInTime);
+  curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime); // delayBeforeFadeBack
+
 }
 
 PerigramReader.prototype.onExitCell = function (curr) {
