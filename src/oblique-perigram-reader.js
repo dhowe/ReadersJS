@@ -51,13 +51,8 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
   this.outerFadeToColor = cloneColor(this.pman.defaultFill);
   // info("bgColor: " + bgColor);
   var invisible = this.pman.defaultFill.a == 0;
-  if (bgColor == 0) { // assumes Dark theme is absolute black:
-		this.innerFadeToColor.a = invisible ? 40 : 20;
-		this.outerFadeToColor.a = invisible ? 70 : 0;
-	} else { // Light theme:
-		this.innerFadeToColor.a = invisible ? 185 : 215;
-		this.outerFadeToColor.a = invisible ? 215 : 0;
-	}
+	this.innerFadeToColor.a = invisible ? 40 : 20;
+	this.outerFadeToColor.a = invisible ? 95 : 0;
   // fading current in and out
   fid = curr.colorTo(this.activeFill, this.fadeInTime);
   curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.speed * this.delayFactor); // delayBeforeFadeBack
