@@ -41,13 +41,13 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   this.actualStepTime = this.stepTime / 1000;
   this.fadeInTime = this.actualStepTime * this.fadeInFactor;
   this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
-  this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
+  this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor; // 
   this.leadingFadeToColor = cloneColor(this.pman.defaultFill);
   this.leadingFadeToColor.a = this.leadingFadeToColor.a + 64;
 
   // fading current in and out
   fid = curr.colorTo(this.activeFill, this.fadeInTime);
-  curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime);
+  curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.speed * this.delayFactor + this.fadeInTime); // delayBeforeFadeBack
 
   // get and fade in neighborhood
   this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
@@ -65,7 +65,7 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   // do the fading
   for (var i = 0; i < this.neighborsToFade.length; i++) {
     this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.leadingFadeToColor, this.fadeInTime);
-    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack);
+    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime);
   }
 }
 

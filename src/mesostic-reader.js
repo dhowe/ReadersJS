@@ -72,7 +72,7 @@ M.selectNext = function () {
 
 M.onEnterCell = function (curr) {
 
-  this.pman.defaultFill = curr.fill();
+  // this.pman.defaultFill = curr.fill();
   curr.colorTo(this.activeFill, .3);
 }
 
