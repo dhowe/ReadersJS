@@ -42,7 +42,7 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   info("Perigram actualStepTime: " + this.actualStepTime);
   this.fadeInTime = this.actualStepTime * this.fadeInFactor;
   this.fadeOutTime = this.speed * this.fadeOutFactor + 1; // actualStepTime or speed
-  this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
+  this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor + .5; // actualStepTime or speed
   this.leadingFadeToColor = cloneColor(this.pman.defaultFill);
   this.leadingFadeToColor.a = this.leadingFadeToColor.a + 64;
 
@@ -52,7 +52,8 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   // filter recently read words out of the neighborhood
   this.neighborsToFade = [];
   for  (var i = 0; i < this.neighborhood.length; i++) {
-    if (this.neighborhood[i] && (this.neighborhood[i] != this.lastRead(2)) && (this.neighborhood[i] != this.lastRead(3))) {
+  	// warn("curr is found in a neighborhood."); // DEBUG
+    if (this.neighborhood[i] &&  (this.neighborhood[i] != curr) && (this.neighborhood[i] != this.lastRead(2)) && (this.neighborhood[i] != this.lastRead(3))) {
       if (this.neighborsToFade.indexOf(this.neighborhood[i]) < 0) this.neighborsToFade.push(this.neighborhood[i]);
     }
   }
@@ -62,12 +63,12 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   // do the fading
   for (var i = 0; i < this.neighborsToFade.length; i++) {
     this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.leadingFadeToColor, this.fadeInTime);
-    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime);
+    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack + this.speed);
   }
 
   // fading current in and out
   fid = curr.colorTo(this.activeFill, this.fadeInTime);
-  curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime); // delayBeforeFadeBack
+  curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack + this.speed); // delayBeforeFadeBack
 
 }
 

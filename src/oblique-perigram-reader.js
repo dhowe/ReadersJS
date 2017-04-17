@@ -32,7 +32,7 @@ function ObliquePerigramReader(g, rx, ry, speed) {
   this.activeFill = colorToObject(255, 0, 157, 255); // #FF009D
 
   // factors
-  this.fadeInFactor = .8;
+  this.fadeInFactor = .6;
   this.fadeOutFactor = 2;
   this.delayFactor = 2;
 }
@@ -64,6 +64,8 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
         this.neighborsToFade.push(this.neighborhood[i]);
   	}
 	}
+	
+  // if (this.neighborsToFade.indexOf(curr) > -1) warn("Found curr in inner neighbors."); // DEBUG	
 
   this.outerNeighborsToFade = [];
   // get outerNeighborhood
@@ -76,6 +78,16 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
       }
     }
   }
+
+  // also remove curr and the lastRead word from inner neighbors
+  // so that it displays as faded in the color of the reader
+  i = this.neighborsToFade.indexOf(curr);
+  // if (i > -1) warn("Found curr in inner neighbors."); // DEBUG
+  if (i > -1) this.neighborsToFade.splice(i, 1); // should not happen
+  // if (i > -1) warn("Found curr in inner neighbors."); // DEBUG
+  i = this.neighborsToFade.indexOf(this.lastRead(2));
+  // if (i > -1) warn("Found last read word in inner neighbors."); // DEBUG - does happen
+	this.neighborsToFade.splice(i, 1);
 
   // filtering for any already active neighbors
   var i = this.outerNeighborsToFade.length;
@@ -92,11 +104,6 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
 		}
   }
 
-  // also remove the lastRead word from inner neighbors
-  // so that it displays as faded in the color of the reader
-  i = this.neighborsToFade.indexOf(this.lastRead(2));
-  this.neighborsToFade.splice(i, 1);
-
   // do the fading
   for (var i = 0; i < this.neighborsToFade.length; i++) {
     this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.innerFadeToColor, this.fadeInTime);
@@ -109,7 +116,7 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
 
   // fading current in and out
   fid = curr.colorTo(this.activeFill, this.fadeInTime);
-  curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.speed * this.delayFactor); // delayBeforeFadeBack
+  curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack); // delayBeforeFadeBack
 }
 
 ObliquePerigramReader.prototype.determineReadingPath = function (neighbors) {
