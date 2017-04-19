@@ -15,8 +15,8 @@ function setup() {
   rt = RiText('Hello', 30, 50);
   // rt2 = RiText('there', 150, 50);
 
-  rt.colorTo({r:0,g:255,b:0,a:255},5,5); // fade to red over 2 seconds
-  rt.colorTo({r:255,g:0,b:0,a:255},10); // fade to red over 2 seconds
+  rt.colorTo({r:0,g:255,b:0,a:255},5,5); // fade to green
+  rt.colorTo({r:255,g:0,b:0,a:255},10); // fade to red
 
   /*
   rt.colorTo({r:0,g:255,b:0,a:255},2, 4); // this works - green
@@ -35,5 +35,6 @@ function draw() {
 
 	background(0);
   RiText.drawAll();
-  //console.log(rt2.fill().r, rt2.fill().g, rt2.fill().b);
+  fill(255);
+  text(round(millis()/100)/10,20,width-20);
 }

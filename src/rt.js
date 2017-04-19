@@ -575,7 +575,7 @@
 
       var bbs, screenH, args;
 
-      //this.faderId = 0;
+      this.faderIds = [];
 
       this._color = {
         r: RiText.defaults.fill.r,
@@ -714,7 +714,20 @@
       return this.fader.startTime + this.fader.duration > millis()
     },
 
+    _clearQueuedFades: function() {
+
+      console.log('rt#'+this.id+'._clearQueuedFades()');
+      var rt = this;
+      this.faderIds.forEach(function(id) {
+        console.log('rt#'+rt.id+'.cleared:', id);
+        clearTimeout(id);
+      });
+      this.faderIds = [];
+    },
+
     stopBehaviors: function() {
+
+      this._clearQueuedFades();
 
       this.fader = {
         startTime: -1,
@@ -727,27 +740,28 @@
     },
 
     colorTo: function (newColor, seconds, delay) {
-
       if (arguments.length > 3) throw Error('colorTo expects a max of 3 arguments,'
         + ' where the target color is 1 (either an array or an object), followed by'
         + ' the fade time (in seconds) as 2, and, optionally, the delay time as 3');
 
       delay = delay || 0;
 
-      var rt = this;
+      console.log('rt#'+this.id+'.colorTo', seconds, delay);
 
-      /*rt.faderId = */
-      setTimeout(function() {
-        //clearTimeout(rt.faderId);
+      var rt = this;
+      this.faderIds.push(setTimeout(function() {
+
+        //console.log("pushed ",rt.faderIds);
         rt.fader = {
           startTime: millis(),
           duration: seconds * 1000,
           from: rt._color,
           to: parseColor(newColor),
         }
-        //console.log(rt.fader.to);
 
-      }, delay * 1000);
+        rt._clearQueuedFades();
+
+      }, delay * 1000));
     },
 
     boundingBox: function () {
