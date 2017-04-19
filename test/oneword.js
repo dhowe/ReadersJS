@@ -23,7 +23,7 @@ async function setup() {
   await sleep(10000); // pause for 5 secs
 
 	state = "reset & pause for ten"
-	rt.colorTo({r:255,g:255,b:255,a:40},0.2); // BUG: if second arg is 0, this doesn't work
+	rt.colorTo({r:255,g:255,b:255,a:40},0); // BUG: if second arg is 0, this doesn't work
 
 
   await sleep(10000); // pause for 5 secs
