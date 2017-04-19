@@ -714,12 +714,12 @@
       return this.fader.startTime + this.fader.duration > millis()
     },
 
-    _clearQueuedFades: function() {
+    _clearFadeQueue: function() {
 
-      console.log('rt#'+this.id+'._clearQueuedFades()');
+      this.debugFades&&console.log('rt#'+this.id+'._clearFadeQueue()');
       var rt = this;
       this.faderIds.forEach(function(id) {
-        console.log('rt#'+rt.id+'.cleared:', id);
+        rt.debugFades&&console.log('rt#'+rt.id+'.cleared:', id);
         clearTimeout(id);
       });
       this.faderIds = [];
@@ -727,7 +727,7 @@
 
     stopBehaviors: function() {
 
-      this._clearQueuedFades();
+      this._clearFadeQueue();
 
       this.fader = {
         startTime: -1,
@@ -739,6 +739,8 @@
       return this;
     },
 
+    debugFades: 0, // tmp
+
     colorTo: function (newColor, seconds, delay) {
       if (arguments.length > 3) throw Error('colorTo expects a max of 3 arguments,'
         + ' where the target color is 1 (either an array or an object), followed by'
@@ -746,11 +748,12 @@
 
       delay = delay || 0;
 
-      console.log('rt#'+this.id+'.colorTo', seconds, delay);
+      this.debugFades&&console.log('rt#'+this.id+'.colorTo', seconds, delay);
 
       var rt = this;
-      this.faderIds.push(setTimeout(function() {
+      var faderId = setTimeout(function() {
 
+        rt._clearFadeQueue();
         //console.log("pushed ",rt.faderIds);
         rt.fader = {
           startTime: millis(),
@@ -759,9 +762,12 @@
           to: parseColor(newColor),
         }
 
-        rt._clearQueuedFades();
 
-      }, delay * 1000));
+
+      }, delay * 1000);
+
+      this.faderIds.push(faderId);
+      this.debugFades&&console.log('rt#'+this.id+'.pushing', faderId);
     },
 
     boundingBox: function () {
