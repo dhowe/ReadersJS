@@ -24,11 +24,12 @@ async function setup() {
 
 	state = "reset & pause for ten"
 	rt.colorTo({r:255,g:255,b:255,a:40},0.2); // BUG: if second arg is 0, this doesn't work
-	
+
+
   await sleep(10000); // pause for 5 secs
-  
+
   state = "fades #3 and #4";
-// this works:
+  // this works:
   rt.colorTo({r:0,g:255,b:0,a:255},5,5); // invocation #3 [fade to green delayed by 5 seconds]
   rt.colorTo({r:255,g:0,b:0,a:255},10); // invocation #4: cancel #3 immediately, thus: just fade to red in 10
 

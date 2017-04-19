@@ -717,11 +717,15 @@
     _clearFadeQueue: function() {
 
       this.debugFades&&console.log('rt#'+this.id+'._clearFadeQueue()');
-      var rt = this;
-      this.faderIds.forEach(function(id) {
-        rt.debugFades&&console.log('rt#'+rt.id+'.cleared:', id);
-        clearTimeout(id);
-      });
+      // var rt = this;
+      // this.faderIds.forEach(function(id) {
+      //   rt.debugFades&&console.log('rt#'+rt.id+'.cleared #'+ id);
+      //   clearTimeout(id);
+      // });
+      for (var i = 0; i < this.faderIds.length-1; i++) {
+        rt.debugFades&&console.log('rt#'+this.id+'.cleared #'+this.faderIds[i]);
+        clearTimeout(this.faderIds[i]); // all but last added
+      }
       this.faderIds = [];
     },
 
@@ -742,6 +746,11 @@
     debugFades: 0, // tmp
 
     colorTo: function (newColor, seconds, delay) {
+
+      function colorToArray(obj) {
+        return [obj.r, obj.g, obj.b];//, obj.a ];
+      }
+
       if (arguments.length > 3) throw Error('colorTo expects a max of 3 arguments,'
         + ' where the target color is 1 (either an array or an object), followed by'
         + ' the fade time (in seconds) as 2, and, optionally, the delay time as 3');
@@ -751,9 +760,8 @@
       this.debugFades&&console.log('rt#'+this.id+'.colorTo', seconds, delay);
 
       var rt = this;
-      var faderId = setTimeout(function() {
+      var faderId = setTimeout(function() { // add this fade to queue
 
-        rt._clearFadeQueue();
         //console.log("pushed ",rt.faderIds);
         rt.fader = {
           startTime: millis(),
@@ -762,12 +770,15 @@
           to: parseColor(newColor),
         }
 
+        rt.debugFades&&console.log('rt#'+rt.id+'.starting ('+colorToArray(rt.fader.to)+")");
 
+        rt._clearFadeQueue();
 
       }, delay * 1000);
 
       this.faderIds.push(faderId);
-      this.debugFades&&console.log('rt#'+this.id+'.pushing', faderId);
+
+      this.debugFades&&console.log('rt#'+this.id+'.pushing', '#'+faderId+' ('+colorToArray(newColor)+")");
     },
 
     boundingBox: function () {
