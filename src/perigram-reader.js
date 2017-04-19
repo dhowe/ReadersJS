@@ -18,9 +18,9 @@ function PerigramReader(g, rx, ry, speed) {
   // this.neighborCol = [127, 10, 30, 255];
 
   // factors
-  this.fadeInFactor = .8;
+  this.fadeInFactor = .9;
   this.fadeOutFactor = 10;
-  this.delayFactor = 2.5;
+  this.delayFactor = 3;
 }
 
 PerigramReader.prototype.selectNext = function () {
@@ -39,15 +39,12 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   // ---- based on Java VB NeighborFadingVisual ---- //
   // variables needed individually for instances of perigram readers:
   this.actualStepTime = this.stepTime / 1000;
+  info("Perigram actualStepTime: " + this.actualStepTime);
   this.fadeInTime = this.actualStepTime * this.fadeInFactor;
-  this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
-  this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor; // 
+  this.fadeOutTime = this.speed * this.fadeOutFactor + 1; // actualStepTime or speed
+  this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor + .5; // actualStepTime or speed
   this.leadingFadeToColor = cloneColor(this.pman.defaultFill);
   this.leadingFadeToColor.a = this.leadingFadeToColor.a + 64;
-
-  // fading current in and out
-  fid = curr.colorTo(this.activeFill, this.fadeInTime);
-  curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.speed * this.delayFactor + this.fadeInTime); // delayBeforeFadeBack
 
   // get and fade in neighborhood
   this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
@@ -55,7 +52,8 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   // filter recently read words out of the neighborhood
   this.neighborsToFade = [];
   for  (var i = 0; i < this.neighborhood.length; i++) {
-    if (this.neighborhood[i] && (this.neighborhood[i] != this.lastRead(2)) && (this.neighborhood[i] != this.lastRead(3))) {
+  	// warn("curr is found in a neighborhood."); // DEBUG
+    if (this.neighborhood[i] &&  (this.neighborhood[i] != curr) && (this.neighborhood[i] != this.lastRead(2)) && (this.neighborhood[i] != this.lastRead(3))) {
       if (this.neighborsToFade.indexOf(this.neighborhood[i]) < 0) this.neighborsToFade.push(this.neighborhood[i]);
     }
   }
@@ -65,8 +63,13 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   // do the fading
   for (var i = 0; i < this.neighborsToFade.length; i++) {
     this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.leadingFadeToColor, this.fadeInTime);
-    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack + this.fadeInTime);
+    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack + this.speed);
   }
+
+  // fading current in and out
+  fid = curr.colorTo(this.activeFill, this.fadeInTime);
+  curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack + this.speed); // delayBeforeFadeBack
+
 }
 
 PerigramReader.prototype.onExitCell = function (curr) {

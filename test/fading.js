@@ -11,16 +11,20 @@ async function test() {
   await sleep(4001);
   // why is this fill function necessary? doesn't the ritext already have a fill?
   // if the next line is commented out, nothing happens
-  stone.fill([255,0,0,255]); // red in 4
+  stone.fill({r:255,g:0,b:0,a:255}); // red in 4
 
   // big question: why doesn't the green fade in slowly - over 4 secs
   // when the follow line is commented out:
   // await sleep(4001);
-  stone.colorTo([0,255,0,255],4); // green from red in 4
-  await sleep(8001);
-  stone.colorTo([0,0,255,255],4, 4); // stays green for 4, then blue in 4
-  await sleep(8001);
-  stone.colorTo([255,0,0,255],4, 4); // stays blue for 4, then red
+  
+  // stone.colorTo([0,255,0,255], 5);
+  // stone.colorTo([0,0,255], 2, 6);
+  
+//   stone.colorTo([0,255,0,255],4); // green from red in 4
+//   await sleep(8001);
+//   stone.colorTo([0,0,255,255],4, 4); // stays green for 4, then blue in 4
+//   await sleep(8001);
+//   stone.colorTo([255,0,0,255],4, 4); // stays blue for 4, then red
 }
 
 function sleep(ms) {

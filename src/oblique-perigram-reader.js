@@ -32,7 +32,7 @@ function ObliquePerigramReader(g, rx, ry, speed) {
   this.activeFill = colorToObject(255, 0, 157, 255); // #FF009D
 
   // factors
-  this.fadeInFactor = .8;
+  this.fadeInFactor = .6;
   this.fadeOutFactor = 2;
   this.delayFactor = 2;
 }
@@ -45,7 +45,7 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
   // variables needed individually for instances of perigram readers:
   this.actualStepTime = this.stepTime / 1000;
   this.fadeInTime = this.actualStepTime * this.fadeInFactor;
-  this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
+  this.fadeOutTime = this.actualStepTime * this.fadeOutFactor + 1;
   this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
   this.innerFadeToColor = cloneColor(this.pman.defaultFill);
   this.outerFadeToColor = cloneColor(this.pman.defaultFill);
@@ -53,9 +53,6 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
   var invisible = this.pman.defaultFill.a == 0;
 	this.innerFadeToColor.a = invisible ? 40 : 20;
 	this.outerFadeToColor.a = invisible ? 95 : 0;
-  // fading current in and out
-  fid = curr.colorTo(this.activeFill, this.fadeInTime);
-  curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.speed * this.delayFactor); // delayBeforeFadeBack
 
   // get neighborhood
   this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
@@ -67,6 +64,8 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
         this.neighborsToFade.push(this.neighborhood[i]);
   	}
 	}
+	
+  // if (this.neighborsToFade.indexOf(curr) > -1) warn("Found curr in inner neighbors."); // DEBUG	
 
   this.outerNeighborsToFade = [];
   // get outerNeighborhood
@@ -95,10 +94,14 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
 		}
   }
 
-  // also remove the lastRead word from inner neighbors
+  // also remove curr and the lastRead word from inner neighbors
   // so that it displays as faded in the color of the reader
+  i = this.neighborsToFade.indexOf(curr);
+  // if (i > -1) warn("Found curr in inner neighbors."); // DEBUG
+  if (i > -1) this.neighborsToFade.splice(i, 1); // should not happen
   i = this.neighborsToFade.indexOf(this.lastRead(2));
-  this.neighborsToFade.splice(i, 1);
+  // if (i > -1) warn("Found last read word in inner neighbors."); // DEBUG - does happen
+	this.neighborsToFade.splice(i, 1);
 
   // do the fading
   for (var i = 0; i < this.neighborsToFade.length; i++) {
@@ -109,6 +112,10 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
     this.outerNeighborsToFade[i] && this.outerNeighborsToFade[i].colorTo(this.outerFadeToColor, this.fadeInTime);
     this.outerNeighborsToFade[i] && this.outerNeighborsToFade[i].colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack);
   }
+
+  // fading current in and out
+  fid = curr.colorTo(this.activeFill, this.fadeInTime);
+  curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack); // delayBeforeFadeBack
 }
 
 ObliquePerigramReader.prototype.determineReadingPath = function (neighbors) {
