@@ -717,13 +717,8 @@
     _clearFadeQueue: function() {
 
       this.debugFades&&console.log('rt#'+this.id+'._clearFadeQueue()');
-      // var rt = this;
-      // this.faderIds.forEach(function(id) {
-      //   rt.debugFades&&console.log('rt#'+rt.id+'.cleared #'+ id);
-      //   clearTimeout(id);
-      // });
       for (var i = 0; i < this.faderIds.length-1; i++) {
-        rt.debugFades&&console.log('rt#'+this.id+'.cleared #'+this.faderIds[i]);
+        rt.debugFades&&console.log('      cleared #'+this.faderIds[i]);
         clearTimeout(this.faderIds[i]); // all but last added
       }
       this.faderIds = [];
@@ -743,11 +738,11 @@
       return this;
     },
 
-    debugFades: 0, // tmp
+    debugFades: 0 , // tmp
 
     colorTo: function (newColor, seconds, delay) {
 
-      function colorToArray(obj) {
+      function dumpColor(obj) {
         return [obj.r, obj.g, obj.b];//, obj.a ];
       }
 
@@ -755,30 +750,39 @@
         + ' where the target color is 1 (either an array or an object), followed by'
         + ' the fade time (in seconds) as 2, and, optionally, the delay time as 3');
 
+      // if (seconds <= 0) { // execute immediately
+      //
+      //   this.stopBehaviors();
+      //   return this.fill(newColor);
+      // }
+
       delay = delay || 0;
 
-      this.debugFades&&console.log('rt#'+this.id+'.colorTo', seconds, delay);
+      this.debugFades&&console.log('rt#'+this.id+'.colorTo('+dumpColor(newColor),","+seconds, ","+delay+") @"+millis());
 
       var rt = this;
       var faderId = setTimeout(function() { // add this fade to queue
 
+        rt._clearFadeQueue();
+
         //console.log("pushed ",rt.faderIds);
         rt.fader = {
+          from: rt._color,
           startTime: millis(),
           duration: seconds * 1000,
-          from: rt._color,
           to: parseColor(newColor),
         }
 
-        rt.debugFades&&console.log('rt#'+rt.id+'.starting ('+colorToArray(rt.fader.to)+")");
+        rt.debugFades&&console.log('rt#'+rt.id+'.starting ('+dumpColor(rt.fader.to)+") @"+millis());
 
-        rt._clearFadeQueue();
 
       }, delay * 1000);
 
       this.faderIds.push(faderId);
 
-      this.debugFades&&console.log('rt#'+this.id+'.pushing', '#'+faderId+' ('+colorToArray(newColor)+")");
+      this.debugFades&&console.log('rt#'+this.id+'.pushing', '#'+faderId+' ('+dumpColor(newColor)+")");
+
+      return this;
     },
 
     boundingBox: function () {

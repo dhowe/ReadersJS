@@ -17,21 +17,21 @@ async function setup() {
 
 	state = "fades #1 and #2"
 // this does NOT work (but it used to):
-  rt.colorTo({r:255,g:0,b:0,a:255},10); // invocation #1 fade to red immediate
-  rt.colorTo({r:0,g:255,b:0,a:255},5,5); // invocation #2 cancel #1 after 5 then fade to green
+  rt.colorTo({r:255,g:0,b:0,a:255},6); // invocation #1 fade to red immediate
+  rt.colorTo({r:0,g:255,b:0,a:255},3,3); // invocation #2 cancel #1 after 5 then fade to green
+  rt.debugFades = 1;
 
-  await sleep(10000); // pause for 5 secs
+  await sleep(5000); // pause for 5 secs
 
-	state = "reset & pause for ten"
-	rt.colorTo({r:255,g:255,b:255,a:40},0.2); // BUG: if second arg is 0, this doesn't work
+	state = "reset & pause for 5"
+	rt.colorTo({r:255,g:255,b:255,a:255}, 0, 11); // BUG: if second arg is 0, this doesn't work
 
-
-  await sleep(10000); // pause for 5 secs
+  await sleep(5000); // pause for 5 secs
 
   state = "fades #3 and #4";
   // this works:
-  rt.colorTo({r:0,g:255,b:0,a:255},5,5); // invocation #3 [fade to green delayed by 5 seconds]
-  rt.colorTo({r:255,g:0,b:0,a:255},10); // invocation #4: cancel #3 immediately, thus: just fade to red in 10
+  rt.colorTo({r:0,g:255,b:0,a:255},3,3); // invocation #3 [fade to green delayed by 5 seconds]
+  rt.colorTo({r:255,g:0,b:0,a:255},6); // invocation #4: cancel #3 immediately, thus: just fade to red in 10
 
 
   /*
