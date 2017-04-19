@@ -44,7 +44,7 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   this.fadeOutTime = this.speed * this.fadeOutFactor + 1; // actualStepTime or speed
   this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor + .5; // actualStepTime or speed
   this.leadingFadeToColor = cloneColor(this.pman.defaultFill);
-  this.leadingFadeToColor.a = this.leadingFadeToColor.a + 64;
+  this.leadingFadeToColor.a = this.leadingFadeToColor.a + 128;
 
   // get and fade in neighborhood
   this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
