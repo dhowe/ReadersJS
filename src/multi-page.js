@@ -22,7 +22,7 @@ function setup() {
 
     // add some readers
     new PerigramReader(pManager.recto, SPEED.Fluent);
-    new MesosticReader(pManager.verso).hide(1);
+    new MesosticReader(pManager.verso).hide(0);
     new ObliquePerigramReader(pManager.verso);
     new SpawningSimpleReader(pManager.recto);
     new SpawningPerigramReader(pManager.verso);
