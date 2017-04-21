@@ -2,11 +2,13 @@
 
 subclass(ObliquePerigramReader, PerigramReader);
 
+var pathWeighting = [ .4, .5, .75, .4, 1, 1, 1, 1, 1 ];
+
 var Direction = {
-  NW: { weight: 1, int: 0 },
-  N:  { weight: 1, int: 1 },
-  NE: { weight: 1, int: 2 },
-  W:  { weight: 1, int: 3 },
+  NW: { weight: .4, int: 0 },
+  N:  { weight: .5, int: 1 },
+  NE: { weight: .75, int: 2 },
+  W:  { weight: .4, int: 3 },
   C:  { weight: 1, int: 4 },
   E:  { weight: 1, int: 5 },
   SW: { weight: 1, int: 6 },
@@ -32,9 +34,9 @@ function ObliquePerigramReader(g, rx, ry, speed) {
   this.activeFill = colorToObject(255, 0, 157, 255); // #FF009D
 
   // factors
-  this.fadeInFactor = .6;
-  this.fadeOutFactor = 2;
-  this.delayFactor = 2;
+  this.fadeInFactor = .8;
+  this.fadeOutFactor = .9;
+  this.delayFactor = 1;
 }
 
 ObliquePerigramReader.prototype.onEnterCell = function (curr) {
@@ -45,7 +47,7 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
   // variables needed individually for instances of perigram readers:
   this.actualStepTime = this.stepTime / 1000;
   this.fadeInTime = this.actualStepTime * this.fadeInFactor;
-  this.fadeOutTime = this.actualStepTime * this.fadeOutFactor + 1;
+  this.fadeOutTime = this.actualStepTime * this.fadeOutFactor;
   this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor;
   this.innerFadeToColor = cloneColor(this.pman.defaultFill);
   this.outerFadeToColor = cloneColor(this.pman.defaultFill);
@@ -54,8 +56,10 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
 	this.innerFadeToColor.a = invisible ? 40 : 20;
 	this.outerFadeToColor.a = invisible ? 95 : 0;
 
+	this.currGrid = Grid.gridFor(curr);
+	
   // get neighborhood
-  this.neighborhood = Grid.gridFor(curr).neighborhood(curr);
+  this.neighborhood = this.currGrid.neighborhood(curr);
   this.neighborsToFade = [];
   for  (var i = 0; i < this.neighborhood.length; i++) {
     // console.log(this.neighborhood[i]);
@@ -70,7 +74,7 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
   this.outerNeighborsToFade = [];
   // get outerNeighborhood
   for (var i = 0; i < this.neighborsToFade.length; i++) {
-    this.neighborhood = Grid.gridFor(curr).neighborhood(this.neighborsToFade[i]);
+    this.neighborhood = this.currGrid.neighborhood(this.neighborsToFade[i]);
     for (var j = 0; j < this.neighborhood.length; j++) {
       // only add unique instances
       if (this.outerNeighborsToFade.indexOf(this.neighborhood[j]) < 0) {
@@ -82,7 +86,7 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
   // filtering for any already active neighbors
   var i = this.outerNeighborsToFade.length;
   while (i--) {
-    if (!this.outerNeighborsToFade[i] || (this.outerNeighborsToFade[i] == curr) || (this.outerNeighborsToFade[i] == this.lastRead(2))) {
+    if (!this.outerNeighborsToFade[i] || (this.outerNeighborsToFade[i] == this.lastRead(2)) || (this.outerNeighborsToFade[i] == curr)) {
       this.outerNeighborsToFade.splice(i, 1);
       continue;
     }
@@ -104,82 +108,123 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
 	this.neighborsToFade.splice(i, 1);
 
   // do the fading
-  for (var i = 0; i < this.neighborsToFade.length; i++) {
-    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.innerFadeToColor, this.fadeInTime);
-    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack);
-  }
   for (var i = 0; i < this.outerNeighborsToFade.length; i++) {
     this.outerNeighborsToFade[i] && this.outerNeighborsToFade[i].colorTo(this.outerFadeToColor, this.fadeInTime);
-    this.outerNeighborsToFade[i] && this.outerNeighborsToFade[i].colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack);
+    this.outerNeighborsToFade[i] && this.outerNeighborsToFade[i].colorTo(this.pman.defaultFill, this.fadeOutTime * 2, this.delayBeforeFadeBack);
+  }
+  for (var i = 0; i < this.neighborsToFade.length; i++) {
+    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.innerFadeToColor, this.fadeInTime);
+    this.neighborsToFade[i] && this.neighborsToFade[i].colorTo(this.pman.defaultFill, this.fadeOutTime * 2, this.delayBeforeFadeBack);
   }
 
   // fading current in and out
   fid = curr.colorTo(this.activeFill, this.fadeInTime);
-  curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack); // delayBeforeFadeBack
+  curr.colorTo(this.pman.defaultFill, this.fadeOutTime * 2, this.delayBeforeFadeBack); // delayBeforeFadeBack
 }
 
-ObliquePerigramReader.prototype.determineReadingPath = function (neighbors) {
+ObliquePerigramReader.prototype._determineReadingPath = function (last, neighbors) {
 
-  var bestScore = 0, nextDir = E, grid = Grid.gridFor(this.current),
-    nextCell = grid.nextCell(this.current);
+	var bestScore = 0, nextDir = -1, grid = Grid.gridFor(this.current),
+  nextCell = Grid.nextCell(this.current);
 
-  for (var idx = 0; idx < 9; idx++)
+  for (var directionIdx = 0; directionIdx < 9; directionIdx++)
   {
-    // only try path if not null and not current or next
-    if (idx != C.int && idx != E.int && neighbors[idx])
+    // only try path if not null and not current or next or west
+    if (neighbors[directionIdx] && (directionIdx != Grid.DIRECTION.W) && (directionIdx != Grid.DIRECTION.E) && (directionIdx != Grid.DIRECTION.C))
     {
-      var newScore;
+      var newScore, USE_PERIGRAMS = false; // TODO: does not USE_PERIGRAMS
       if (USE_PERIGRAMS)
-        newScore = tryPath(neighbors[idx], pathWeighting[idx], perigrams);
-      else
-        newScore = tryPath(neighbors[idx], pathWeighting[idx]);
-
+        newScore = this.tryPath(neighbors[directionIdx], pathWeighting[directionIdx], perigrams);
+      else {
+      	newScore = this._directionalCount(this._assembleKey(last, this.current, neighbors[directionIdx]), directionIdx) * pathWeighting[directionIdx];
+      }
+			// info("bestscore newScore: " + bestScore + " " + newScore); // DEBUG
       // make wayToGo the highest scoring neighbor
       if (newScore > bestScore)
       {
         bestScore = newScore;
-        nextCell = neighbors[idx];
-        nextDir = Direction.fromInt(idx);
+        nextCell = neighbors[directionIdx];
+        nextDir = directionIdx;
+        info(nextCell.text() + " scores: " + bestScore); // DEBUG
       }
     }
   }
 
-  // but always go to the next word 1/7 of the time:
-  if (floor(random(7)) == 0)
+  // but always go to the next or a viable SE word 1/7 of the time:
+  if ((Math.floor(Math.random() * 4) == 0) || (nextDir == -1))
   {
-    nextCell = grid.nextCell(this.currentCell);
-    nextDir = E;
+  	nextCell = neighbors[Grid.DIRECTION.E];
+  	if (nextDir == -1) {
+			nextDir = Grid.DIRECTION.E;  		
+  	} else {
+  	// info((nextDir == -1 ? "nothing viable" : "progressing on a 1 in 7 chance")); // DEBUG
+  		var viableDir = false;
+  		for (nextDir = 7; nextDir < 9; nextDir++) {
+				if (neighbors[nextDir]) {
+					var key = this._assembleKey(last, this.current, neighbors[nextDir]);
+					var count = this._directionalCount(key, nextDir);
+					var threshold = this._getThreshold(key);
+					viableDir = this._isViableDirection(count, threshold);
+				}
+				if (viableDir) {
+					nextCell = neighbors[nextDir];
+					break;
+				}
+			}
+			nextDir = (nextDir == 9) ? 5 : nextDir;
+  	}
   }
+	
+	// info("heading: " + nextDir); // DEBUG
 
   if (!nextCell) Readers.error("nextCell is null!");
 
-  // build the context based on where we are going
+  // TODO: build the context based on where we are going
   // buildConTextForServer(nextCell);
 
   //if (printToConsole) printDirection(neighbors, nextCell, nextDir.int);
 
-  setLastDirection(nextDir);
+  // TODO: legacy code: setLastDirection(nextDir);
 
   return nextCell;
 };
 
+ObliquePerigramReader.prototype._getThreshold = function (key) {
+  return key ? this._adjustForStopWords(0, key.split(' ')) : Number.MAX_SAFE_INTEGER;
+};
+
+ObliquePerigramReader.prototype._directionalCount = function (key, dir) {
+  dir = dir || -1;
+  return key ? this.pman.trigramCount(key) : 0;
+};
+
+ObliquePerigramReader.prototype._assembleKey = function (last, curr, neighbor) {
+  var result, key, S = ' ';
+  if (!last || !curr || !neighbor)
+    return null;
+  key = (last.text() + S + curr.text() + S + neighbor.text()).toLowerCase();
+  return RiTa.stripPunctuation(key);
+};
+
+ObliquePerigramReader.prototype._isViableDirection = function (count, threshold) {
+  return count > threshold;
+};
+
+// TODO: (perhaps?) this method not currently used 
 ObliquePerigramReader.prototype.tryPath = function (cellOnNewPath, theWeighting, perigrams) {
 
+/* TODO: (perhaps?)
   if (perigrams) { // using perigrams
-
     var theScore = 0;
-
-    // theWeighting (from pathWeighting[]) not yet used
     if (!getLastReadCell() || !cellOnNewPath)
       return 0;
-
     if (perigrams.isPerigram(getLastReadCell(), this.currentCell, cellOnNewPath))
       theScore = (Math.random() < theWeighting ? 1 : 0);
-
     // theScore will be 0 if not a bigram
     // just give a randomly weighted score to a qualifying direction
     return theScore * (floor(random(9)) + 1);
   }
+ */
 
   // using digrams only
   return isDigram(this.currentCell, cellOnNewPath) ?

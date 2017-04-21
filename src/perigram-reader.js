@@ -39,7 +39,7 @@ PerigramReader.prototype.onEnterCell = function (curr) {
   // ---- based on Java VB NeighborFadingVisual ---- //
   // variables needed individually for instances of perigram readers:
   this.actualStepTime = this.stepTime / 1000;
-  info("Perigram actualStepTime: " + this.actualStepTime);
+  // info("Perigram actualStepTime: " + this.actualStepTime); // DEBUG
   this.fadeInTime = this.actualStepTime * this.fadeInFactor;
   this.fadeOutTime = this.speed * this.fadeOutFactor + 1; // actualStepTime or speed
   this.delayBeforeFadeBack = this.actualStepTime * this.delayFactor + .5; // actualStepTime or speed
