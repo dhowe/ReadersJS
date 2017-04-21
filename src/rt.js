@@ -162,6 +162,13 @@
     return l;
   }
 
+  var disabledFader = {
+    startTime: -1,
+    duration: -1,
+    from: {},
+    to: {}
+  };
+
   //////////////////////////////////////////////////////////////////////
   // RiText statics
   //////////////////////////////////////////////////////////////////////
@@ -573,9 +580,11 @@
 
     init: function (text, x, y, font) {
 
-      var bbs, screenH, args;
+      var bbs, args;
 
-      this.faderIds = [];
+      this._fader = disabledFader;
+      this._faderQueue = [];
+      this.debugFades = 0;
 
       this._color = {
         r: RiText.defaults.fill.r,
@@ -619,13 +628,8 @@
       this.y = is(args[2], N) ? args[2] : 100;
       this.z = 0;
 
-      //log('RiText: '+this._rs._text +"("+this.x+","+this.y+")"+" / "+ this._font.name);
-
       RiText.instances.push(this);
       this.id = ++RiText._IDGEN;
-
-      this.stopBehaviors();
-      //log(this.id, this.text());
     },
 
     _initArgs: function () {
@@ -678,109 +682,110 @@
 
     draw: function () {
 
-      //if (this.text()==='stone') console.log(frameCount,this._color);
       return this._update()._render();
     },
 
-    _update: function () {
-
-      var f = this.fader, dbug = 0;
-
-      if (dbug&&!window.lastLog) window.lastLog = 1;
-
-      if (this._faderAlive()) {
-
-        this._color = lerpCol(f.from, f.to, this._faderProgress());
-
-        if (dbug&&millis() - window.lastLog > 100) {
-          var t = (round(this._faderElapsed()/100)/10)+'s';
-          console.log(this._faderElapsed(), this._color);
-          window.lastLog = millis();
-        }
-      }
-
-      return this;
-    },
-
     _faderElapsed: function () {
-      return (millis() - this.fader.startTime);
+
+      return (millis() - this._fader.startTime);
     },
 
     _faderProgress: function () {
-      return this._faderElapsed() / this.fader.duration;
+
+      return this._faderElapsed() / max(this._fader.duration,1);
     },
 
-    _faderAlive: function () {
-      return this.fader.startTime + this.fader.duration > millis()
+    _faderRunning: function () {
+
+      return this._fader.startTime > 0 &&
+        (millis() < (this._fader.startTime + this._fader.duration));
+    },
+
+    _faderComplete: function () {
+
+      return this._fader.startTime > 0 &&
+        (millis() >= (this._fader.startTime + this._fader.duration));
     },
 
     _clearFadeQueue: function() {
 
-      this.debugFades&&console.log('rt#'+this.id+'._clearFadeQueue()');
-      for (var i = 0; i < this.faderIds.length-1; i++) {
-        rt.debugFades&&console.log('      cleared #'+this.faderIds[i]);
-        clearTimeout(this.faderIds[i]); // all but last added
+      if (this.debugFades && this._faderQueue.length > 1) {
+        console.log('rt#'+this.id+'._clearFadeQueue(' +
+          this._faderQueue.slice(0,this._faderQueue.length-1)+')');
       }
-      this.faderIds = [];
+
+      for (var i = 0; i < this._faderQueue.length-1; i++) { // all but last added
+
+        clearTimeout(this._faderQueue[i]);
+      }
+
+      this._faderQueue = [];
     },
 
     stopBehaviors: function() {
 
       this._clearFadeQueue();
+      this._fader = disabledFader;
+      return this;
+    },
 
-      this.fader = {
-        startTime: -1,
-        duration: -1,
-        from: {},
-        to: {}
-      };
+    _update: function () {
+
+      var f = this._fader, dbug = 0;
+
+      if (dbug&&!window.lastLog) window.lastLog = 1;
+
+      if (this._faderRunning()) {
+
+        this._color = lerpCol(f.from, f.to, this._faderProgress());
+
+        if (dbug && millis() - window.lastLog > 100) {
+          console.log(round(this._faderProgress()*1000)/10+'%', this._color);
+          window.lastLog = millis();
+        }
+      }
+      else if (this._faderComplete()) {
+
+        this.fill(f.to);
+        this._fader = disabledFader;
+      }
 
       return this;
     },
 
-    debugFades: 0 , // tmp
-
     colorTo: function (newColor, seconds, delay) {
 
       function dumpColor(obj) {
-        return [obj.r, obj.g, obj.b];//, obj.a ];
+        return '['+obj.r+','+obj.g+','+obj.b+']';//, obj.a ];
       }
 
       if (arguments.length > 3) throw Error('colorTo expects a max of 3 arguments,'
         + ' where the target color is 1 (either an array or an object), followed by'
         + ' the fade time (in seconds) as 2, and, optionally, the delay time as 3');
 
-      // if (seconds <= 0) { // execute immediately
-      //
-      //   this.stopBehaviors();
-      //   return this.fill(newColor);
-      // }
-
       delay = delay || 0;
 
-      this.debugFades&&console.log('rt#'+this.id+'.colorTo('+dumpColor(newColor),","+seconds, ","+delay+") @"+millis());
+      this.debugFades&&console.log('rt#'+this.id+'.colorTo('+dumpColor(newColor)+","+seconds+","+delay+") @"+millis());
 
       var rt = this;
       var faderId = setTimeout(function() { // add this fade to queue
 
         rt._clearFadeQueue();
 
-        //console.log("pushed ",rt.faderIds);
-        rt.fader = {
+        rt._fader = {
           from: rt._color,
           startTime: millis(),
           duration: seconds * 1000,
           to: parseColor(newColor),
         }
 
-        rt.debugFades&&console.log('rt#'+rt.id+'.starting ('+dumpColor(rt.fader.to)+") @"+millis());
-
+        rt.debugFades&&console.log('rt#'+rt.id+'.startFade('+dumpColor(rt._fader.to)+") @"+millis());
 
       }, delay * 1000);
 
-      this.faderIds.push(faderId);
+      this._faderQueue.push(faderId);
 
-      this.debugFades&&console.log('rt#'+this.id+'.pushing', '#'+faderId+' ('+dumpColor(newColor)+")");
+      this.debugFades&&console.log('rt#'+this.id+'.push(#'+faderId+","+dumpColor(newColor)+")");
 
       return this;
     },

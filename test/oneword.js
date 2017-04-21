@@ -13,13 +13,14 @@ async function setup() {
   RiText.defaultFill(255,255,255,40);
 
   rt = RiText('Hello', 30, 50);
+  rt.debugFades = 0;
   // rt2 = RiText('there', 150, 50);
 
 	state = "fades #1 and #2"
 // this does NOT work (but it used to):
   rt.colorTo({r:255,g:0,b:0,a:255},6); // invocation #1 fade to red immediate [fires at 0]
   rt.colorTo({r:0,g:255,b:0,a:255},3,3); // invocation #2 cancel #1 after 5 then fade to green [fires at 3]
-  rt.debugFades = 1;
+
 
   await sleep(5000); // pause for 5 secs
 
