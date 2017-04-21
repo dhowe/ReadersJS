@@ -57,7 +57,7 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
 	this.outerFadeToColor.a = invisible ? 95 : 0;
 
 	this.currGrid = Grid.gridFor(curr);
-	
+
   // get neighborhood
   this.neighborhood = this.currGrid.neighborhood(curr);
   this.neighborsToFade = [];
@@ -68,8 +68,8 @@ ObliquePerigramReader.prototype.onEnterCell = function (curr) {
         this.neighborsToFade.push(this.neighborhood[i]);
   	}
 	}
-	
-  // if (this.neighborsToFade.indexOf(curr) > -1) warn("Found curr in inner neighbors."); // DEBUG	
+
+  // if (this.neighborsToFade.indexOf(curr) > -1) warn("Found curr in inner neighbors."); // DEBUG
 
   this.outerNeighborsToFade = [];
   // get outerNeighborhood
@@ -145,7 +145,7 @@ ObliquePerigramReader.prototype._determineReadingPath = function (last, neighbor
         bestScore = newScore;
         nextCell = neighbors[directionIdx];
         nextDir = directionIdx;
-        info(nextCell.text() + " scores: " + bestScore); // DEBUG
+        //info(nextCell.text() + " scores: " + bestScore); // DEBUG
       }
     }
   }
@@ -155,7 +155,7 @@ ObliquePerigramReader.prototype._determineReadingPath = function (last, neighbor
   {
   	nextCell = neighbors[Grid.DIRECTION.E];
   	if (nextDir == -1) {
-			nextDir = Grid.DIRECTION.E;  		
+			nextDir = Grid.DIRECTION.E;
   	} else {
   	// info((nextDir == -1 ? "nothing viable" : "progressing on a 1 in 7 chance")); // DEBUG
   		var viableDir = false;
@@ -174,7 +174,7 @@ ObliquePerigramReader.prototype._determineReadingPath = function (last, neighbor
 			nextDir = (nextDir == 9) ? 5 : nextDir;
   	}
   }
-	
+
 	// info("heading: " + nextDir); // DEBUG
 
   if (!nextCell) Readers.error("nextCell is null!");
@@ -210,7 +210,7 @@ ObliquePerigramReader.prototype._isViableDirection = function (count, threshold)
   return count > threshold;
 };
 
-// TODO: (perhaps?) this method not currently used 
+// TODO: (perhaps?) this method not currently used
 ObliquePerigramReader.prototype.tryPath = function (cellOnNewPath, theWeighting, perigrams) {
 
 /* TODO: (perhaps?)
