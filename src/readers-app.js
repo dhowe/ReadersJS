@@ -1446,7 +1446,7 @@ var PageManager = function (host, port) {
     this.perigrams[n] = obj;
   };
 
-  this.isTrigram = function (rts, threshold) {
+  this.trigramCount = function (rts) {
 
     var key = rts,
       count, words = [],
@@ -1462,11 +1462,11 @@ var PageManager = function (host, port) {
         rts[1].text() + S + rts[2].text()).toLowerCase());
     }
 
-    threshold = threshold || 0;
-    count = trigrams[key] || 0;
-    //info(key+' -> '+count);
+    return trigrams[key] || 0;
+  };
 
-    return count > threshold;
+  this.isTrigram = function (rts, threshold) {
+    return this.trigramCount(rts) > threshold;
   };
 
   this.isBigram = function (rts, threshold) {
