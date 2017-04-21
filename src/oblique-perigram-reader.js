@@ -150,8 +150,8 @@ ObliquePerigramReader.prototype._determineReadingPath = function (last, neighbor
     }
   }
 
-  // but always go to the next or a viable SE word 1/7 of the time:
-  if ((Math.floor(Math.random() * 4) == 0) || (nextDir == -1))
+  // but always go to the next or a viable SW/S/SE word 1/4 of the time:
+  if ((Math.floor(Math.random() * 3) == 0) || (nextDir == -1))
   {
   	nextCell = neighbors[Grid.DIRECTION.E];
   	if (nextDir == -1) {
@@ -159,7 +159,7 @@ ObliquePerigramReader.prototype._determineReadingPath = function (last, neighbor
   	} else {
   	// info((nextDir == -1 ? "nothing viable" : "progressing on a 1 in 7 chance")); // DEBUG
   		var viableDir = false;
-  		for (nextDir = 7; nextDir < 9; nextDir++) {
+  		for (nextDir = 6; nextDir < 9; nextDir++) {
 				if (neighbors[nextDir]) {
 					var key = this._assembleKey(last, this.current, neighbors[nextDir]);
 					var count = this._directionalCount(key, nextDir);
@@ -171,10 +171,10 @@ ObliquePerigramReader.prototype._determineReadingPath = function (last, neighbor
 					break;
 				}
 			}
-			nextDir = (nextDir == 9) ? 5 : nextDir;
+			nextDir = (nextDir == 9) ? ((Math.floor(Math.random() * 3) == 0) ? Grid.DIRECTION.SE : Grid.DIRECTION.E) : nextDir;
   	}
   }
-
+  nextCell = ((nextDir == Grid.DIRECTION.SE) && !nextCell[nextDir]) ? neighbors[Grid.DIRECTION.E] : nextCell; // got to be safe
 	// info("heading: " + nextDir); // DEBUG
 
   if (!nextCell) Readers.error("nextCell is null!");
