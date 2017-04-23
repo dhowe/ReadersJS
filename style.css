@@ -254,7 +254,7 @@ button:hover {
 #hoverTextWrapper {
   background-color: rgba(130, 130, 130, .95);
   position: absolute;
-/*  display: none;*/
+  display: none;
   margin-left: 1.5em;
   padding: .5em;
   width: 370px;
@@ -263,7 +263,7 @@ button:hover {
   display: block;
 }
 .hoverText {
- /* display: none;*/
+  display: none;
   font-size: 14px;
   user-select: none;
   -moz-user-select: none;
