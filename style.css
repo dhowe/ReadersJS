@@ -227,13 +227,26 @@ button:hover {
 .reader input:checked+ label:before {
   border-color: rgba(0, 0, 0, 0);
 }
-.hoverText a:hover {
-  color: black;
-}
 .hoverText span.helpInfo {
   display: none;
   margin-top: .5em;
   font-size: 12px;
+}
+.hoverText a.help:hover {
+ background-color: rgba(0,0,0,.5);
+ color:white;
+}
+.hoverText a.help{
+  background-color: rgba(0,0,0,.2);
+  border-radius: 9px;
+  width: 18px;
+  display: inline-block;
+  text-align: center;
+  font-size: 14px;
+  height: 18px;
+  color:rgba(255,255,255,.7);
+  font-weight: bold;
+  font-family: serif;
 }
 .hoverText-unchecked {
   display: none;
@@ -252,6 +265,11 @@ button:hover {
 .hoverText {
   display: none;
   font-size: 14px;
+  user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
 }
 .reader input+ label, #focusDisplayTag, #options {
   user-select: none;
