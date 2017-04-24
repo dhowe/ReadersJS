@@ -1,6 +1,6 @@
 {
   "name": "readersjs",
-  "version": "1.0.15",
+  "version": "1.0.100",
   "description": "A JavaScript implementation of The Readers Project ",
   "main": "simple.js",
   "scripts": {
