@@ -402,6 +402,9 @@
 
       if (is(a[0], O)) fontObject(a[0], a[1]);
       if (is(a[0], S)) fontString(a[0], a[1]);
+
+      textFont(a[0]);
+      textSize(a[1]);
     }
 
     return RiText.defaults._font;
@@ -733,16 +736,9 @@
 
       var f = this._fader, dbug = 0;
 
-      if (dbug&&!window.lastLog) window.lastLog = 1;
-
       if (this._faderRunning()) {
 
         this._color = lerpCol(f.from, f.to, this._faderProgress());
-
-        if (dbug && millis() - window.lastLog > 100) {
-          console.log(round(this._faderProgress()*1000)/10+'%', this._color);
-          window.lastLog = millis();
-        }
       }
       else if (this._faderComplete()) {
 
@@ -817,8 +813,8 @@
         fill(this._color.r, this._color.g, this._color.b, this._color.a);
 
         // Set font params
-        textFont(this._font);
-        textSize(fontSize);
+        if (textFont() !== this._font) textFont(this._font);
+        if (textSize() !== fontSize) textSize(fontSize);
         textAlign(this._alignment);
 
         // Draw text

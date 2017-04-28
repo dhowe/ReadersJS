@@ -11,27 +11,39 @@
 
     function setup() {
       createCanvas(800, 800);
-      RiText.defaultFont(font);
+      RiText.defaultFont(font, 24);
+      textFont(font);
       grid = layout(txt, 100, 100, 600, 600)[0];
       performance.mark("start");
     }
 
     function draw() {
+
       fill(255);
 
       background(245);
 
       grid.update();
-      grid.draw();
+      drawGrid(grid);
 
       if (frameCount == 100) {
         performance.mark("end");
         performance.measure('', "start", "end");
         var total = performance.getEntriesByType("measure")[0].duration;
         console.log("elapsed: " + round(total) + ' ms');
+        console.log(p5.calls);
+        background(0);
         noLoop();
       }
     }
+
+    drawGrid = function (grid) { // not called in Node
+      for (var i = 0; i < grid.cells.length; i++) {
+        for (var j = 0; j < grid.cells[i].length; j++)
+          if (grid.cells[i][j])
+            grid.cells[i][j]._render();
+      }
+    };
 
     var layout = function (txt, x, y, w, h, leading) {
 
@@ -199,9 +211,9 @@
   </script>
 </head>
 
+<script src="../lib/p5.js"></script>
 <!--script src="../node_modules/p5/lib/p5.js"></script-->
 <script src="../node_modules/rita/lib/rita-tiny.js"></script>
-<script src="../lib/p5.js"></script>
 <script src="../src/readers-app.js"></script>
 <script src="../src/rt.js"></script>
 
