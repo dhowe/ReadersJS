@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script>
+    function preload() {
+      font = loadFont('../fonts/Baskerville.ttf');
+    }
+
+    function setup() {
+      createCanvas(800, 800);
+      fill(255);
+      // textFont(font);
+      background(0);
+      performance.mark("start");
+      for (var i = 0; i < 100000; i++)
+      {
+        textFont(font);
+        text(String.fromCharCode(floor(random(65, 65 + 26))), random(width - 10), random(10, height));
+      }
+      performance.mark("end");
+      performance.measure('', "start", "end");
+      console.log("elapsed: " + round(performance.getEntriesByType("measure")[0].duration) + ' ms');
+    }
+  </script>
+</head>
+
+<script src="../node_modules/p5/lib/p5.js"></script>
+
+</html>
