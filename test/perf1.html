@@ -3,29 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <script>
-    var font, total = 0;
+    var font;
     function preload() {
       font = loadFont('../fonts/Baskerville.ttf');
     }
 
     function setup() {
       createCanvas(800, 800);
+      performance.mark("start");
     }
 
     function draw() {
       fill(255);
-      // textFont(font);
+
       background(0);
-      performance.mark("start");
-      for (var i = 0; i < 1000; i++)
+
+      for (var i = 0; i < 100; i++)
       {
         textFont(font);
         text(String.fromCharCode(floor(random(65, 65 + 26))), random(1,width - 10), random(10, height-3));
       }
-      performance.mark("end");
-      performance.measure('', "start", "end");
-      total += performance.getEntriesByType("measure")[0].duration;
+
       if (frameCount == 100) {
+        performance.mark("end");
+        performance.measure('', "start", "end");
+        var total = performance.getEntriesByType("measure")[0].duration;
         console.log("elapsed: " + round(total) + ' ms');
         noLoop();
       }
@@ -33,6 +35,6 @@
   </script>
 </head>
 
-<script src="../node_modules/p5/lib/p5.js"></script>
+<script src="../lib/p5.js"></script>
 
 </html>
