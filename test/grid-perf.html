@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script>
+    var font, grid, txt = "swimming back alone to the bathing rock, head under, he reaches out to grasp the familiar ledge, a fold in the rose-tinged granite just above the surface of the waist-deep water at its edge, by the stone which he can see clearly though unfocused through the lake water. but he has not reached it yet. his expectant hand breaks the surface, down through ‘empty’ water and his knuckles graze the rock. his face will not rise up, dripping and gasping, out of the water. instead, it ‘falls’ forward and, momentarily, down, into the shallows, stumbles, breathes a choking mouthful, which he expected to be air. he finds his feet, the ledge, a moment later. a child learning to swim, back to this same rock. from tip-toe six yards out, then anxious half-flailing dog-paddle back to the sandy shallows. missing the ledge and choking. comforted after her first swim. his hand hovers over smooth forbidden flesh. imagined ochres. to touch them is assured disaster, waking nightmare, inevitable misunderstanding and, finally, betrayal. bare island flesh. to reach this shore. to come beside. islanded. neurath’s sailor on the moving island, watching its wake — the turbulence of physical knowledge — and wondering (in pictures), ‘why is it that language wishes me here? on an island of stone and hemlock, of pine and green moss, floor of the woods, light lacing the shallows? why here?’ words drifting under the moon, on the sea of textuality. letters lacing the surface of its waters, like that light, misspelt landings, tracing hidden texts in other languages for other islanders. but my grandfather’s boat is sinking, and i cannot reach that body anymore, those selves. and my grandmother’s boat is sinking and i cannot reach that island anymore, those selves of ours. or the cushion-shaped stone i asked for, or the sloping rock where another father cast for small-mouth bass and other happy fish — trailing a silent line. the sigh of the waters pulled back by the paddle in the only island ‘i’ can move. swimming back (alone?) to the bathing rock each night, head under, he reaches out to grasp the familiar ledge, a fold in the rose-tinged flesh just below the surface of her waist, but still somehow near her face which he sees clearly through the dark water. but he has not reached her yet. his expectant hand breaks the surface, down through ‘dry’ water and his knuckles graze the rock. his face will not rise up, dripping and gasping, out of the water. instead, he ‘falls’ forward and, momentarily, down, into the shallows, stumbles, breathes a choking mouthful, which he expected to be sweet, delicious darkness. he finds his sleep, slides off the ledge, a moment later. neurath’s pilgrim, 1620, on the moving island, leaving the old world and sailing to the new. unaccountably on deck ‘in a mightie storm’ when the ship pitched, he was thrown into the sea, but caught hold of a top-sail halyard which hung overboard and ‘rane out at length’. he kept his hold ‘though he was sundrie fadomes under water’ until he was hauled back to the surface, then dragged on board with a boat hook. the body is lost, given over to a clock that gives a new name to every separate moment. the body is given over to entropy, the sea. you cannot reach that shore, with seagulls circling. turning and turning, the island turns in the water and your hand slips off, another bloated corpse.";
+
+    function preload() {
+      font = loadFont('../fonts/Baskerville.ttf');
+    }
+
+    function setup() {
+      createCanvas(800, 800);
+      RiText.defaultFont(font);
+      grid = layout(txt, 100, 100, 600, 600)[0];
+      performance.mark("start");
+    }
+
+    function draw() {
+      fill(255);
+
+      background(245);
+
+      grid.update();
+      grid.draw();
+
+      if (frameCount == 100) {
+        performance.mark("end");
+        performance.measure('', "start", "end");
+        var total = performance.getEntriesByType("measure")[0].duration;
+        console.log("elapsed: " + round(total) + ' ms');
+        noLoop();
+      }
+    }
+
+    var layout = function (txt, x, y, w, h, leading) {
+
+      var createGrid = function (lines) {
+        grids.push(new Grid(toCells(lines), this.x, this.y, this.width, this.height));
+        RiText.dispose(lines);
+      };
+
+      var toCells = function (rt) {
+        var cells = [];
+        for (var y = 0; y < rt.length; y++)
+          cells.push(rt[y].splitWords());
+        return cells;
+      };
+
+      var addToStack = function (txt, words) {
+        var tmp = txt.split(' ');
+        for (var i = tmp.length - 1; i >= 0; i--)
+          words.push(tmp[i]);
+      };
+
+      var withinBoundsY = function (currentY, leading, maxY, descent, firstLine) {
+        if (!firstLine)
+          return currentY + leading <= maxY - descent;
+        return currentY <= maxY - descent;
+      };
+
+      var newRiTextLine = function (s, pf, xPos, nextY) {
+        while (s && s.length > 0 && s.endsWith(' '))
+          s = s.substring(0, s.length - 1);
+        return new RiText(s, xPos, nextY, pf);
+      };
+
+      var grids = [], pfont = RiText.defaultFont(), PAGE_BREAK = '<pb/>', SP = ' ', E = '';
+
+      if (!pfont) throw new Error("No font set");
+      if (!txt || !txt.length) throw Error("No text!");
+
+      w = w || Number.MAX_VALUE - x, h = h || Number.MAX_VALUE,
+        leading = leading || ((pfont.size || RiText.defaults.fontSize) * RiText.defaults.leadingFactor);
+
+      var ascent, descent, leading, startX = x,
+        currentX = 0,
+        yPos = 0,
+        currentY = y,
+        rlines = [],
+        sb = E,
+        maxW = x + w,
+        maxH = y + h,
+        words = [],
+        next, dbug = 0,
+        paraBreak = false,
+        pageBreak = false,
+        lineBreak = false,
+        firstLine = true;
+
+      var ascent = pfont._textAscent(RiText.defaults.fontSize),
+        descent = pfont._textDescent(RiText.defaults.fontSize);
+
+      // remove line breaks & add spaces around html
+      txt = txt.replace(/&gt;/g, '>').replace(/&lt;/g, '<');
+      txt = txt.replace(/ ?(<[^>]+>) ?/g, " $1 ").replace(/[\r\n]/g, SP);
+
+      // split into reversed array of words
+      addToStack(txt, words);
+
+      if (RiText.defaults.indentFirstParagraph)
+        startX += RiText.defaults.paragraphIndent;
+
+      while (words.length > 0) {
+        next = words.pop();
+
+        if (!next.length) continue;
+
+        // check for HTML-style tags
+        if (/<[^>]+>/.test(next)) {
+
+          if (next == RiText.NON_BREAKING_SPACE)
+            sb += SP;
+          else if (next == RiText.PARAGRAPH_BREAK)
+            paraBreak = true;
+          else if (next == RiText.LINE_BREAK)
+            lineBreak = true;
+          else if (next == PAGE_BREAK)
+            pageBreak = true;
+
+          continue;
+        }
+
+        // re-calculate our X position
+        currentX = startX + pfont._textWidth(sb + next, RiText.defaults.fontSize);
+
+        // check it against the line-width
+        if (!paraBreak && !lineBreak && !pageBreak && currentX < maxW) {
+
+          sb += next + SP; // add-word
+
+        } else {
+
+          if (!pageBreak && withinBoundsY(currentY, leading, maxH, descent)) {
+
+            yPos = firstLine ? currentY : currentY + leading;
+            rt = newRiTextLine(sb, pfont, startX, yPos);
+            if (dbug) info("add1: " + rt + " currentY=" + currentY + " yPos=" + yPos);
+            rlines.push(rt);
+
+            currentY = paraBreak ? rt.y + RiText.defaults.paragraphLeading : rt.y;
+            startX = x;
+
+            // reset
+            if (paraBreak) startX += RiText.defaults.paragraphIndent;
+
+            sb = next + SP;
+
+            // reset with next word
+            paraBreak = lineBreak = firstLine = false;
+
+          } else {
+
+            if (pageBreak) {
+
+              pageBreak = false;
+              rt = newRiTextLine(sb, pfont, startX, yPos + leading);
+              if (dbug) info("add2: " + rt + " currentY=" + currentY + " yPos=" + yPos);
+              rlines.push(rt);
+              sb = E;
+            }
+            words.push(next);
+
+            // create a new grid from existing lines
+            if (dbug) info("------ new grid(a) -------");
+            createGrid(rlines);
+            firstLine = true;
+
+            // reset everything for next grid
+            currentX = startX;
+            currentY = y;
+            yPos = 0;
+            rlines = [];
+          }
+        }
+      }
+
+      // check if leftover words can make a new line
+      if (withinBoundsY(currentY, leading, maxH, descent)) {
+
+        rlines.push(rt = newRiTextLine(sb, pfont, x, leading + currentY));
+
+        if (dbug) info("add3: " + rt);
+        sb = E;
+
+      } else if (words.length) { // IF ADDED: (DCH) 12.4.13
+
+        rlines.push(rt = newRiTextLine(words.join(SP).trim(), pfont, x, leading));
+
+        if (dbug) info("add4: " + rt);
+      }
+
+      // create the last grid with the leftovers
+      if (rlines.length) createGrid(rlines);
+
+      return grids;
+    };
+
+  </script>
+</head>
+
+<!--script src="../node_modules/p5/lib/p5.js"></script-->
+<script src="../node_modules/rita/lib/rita-tiny.js"></script>
+<script src="../lib/p5.js"></script>
+<script src="../src/readers-app.js"></script>
+<script src="../src/rt.js"></script>
+
+</html>
