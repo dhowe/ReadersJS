@@ -85,12 +85,6 @@ function Grid(c, x, y, w, h) {
   this.x = x;
   this.y = y;
 
-  if (Grid.HEADERS)
-    this.header = RiText('', x + w / 2, y / 2);
-
-  if (Grid.FOOTERS)
-    this.footer = RiText('' + (this.id + 1), x + w / 2, y + h + 15);
-
   this.initial = this.storeInitial(); // a 2d array of objects {word,x,y,fill}
 
   Grid.instances.push(this);
@@ -102,8 +96,6 @@ Grid.prototype = {
 
     for (var i = 0; i < this.cells.length; i++)
       RiText.disposeAll(this.cells[i]);
-
-    RiText.disposeAll([this.header, this.footer]);
   },
 
   update: function () { // not called in Node
@@ -128,9 +120,6 @@ Grid.prototype = {
           this.cells[i][j]._render();
         }
     }
-
-    this.header && (this.header._render());
-    this.footer && (this.footer._render());
 
     pop();
   },
@@ -1527,20 +1516,6 @@ var PageManager = function (host, port) {
       callback.call(this, pMan.perigrams);
 
     }, '\n');
-  };
-
-  this.footers = function () {
-    var result = [];
-    for (var i = 0, j = Grid.instances.length; i < j; i++)
-      result.push(Grid.instances[i].footer);
-    return result;
-  };
-
-  this.headers = function () {
-    var result = [];
-    for (var i = 0, j = Grid.instances.length; i < j; i++)
-      result.push(Grid.instances[i].header);
-    return result;
   };
 
   // optional boolean arg makes sure reader is on recto/verso after switch
