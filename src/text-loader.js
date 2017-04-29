@@ -21,7 +21,7 @@ var notify, timerStart = Date.now(),
 function loadTexts() {
 
   if (typeof InstallTrigger !== 'undefined' && !location.href.includes('localhost')) {// tmp: Firefox
-    document.getElementById('overlay').innerHTML = "<br>Currently runs only in Chromium browsers</p>";
+    document.getElementById('overlay').innerHTML = "<br>Currently runs only on Chrome/Chromium/Opera/Safari</p>";
     window.mocha = 1; // disable p5.js
     return;
   }
