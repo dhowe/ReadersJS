@@ -1090,6 +1090,7 @@
         tmp.text(words[i]);
         var mx = RiText._wordOffsetFor(this, words, i);
         tmp.position(mx, this.y);
+        tmp.id = ++RiTa._IDGEN; // DCH: fixed
         l.push(tmp);
       }
 

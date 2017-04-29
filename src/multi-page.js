@@ -1,4 +1,4 @@
-var pManager, font, bgColor, readers = {};
+var pManager, font, bgColor, fps = false;
 
 function preload() {
 
@@ -9,7 +9,7 @@ function setup() {
 
   createCanvas(1280, 720);
 
-  RiText.defaultFont(font, 24);
+  //RiText.defaultFont(font, 24);
   RiText.defaults.paragraphLeading = 10;
   RiText.defaults.paragraphIndent = 0;
 
@@ -38,6 +38,11 @@ function draw() {
 
   background(bgColor || 0);
   pManager && (pManager.draw());
+  if (fps) {
+    fill(255);
+    textSize(14);
+    text(round(frameRate()), width-20,15);
+  }
 }
 
 function keyPressed() {
@@ -46,6 +51,7 @@ function keyPressed() {
   keyCode == 37 && (pManager.lastPage(1));
 
   if (key === 'R') dumpMem(); // DEBUG: (PRESS 'r' FOR CONSOLE OUTPUT)
+  if (key === 'F') toggleFPS(); // DEBUG: (PRESS 'f' FOR FRAME RATE)
 }
 
 function loadTexts(callback) {
@@ -212,6 +218,9 @@ function cloneColor(obj) {
   };
 }
 
+function toggleFPS() {
+  fps = !fps;
+}
 function dumpMem() {
 
   var stats = {},
