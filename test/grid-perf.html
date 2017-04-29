@@ -31,7 +31,7 @@
         performance.measure('', "start", "end");
         var total = performance.getEntriesByType("measure")[0].duration;
         console.log("elapsed: " + round(total) + ' ms');
-        console.log(p5.calls);
+        console.log(getPathCalls);
         background(0);
         noLoop();
       }
@@ -213,7 +213,7 @@
 
 <script src="../lib/p5.js"></script>
 <!--script src="../node_modules/p5/lib/p5.js"></script-->
-<script src="../node_modules/rita/lib/rita-tiny.js"></script>
+<script src="../node_modules/rita/lib/rita-micro.js"></script>
 <script src="../src/readers-app.js"></script>
 <script src="../src/rt.js"></script>
 

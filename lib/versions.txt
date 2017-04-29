@@ -1,4 +1,4 @@
-rita: v1.1.51
+rita: v1.1.60
+p5js: v0.5.8 March 25, 2017
 socket.io:
-p5js:
 jquery:
