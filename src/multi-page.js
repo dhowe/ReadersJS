@@ -1,3 +1,5 @@
+p5.disableFriendlyErrors = true; // opt
+
 var pManager, font, bgColor, fps = false;
 
 function preload() {
