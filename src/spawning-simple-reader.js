@@ -11,10 +11,12 @@ function SpawningSimpleReader(g, rx, ry, speed) {
   this.consoleString = '';
   this.downWeighting = .6;
   this.upWeighting = .12;
+  this.defaultColorDark = hexToRgb("#F3F100"); // Yellow
+  this.defaultColorLight = hexToRgb("#BFBD00");
 
   if (!speed) this.speed = SPEED.Fluent; // default speed for SpawningSimpleReaders (DH shouldn't be needed)
 
-  this.activeFill =  colorToObject(255, 252, 0, 255); // #FFFD00
+  this.activeFill =  this.defaultColorDark;
   // this.neighborCol = [127, 10, 30, 255];
 
   // factors

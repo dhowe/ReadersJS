@@ -36,7 +36,7 @@ function setup() {
          pManager.focus(randomReader());
 
          createInterface();
-         
+
      }, 100); 
 
  });
@@ -138,13 +138,21 @@ function themeChanged() {
   var dark = (themeName === "Dark"),
     style = STYLE[styleName],
     col = dark ? COLOR.White : COLOR.Black;
-
-  bgColor = dark ? 0 : 232; // global
-
-  log("[UI] Theme/style: " + themeName + "/" + styleName);
-  pManager.gridFill(colorToObject(col, style));
-
+  
+  
   $('body').toggleClass("light", !dark).toggleClass("dark", dark);
+  bgColor = dark ? 0 : 232; // global
+  pManager.gridFill(colorToObject(col, style));
+  changeReadersColorTheme(dark);
+  $('#focusDisplayTag').css("color", getCSSFromColor(focused.activeFill));
+  
+  log("[UI] Theme/style: " + themeName + "/" + styleName); 
+}
+
+function changeReadersColorTheme(isDark) {
+  activeReaders().forEach(function(r) {
+    r.activeFill = isDark ? r.defaultColorDark : r.defaultColorLight;
+  });
 }
 
 function textChanged() {
@@ -190,6 +198,15 @@ function colorToArray(obj, overrideAlpha) { // takes optional 2nd argument for a
   return [obj.r, obj.g, obj.b, (typeof overrideAlpha === 'undefined') ?
     obj.a || 255 : overrideAlpha
   ];
+}
+
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
 }
 
 function colorToObject(r, g, b, a) {
