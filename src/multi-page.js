@@ -15,25 +15,35 @@ function setup() {
   RiText.defaults.paragraphLeading = 10;
   RiText.defaults.paragraphIndent = 0;
 
-  loadTexts(function () {
+    
+  loadTexts(function() {
 
-    // do the layout
-    pManager = PageManager.getInstance(Reader.APP);
-    pManager.layout(TEXTS[0], 25, 40, 580, 650);
-    pManager.gridFill(colorToObject(255, 255, 255, 40));
+     // do the layout
+     pManager = PageManager.getInstance(Reader.APP);
 
-    // add some readers
-    new PerigramReader(pManager.recto, SPEED.Fluent);
-    new MesosticReader(pManager.verso).hide(0);
-    new ObliquePerigramReader(pManager.verso);
-    new SpawningSimpleReader(pManager.recto);
-    new SpawningPerigramReader(pManager.verso);
+     setTimeout(function() {
+         pManager.layout(TEXTS[0], 25, 40, 580, 650);
+         pManager.gridFill(colorToObject(255, 255, 255, 40));
 
-    // pick one to get focus
-    pManager.focus(randomReader());
+         // add some readers
+         new PerigramReader(pManager.recto, SPEED.Fluent);
+         new MesosticReader(pManager.verso).hide(0);
+         new ObliquePerigramReader(pManager.verso);
+         new SpawningSimpleReader(pManager.recto);
+         new SpawningPerigramReader(pManager.verso);
 
-    createInterface();
-  });
+         // pick one to get focus
+         pManager.focus(randomReader());
+
+         createInterface();
+         
+     }, 100); 
+
+ });
+  
+
+  
+
 };
 
 function draw() {
