@@ -15,25 +15,35 @@ function setup() {
   RiText.defaults.paragraphLeading = 10;
   RiText.defaults.paragraphIndent = 0;
 
-  loadTexts(function () {
+    
+  loadTexts(function() {
 
-    // do the layout
-    pManager = PageManager.getInstance(Reader.APP);
-    pManager.layout(TEXTS[0], 25, 40, 580, 650);
-    pManager.gridFill(colorToObject(255, 255, 255, 40));
+     // do the layout
+     pManager = PageManager.getInstance(Reader.APP);
 
-    // add some readers
-    new PerigramReader(pManager.recto, SPEED.Fluent);
-    new MesosticReader(pManager.verso).hide(0);
-    new ObliquePerigramReader(pManager.verso);
-    new SpawningSimpleReader(pManager.recto);
-    new SpawningPerigramReader(pManager.verso);
+     setTimeout(function() {
+         pManager.layout(TEXTS[0], 25, 40, 580, 650);
+         pManager.gridFill(colorToObject(255, 255, 255, 40));
 
-    // pick one to get focus
-    pManager.focus(randomReader());
+         // add some readers
+         new PerigramReader(pManager.recto, SPEED.Fluent);
+         new MesosticReader(pManager.verso).hide(0);
+         new ObliquePerigramReader(pManager.verso);
+         new SpawningSimpleReader(pManager.recto);
+         new SpawningPerigramReader(pManager.verso);
 
-    createInterface();
-  });
+         // pick one to get focus
+         pManager.focus(randomReader());
+
+         createInterface();
+
+     }, 100); 
+
+ });
+  
+
+  
+
 };
 
 function draw() {
@@ -128,13 +138,21 @@ function themeChanged() {
   var dark = (themeName === "Dark"),
     style = STYLE[styleName],
     col = dark ? COLOR.White : COLOR.Black;
-
-  bgColor = dark ? 0 : 232; // global
-
-  log("[UI] Theme/style: " + themeName + "/" + styleName);
-  pManager.gridFill(colorToObject(col, style));
-
+  
+  
   $('body').toggleClass("light", !dark).toggleClass("dark", dark);
+  bgColor = dark ? 0 : 232; // global
+  pManager.gridFill(colorToObject(col, style));
+  changeReadersColorTheme(dark);
+  $('#focusDisplayTag').css("color", getCSSFromColor(focused.activeFill));
+  
+  log("[UI] Theme/style: " + themeName + "/" + styleName); 
+}
+
+function changeReadersColorTheme(isDark) {
+  activeReaders().forEach(function(r) {
+    r.activeFill = isDark ? r.defaultColorDark : r.defaultColorLight;
+  });
 }
 
 function textChanged() {
@@ -180,6 +198,15 @@ function colorToArray(obj, overrideAlpha) { // takes optional 2nd argument for a
   return [obj.r, obj.g, obj.b, (typeof overrideAlpha === 'undefined') ?
     obj.a || 255 : overrideAlpha
   ];
+}
+
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
 }
 
 function colorToObject(r, g, b, a) {

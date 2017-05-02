@@ -26,6 +26,8 @@ function loadTexts() {
     return;
   }
 
+  loadTheFirst();
+
   var menu = document.getElementById('interface'),
     overlay = document.getElementById('overlay');
 
@@ -80,19 +82,22 @@ function finishLoading(text) {
   }
 }
 
-function reloadTheRest() {
-
-  for (var i = 1; i < TEXTS.length; i++) { // skip the first text
-
+function createScriptTag(src, id) {
     var script = document.createElement("script");
-
-    script.src = TEXTS[i].trigrams;
-    script.id = TEXTS[i].title;
-
+    script.src = src;
+    script.id = id;
     document.getElementsByTagName("html")[0].appendChild(script);
-    script.onload = function () {
-      finishLoading(this.id);
-    };
+    script.onload = finishLoading(id);
+}
+
+function loadTheFirst() {
+    createScriptTag(TEXTS[0].trigrams, TEXTS[0].title);
+}
+
+
+function reloadTheRest() {
+  for (var i = 1; i < TEXTS.length; i++) { // skip the first text
+      createScriptTag(TEXTS[i].trigrams, TEXTS[i].title); 
   }
 }
 

@@ -30,8 +30,10 @@ function ObliquePerigramReader(g, rx, ry, speed) {
   this.type = 'ObliquePerigramReader'; //  superclass variable(s)
 
   if (!speed) this.speed = SPEED.Steady; // default speed for ObliquePerigramReaders
+  this.defaultColorDark = hexToRgb("#FF41B6"); // Pink
+  this.defaultColorLight = hexToRgb("#D23495");
 
-  this.activeFill = colorToObject(255, 0, 157, 255); // #FF009D
+  this.activeFill = this.defaultColorDark;
 
   // factors
   this.fadeInFactor = .8;
