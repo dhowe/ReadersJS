@@ -11,10 +11,12 @@ function PerigramReader(g, rx, ry, speed) {
   this.consoleString = '';
   this.downWeighting = .6;
   this.upWeighting = .12;
+  this.defaultColorDark = hexToRgb("#FA0007"); // red
+  this.defaultColorLight = hexToRgb("#C711F24");
 
   if (!speed) this.speed = SPEED.Fluent; // default speed for PerigramReaders
 
-  this.activeFill = colorToObject(250, 0, 7, 255) // red #FA0007
+  this.activeFill = this.defaultColorDark
   // this.neighborCol = [127, 10, 30, 255];
 
   // factors

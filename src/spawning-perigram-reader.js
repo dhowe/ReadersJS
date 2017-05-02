@@ -11,10 +11,12 @@ function SpawningPerigramReader(g, rx, ry, speed) {
   this.consoleString = '';
   this.downWeighting = .6;
   this.upWeighting = .12;
+  this.defaultColorDark = hexToRgb("#FF5100"); // orange 
+  this.defaultColorLight = hexToRgb("#D75F22");
 
   if (!speed) this.speed = SPEED.Fluent; // default speed for SpawningPerigramReaders
 
-  this.activeFill = colorToObject(255, 81, 0, 255); // orange #FF5100
+  this.activeFill = this.defaultColorDark;
   // this.neighborCol = [127, 10, 30, 255];
 
   // factors

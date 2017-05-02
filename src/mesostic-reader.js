@@ -13,7 +13,10 @@ function MesosticReader(g, rx, ry, speed) {
   this.upperCasing = true;
   this.letterIdx = 0;
   this.letter = null;
-  this.activeFill = colorToObject(0, 149, 255, 255); // #0095FF
+  this.defaultColorDark = hexToRgb("#0095FF"); // blue
+  this.defaultColorLight = hexToRgb("#1C76D6");
+
+  this.activeFill = this.defaultColorDark;
 }
 
 var M = MesosticReader.prototype;
