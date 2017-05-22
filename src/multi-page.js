@@ -37,12 +37,9 @@ function setup() {
 
          createInterface();
 
-     }, 100); 
+     }, 100);
 
- });
-  
-
-  
+ }); 
 
 };
 
