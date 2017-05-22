@@ -37,12 +37,14 @@ function createInterface() {
 
     var focusButton = createCheckbox('F',false);
     focusButton.class('smallButton focus');
+    focusButton.attribute('title','focus');
     focusButton.changed(focusButtonPushed);
     focusButton.value(reader.type);
     focusButton.parent(rb);
 
     var soloButton = createCheckbox('S',false);
     soloButton.class('smallButton solo');
+    soloButton.attribute('title','solo');
     soloButton.changed(soloButtonPushed);
     soloButton.value(reader.type);
     soloButton.parent(rb);
@@ -181,20 +183,21 @@ function createInterface() {
   }
 
   function focusChanged(focused) {
-    log("[UI] Focus: " + focused.type);
-    focused && pManager.focus(focused);
-    assignFocus(focused);
+      log("[UI] Focus: " + focused.type);
+      focused && pManager.focus(focused);
+      assignFocus(focused);
+
+      // turn off other focusButtons
+      var eles = document.getElementsByClassName('smallButton focus');
+      for (var i = 0; i < eles.length; i++) {
+          if (eles[i].parentNode.id != focused.type)
+              eles[i].firstElementChild.checked = false;
+      }
   }
 
   function focusButtonPushed() {
     if (this.elt.firstElementChild.checked) {
         focusChanged(Reader.firstOfType(this.elt.parentElement.id));
-        // turn off other focusButtons
-        var eles = document.getElementsByClassName('smallButton focus');
-        for (var i = 0; i < eles.length; i++) {
-            if (eles[i] != this.elt)
-                eles[i].firstElementChild.checked = false;
-        }
     } else {
         // if it is the current focus, do nothing // Or random select another one ?
         this.elt.firstElementChild.checked = true;
@@ -223,6 +226,7 @@ function createInterface() {
       }
       // change focus to the current reader
       focusChanged(reader);
+      document.getElementById(reader.type).getElementsByClassName('smallButton focus')[0].firstElementChild.checked = true;
   }
 
   function unsolo(reader) {
