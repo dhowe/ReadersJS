@@ -141,7 +141,9 @@ function themeChanged() {
   bgColor = dark ? 0 : 232; // global
   pManager.gridFill(colorToObject(col, style));
   changeReadersColorTheme(dark);
-  $('#focusDisplayTag').css("color", getCSSFromColor(focused.activeFill));
+
+  //focus
+  $('#focusDisplayTag').css("color", getCSSFromColor(pManager.focus().activeFill));
   
   log("[UI] Theme/style: " + themeName + "/" + styleName); 
 }
