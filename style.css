@@ -210,6 +210,10 @@ button:hover {
 .reader {
   height: 50px;
 }
+.reader.disabled {
+  pointer-events: none;
+  -webkit-filter: grayscale(1);
+}
 /*.reader div {
   padding-left: 10px;
   font-size: 16px;
