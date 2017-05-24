@@ -159,7 +159,8 @@ function createInterface() {
 
     // clear focusDisplay, change color
     $('#focusDisplay').html('');
-    $('#focusDisplayTag').css("color", getCSSFromColor(focused.activeFill));
+
+    $('#focusDisplayTag').css("color", focused ? getCSSFromColor(focused.activeFill) : "#EEE");
   }
 
   function clearFocus() {
@@ -171,13 +172,11 @@ function createInterface() {
   }
 
   function readerOnOffEvent(reader, onOffSwitch) {
-    // if attempting to turn off the only visible Reader, do nothing
-    if (!onOffSwitch && activeReaders().length === 1) {
-      document.getElementById(reader.type).firstElementChild.checked = false;
-      return;
-    }
     reader.hide(!onOffSwitch);
     resetFocus();
+
+    if (document.getElementById(reader.type).className === "reader solo")
+      unsolo(reader);
 
     log("[UI] " + reader.type + (reader.hidden ? ': Off' : ': On'));
   }
@@ -226,6 +225,8 @@ function createInterface() {
               readers[i].className += " disabled";
               if (actives.indexOf(reader) > 0)
                 readerOnOffEvent(reader, false);
+          } else {
+            readers[i].className += " solo";
           }
       }
       
@@ -242,12 +243,14 @@ function createInterface() {
 
       for (var i = 0; i < readers.length; i++) {
           var reader = Reader.firstOfType(readers[i].id);
-          if (reader != targetReader) {
-              readers[i].className = "reader";
-              if (actives.indexOf(reader) > 0)
-              readerOnOffEvent(reader, true);
-
+          readers[i].className = "reader";
+          if (reader === targetReader) {
+            readers[i].getElementsByClassName('smallButton solo')[0].firstElementChild.checked = false;
           }
+          else if (actives.indexOf(reader) > 0) {
+              readerOnOffEvent(reader, true);
+          }
+             
       }
   }
 
