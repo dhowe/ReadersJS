@@ -69,8 +69,7 @@ canvas {
   top: 10px;
   left: 0px;
   position: absolute;
-  background: rgba(0, 0, 0, .7);
-  color: #EEE;
+  background: rgb(0, 0, 0);
   padding: 30px 20px 20px 120px;
   width: 420px;
   border: 1px solid #555;
@@ -138,6 +137,13 @@ canvas {
     background-color: rgba(0, 0, 0, .05) !important;
   }
 }
+.select {
+    overflow: hidden; 
+    height: 29px;    
+    position: relative;
+    margin: 5px 10px;
+    display: inline-block;
+}
 select {
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -147,13 +153,34 @@ select {
   background-color: #3D3D3D;
   border: none;
   font-size: 14px;
-  font-weight: bold;
   letter-spacing: 0.06em;
   height: 29px;
-  padding: 5px;
-  margin: 5px 10px;
-  color: #DDD;
+  padding: 5px 10px 5px 5px;
   border-radius: 0px;
+  background-color: #3D3D3D;
+  color:#DDD;
+  font-weight: bold;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+.select:after{
+    content:"▼"; 
+    color:#AAA;
+    opacity: .5; 
+    padding: 8px;
+    position: absolute; 
+    right: 5px; 
+    font-size:10px;
+    top: 0;    
+    z-index: 1;
+    text-align: center;
+    width: 10%;
+    height: 100%;      
+    pointer-events: none;
+    box-sizing: border-box;   
 }
 select:focus {
   outline:none;
@@ -170,17 +197,15 @@ button {
   line-height: 20px;
   margin-top: 10px;
 }
-button:hover {
-  color: black;
-  background-color: #DDD;
+.reader select, .smallButton label {
+  background-color: #2D2D2D;
+  color:#7a7a7a;
   font-weight: bold;
-
 }
 .smallButton label {
   display: inline-block;
 /*  width:34px !important;
   height:34px;*/
-  background-color: #3D3D3D;
 /*  box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -188,7 +213,7 @@ button:hover {
   border-style: solid;
   border-width:2px;*/
   font-size: 16px;
-  padding: 7px 9px 6px;
+  padding: 6px 8px 6px;
   margin:5px 10px 5px 0px;
   -moz-user-select: none;
   -khtml-user-select: none;
@@ -205,30 +230,37 @@ button:hover {
 }
 .item p {
   width: 60px;
+  position: absolute;
 }
 .item select {
-  width: 320px;
+  width: 340px;
+  margin-left: 60px;
 }
 .item select.half, .item .select.half {
-  width: 120px;
+  width: 130px;
 }
 .reader {
   height: 50px;
 }
 .reader.disabled {
-  pointer-events: none;
-  opacity:.6;
+
+  opacity:.3;
+  color:#AAA !important;
   -webkit-filter: grayscale(1);
 }
-
+.reader.disabled .smallButton.focus,.reader.disabled > label, .reader.disabled .select{
+    pointer-events: none;
+}
+.reader.disabled select{
+  color:#AAA !important;
+}
 /*.reader div {
   padding-left: 10px;
   font-size: 16px;
   display: inline-block;
 }*/
-.reader select, .reader .smallButton{
+.reader .select, .reader .smallButton{
   float: right;
-  display: none;
 }
 .reader input {
   display: none;
@@ -302,6 +334,9 @@ button:hover {
   -o-user-select: none;
   user-select: none;
 }
+.reader > input + label, .item p{
+  color: #EEE;
+}
 .reader > input + label, #focusDisplayTag, #options {
   -moz-user-select: none;
   -khtml-user-select: none;
@@ -316,19 +351,23 @@ button:hover {
   /* fake*/
   transition: background-color .5s;
 }
-.reader#MesosticReader input:checked + label:before, .reader#MesosticReader .smallButton input:checked + label{
+.smallButton input:checked + label {
+  background-color: white;
+  color:black;
+}
+.reader#MesosticReader input:checked + label:before{
   background-color: #0095FF;
 }
-.reader#PerigramReader input:checked + label:before, .reader#PerigramReader .smallButton input:checked + label{
+.reader#PerigramReader input:checked + label:before{
   background-color: #FA0007;
 }
-.reader#ObliquePerigramReader input:checked + label:before, .reader#ObliquePerigramReader .smallButton input:checked + label{
+.reader#ObliquePerigramReader input:checked + label:before{
   background-color: #FF41B6;
 }
-.reader#SpawningSimpleReader input:checked + label:before, .reader#SpawningSimpleReader .smallButton input:checked + label{
+.reader#SpawningSimpleReader input:checked + label:before{
   background-color: #F3F100;
 }
-.reader#SpawningPerigramReader input:checked + label:before, .reader#SpawningPerigramReader .smallButton input:checked + label{
+.reader#SpawningPerigramReader input:checked + label:before{
   background-color: #FF5100;
 }
 

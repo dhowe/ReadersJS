@@ -48,10 +48,15 @@ function createInterface() {
     soloButton.changed(soloButtonPushed);
     soloButton.value(reader.type);
     soloButton.parent(rb);
+    
+    var selectWrapper =  createDiv('');
+    selectWrapper.class('select');
+    selectWrapper.parent(rb);
 
-    var speedSelect = initSelect('speedSelect', 'full', Object.keys(SPEED), speedChanged, rb);
+    var speedSelect = initSelect('speedSelect', 'full', Object.keys(SPEED), speedChanged, selectWrapper);
     speedSelect.value(speedToName(reader.speed));
-    speedSelect.source = reader;
+
+
 
     // rb.child(document.getElementById('hoverTextWrapper').cloneNode(true)); // onhover message
   });
@@ -85,7 +90,10 @@ function createInterface() {
     var wrapper = createDiv('');
     wrapper.addClass('item').parent('interface');
     createP(descText[i]).parent(wrapper);
-    wrapper.child(uiElements[i]);
+    var selectWrapper =  createDiv('');
+    selectWrapper.class('select');
+    uiElements[i].parent(selectWrapper);
+    wrapper.child(selectWrapper);
   }
 
   var timeoutId,
@@ -212,21 +220,19 @@ function createInterface() {
   }
 
   function solo(targetReader) { 
-      var readers = document.getElementsByClassName("reader"),
-          actives = activeReaders();
-
-      // remember current Reader 
-      activeReadersBeforeSolo = actives;
+      var readers = document.getElementsByClassName("reader");
 
       // disable all other readers, turn off active readers in the background
       for (var i = 0; i < readers.length; i++) {
           var reader = Reader.firstOfType(readers[i].id);
           if (reader != targetReader) {
-              readers[i].className += " disabled";
-              if (actives.indexOf(reader) > 0)
+              readers[i].className = "reader disabled";
                 readerOnOffEvent(reader, false);
+              //turn off other solo Buttons
+              readers[i].getElementsByClassName('smallButton solo')[0].firstElementChild.checked = false;
           } else {
-            readers[i].className += " solo";
+            readerOnOffEvent(reader, true);
+            readers[i].className = "reader solo";
           }
       }
       
@@ -238,16 +244,16 @@ function createInterface() {
 
   function unsolo(targetReader) {
     // turn on other readers
-    var readers = document.getElementsByClassName("reader"),
-        actives = activeReadersBeforeSolo;
-
+    var readers = document.getElementsByClassName("reader");
+      
       for (var i = 0; i < readers.length; i++) {
           var reader = Reader.firstOfType(readers[i].id);
           readers[i].className = "reader";
           if (reader === targetReader) {
             readers[i].getElementsByClassName('smallButton solo')[0].firstElementChild.checked = false;
           }
-          else if (actives.indexOf(reader) > 0) {
+          //if the reader is checked in interface, turn it on
+          if (readers[i].firstElementChild.checked === true) {
               readerOnOffEvent(reader, true);
           }
              
