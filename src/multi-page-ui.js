@@ -48,14 +48,14 @@ function createInterface() {
     soloButton.changed(soloButtonPushed);
     soloButton.value(reader.type);
     soloButton.parent(rb);
-    
+
     var selectWrapper =  createDiv('');
     selectWrapper.class('select');
     selectWrapper.parent(rb);
 
     var speedSelect = initSelect('speedSelect', 'full', Object.keys(SPEED), speedChanged, selectWrapper);
     speedSelect.value(speedToName(reader.speed));
-
+    speedSelect.source = reader;
 
 
     // rb.child(document.getElementById('hoverTextWrapper').cloneNode(true)); // onhover message
@@ -198,7 +198,7 @@ function createInterface() {
       var eles = document.getElementsByClassName('smallButton focus');
 
       for (var i = 0; i < eles.length; i++) {
-              eles[i].firstElementChild.checked = eles[i].parentNode.id === focused.type ? true : false; 
+              eles[i].firstElementChild.checked = eles[i].parentNode.id === focused.type ? true : false;
       }
   }
 
@@ -219,7 +219,7 @@ function createInterface() {
         unsolo(targetReader);
   }
 
-  function solo(targetReader) { 
+  function solo(targetReader) {
       var readers = document.getElementsByClassName("reader");
 
       // disable all other readers, turn off active readers in the background
@@ -235,17 +235,17 @@ function createInterface() {
             readers[i].className = "reader solo";
           }
       }
-      
+
       // change focus to the current reader
       focusChanged(targetReader);
       document.getElementById(targetReader.type).getElementsByClassName('smallButton focus')[0].firstElementChild.checked = true;
-      
+
   }
 
   function unsolo(targetReader) {
     // turn on other readers
     var readers = document.getElementsByClassName("reader");
-      
+
       for (var i = 0; i < readers.length; i++) {
           var reader = Reader.firstOfType(readers[i].id);
           readers[i].className = "reader";
@@ -256,7 +256,7 @@ function createInterface() {
           if (readers[i].firstElementChild.checked === true) {
               readerOnOffEvent(reader, true);
           }
-             
+
       }
   }
 
@@ -272,7 +272,6 @@ function createInterface() {
   }
 
   function speedChanged() {
-
     var spd = this.value();
     this.source.speed = SPEED[spd];
     log('[UI] ' + this.source.type + '.speed=' + this.source.speed);
@@ -320,7 +319,7 @@ function createInterface() {
          state = !ele.parentNode.getElementsByTagName('input')[0].checked;
     readerOnOffEvent(reader, state);
  }
-  
+
   // Remove DoubleClick
   // function onReaderDoubleClick(ele) {
   //   //if it is off, turn it on
@@ -367,7 +366,7 @@ function createInterface() {
     }
   });
 
-  // No more in use 
+  // No more in use
   // menu.addEventListener('mouseover', function (event) {
 
   //   var ele = event.target;
@@ -399,7 +398,7 @@ function focusJump(focused) {
 
 function getCSSFromColor(colorObj) {
   if (colorObj === undefined) return null;
-  else return "rgb(" + colorObj.r + "," + colorObj.g + "," + colorObj.b + ")"; 
+  else return "rgb(" + colorObj.r + "," + colorObj.g + "," + colorObj.b + ")";
 }
 
 function logToDisplay(msg) {
