@@ -1458,9 +1458,9 @@ var PageManager = function (host, port) {
     return this.trigramCount(rts) > threshold;
   };
 
-  this.isBigram = function (rts, threshold) {
+  this.bigramCount = function (rts) {
 
-    var count, key = rts, words = [], bigrams = this.perigrams[2];
+    var key = rts, words = [], bigrams = this.perigrams[2];
 
     if (!bigrams) throw Error("No 2-grams loaded!");
 
@@ -1472,10 +1472,11 @@ var PageManager = function (host, port) {
         rts[1].text()).toLowerCase());
     }
 
-    threshold = threshold || 0;
-    count = bigrams[key] || 0;
+    return bigrams[key] || 0;
+  };
 
-    return count > threshold;
+  this.isBigram = function (rts, threshold) {
+    return this.bigramCount(rts) > threshold;
   };
 
   // this seems only to work in the browser for smaller files

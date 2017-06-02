@@ -97,10 +97,13 @@ PerigramReader.prototype.textForServer = function () {
 	var tfs = "";
 
 	// info(this.currentKey); // DEBUG
-	tfs = this.current.text(); // + ' ' + this.pman.trigramCount(this.currentKey);
+	var key = this.currentKey; // this is the current trigram key
+	key = key.slice(key.indexOf(' ') + 1); // get the bigram
+	// info("|" + key); // DEBUG
+	tfs = this.current.text() + ' ' + this.pman.bigramCount(key);
 	// console.log(tfs);
 
-	if (this.pman.trigramCount(this.currentKey) > 9) tfs = "\n" + tfs;
+	if (this.pman.trigramCount(this.currentKey) < 10) tfs = "\n" + tfs;
 
   return tfs;
 }
