@@ -1126,8 +1126,10 @@ Reader.prototype = {
 
   outputAsHTML: function (msg) {
 
+    if (!msg || !msg.length) return;
+
     // replace spaces and line-breaks with html versions
-    msg =  msg.replace(/ /g, '&nbsp;').replace(/\n/g, '<br>');
+    msg = msg.replace(/ /g, '&nbsp;').replace(/\n/g, '<br>');
 
     if (typeof createP === "function") {
 

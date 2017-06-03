@@ -393,12 +393,10 @@ function createInterface() {
       window.clearTimeout(timeoutId);
       timeoutId = null;
     }
-    var helpInfos = document.getElementsByClassName("helpInfo");
-    for (
-      var i = 0;
-      i < helpInfos.length;
-      i++
-    ) helpInfos[i].style.display = "none";
+    var his = document.getElementsByClassName("helpInfo");
+    for (var i = 0; i < his.length; i++) {
+      his[i].style.display = "none";
+    }
   });
 
 } // end createInterface
