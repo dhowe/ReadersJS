@@ -140,7 +140,7 @@ function createInterface() {
 
   function resetFocus() {
     var focused = pManager.focus(), actives = activeReaders();
-
+    
     // if only one reader is active and its not focused, give it focus
     if (actives.length == 1 && actives[0] !== focused) {
       assignFocus(actives[0]);
@@ -191,10 +191,11 @@ function createInterface() {
 
   function readerOnOffEvent(reader, onOffSwitch) {
     reader.hide(!onOffSwitch);
-    resetFocus();
 
-    if (document.getElementById(reader.type).className === "reader solo")
+    if (document.getElementById(reader.type).className.indexOf("solo") > -1)
       unsolo(reader);
+
+    resetFocus();
 
     log("[UI] " + reader.type + (reader.hidden ? ": Off" : ": On"));
   }
@@ -217,7 +218,7 @@ function createInterface() {
   function soloButtonPushed() {
     var targetReader = Reader.firstOfType(this.elt.parentElement.id);
     if (this.elt.firstElementChild.checked) solo(targetReader);
-    else unsolo(targetReader);
+    else unsolo();
   }
 
   function solo(targetReader) {
@@ -228,13 +229,13 @@ function createInterface() {
       var reader = Reader.firstOfType(readers[i].id);
       if (reader != targetReader) {
         readers[i].className = "reader disabled";
-        readerOnOffEvent(reader, false);
+        reader.hide(true);
         //turn off other solo Buttons
         readers[i].getElementsByClassName(
           "smallButton solo"
         )[0].firstElementChild.checked = false;
       } else {
-        readerOnOffEvent(reader, true);
+        reader.hide(false);
         readers[i].className = "reader solo";
       }
     }
@@ -247,21 +248,20 @@ function createInterface() {
       )[0].firstElementChild.checked = true;
   }
 
-  function unsolo(targetReader) {
+  function unsolo(r) {
     // turn on other readers
     var readers = document.getElementsByClassName("reader");
 
     for (var i = 0; i < readers.length; i++) {
       var reader = Reader.firstOfType(readers[i].id);
-      readers[i].className = "reader";
-      if (reader === targetReader) {
-        readers[i].getElementsByClassName(
+      readers[i].classList.remove("disabled");
+      readers[i].classList.remove("solo");
+      readers[i].getElementsByClassName(
           "smallButton solo"
-        )[0].firstElementChild.checked = false;
-      }
+      )[0].firstElementChild.checked = false;
       //if the reader is checked in interface, turn it on
-      if (readers[i].firstElementChild.checked === true) {
-        readerOnOffEvent(reader, true);
+      if (readers[i].firstElementChild.checked === true && reader != r) {
+        reader.hide(false);
       }
     }
   }
@@ -331,48 +331,10 @@ function createInterface() {
     readerOnOffEvent(reader, state);
   }
 
-  // Remove DoubleClick
-  // function onReaderDoubleClick(ele) {
-  //   //if it is off, turn it on
-  //   var input = ele.parentNode.children[0];
-  //   if (input.checked) {
-  //     readerOnOffEvent(Reader.firstOfType(ele.parentNode.id), true);
-  //     input.checked = false;
-  //   }
-
-  //   if (!ele.parentNode.matches('.focused'))
-  //     focusChanged(Reader.firstOfType(ele.parentNode.id));
-  // }
-
-  menu.addEventListener("click", function(event) {
-    var el = event.target;
-    // differeniate single & double click for reader
-    if (!el.matches(".reader > label")) return;
-
-    // if (el.getAttribute("data-dblclick") == null) {
-    // el.setAttribute("data-dblclick", 1);
-    // setTimeout(function () {
-    //   if (el.getAttribute("data-dblclick") == 1) {
-    onReaderSingleClick(el);
-    //     }
-    //     el.removeAttribute("data-dblclick");
-    //   }, 300);
-    // } else {
-    //   el.removeAttribute("data-dblclick");
-    //   onReaderDoubleClick(el);
-    // }
-  });
-
   menu.addEventListener("click", function(event) {
     var ele = event.target;
-    if (ele.matches(".hoverText a.help")) {
-      var display = ele.parentNode.parentNode.getElementsByClassName(
-        "helpInfo"
-      )[0].style.display;
-      display = display === "block" ? "none" : "block";
-      ele.parentNode.parentNode.getElementsByClassName(
-        "helpInfo"
-      )[0].style.display = display;
+    if (ele.matches(".reader > label")) {
+      onReaderSingleClick(ele);
     }
   });
 
@@ -435,6 +397,7 @@ $(window).focus(function() {
 */
 
 $(document).ready(function() {
+
   $("#focusDisplayTag").click(function() {
     var tag = $("#focusDisplay:visible").length === 0 ? " - " : " + ";
     $("#focusDisplay").toggle("slide");
