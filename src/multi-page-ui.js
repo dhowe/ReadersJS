@@ -160,19 +160,26 @@ function createInterface() {
     }
 
     clearFocus();
-
+    
+    pManager.focus(focused);
     if (focused) {
       // only if we have an active reader
       document.getElementById(focused.type).className += " focused";
-      pManager.focus(focused);
       pManager.makeFocusedReaderVisible();
-    }
+    } 
 
     // clear focusDisplay, change color
     $("#focusDisplay").html("");
     $("#focusDisplayTag").css("color", focused ?
       getCSSFromColor(focused.activeFill) : "#EEE"
     );
+
+    // turn off other focusButtons
+    var eles = document.getElementsByClassName("smallButton focus");
+    for (var i = 0; i < eles.length; i++) {
+      eles[i].firstElementChild.checked = eles[i].parentNode.id === focused.type
+        ? true : false;
+    }
   }
 
   function clearFocus() {
@@ -196,14 +203,6 @@ function createInterface() {
     log("[UI] Focus: " + focused.type);
     focused && pManager.focus(focused);
     assignFocus(focused);
-
-    // turn off other focusButtons
-    var eles = document.getElementsByClassName("smallButton focus");
-
-    for (var i = 0; i < eles.length; i++) {
-      eles[i].firstElementChild.checked = eles[i].parentNode.id === focused.type
-        ? true : false;
-    }
   }
 
   function focusButtonPushed() {

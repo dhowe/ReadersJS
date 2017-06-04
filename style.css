@@ -167,7 +167,7 @@ select {
   user-select: none;
 }
 .select:after{
-    content:"▼"; 
+    content:" \25BC"; 
     color:#AAA;
     opacity: .5; 
     padding: 8px;
@@ -261,6 +261,7 @@ button {
 }*/
 .reader .select, .reader .smallButton{
   float: right;
+  display:none;
 }
 .reader input {
   display: none;
@@ -421,7 +422,7 @@ button {
 }
  */
 
-.reader > input:checked~ select, .reader > input:checked~ .smallButton {
+.reader > input:checked~ .select, .reader > input:checked~ .smallButton {
   display: inline-block;
 }
 #interface p {
