@@ -127,10 +127,12 @@ function textFromName(textName) {
 function themeChanged() {
 
   var e1 = document.getElementById('styleSelect'),
-    styleName = e1.options[e1.selectedIndex].value;
+      e2 = document.getElementById('themeSelect');
 
-  var e2 = document.getElementById('themeSelect'),
-    themeName = e2.options[e2.selectedIndex].value;
+  if (e1 === null || e2 === null) return;
+
+  var styleName = e1.options[e1.selectedIndex].value,
+      themeName = e2.options[e2.selectedIndex].value;
 
   var dark = (themeName === "Dark"),
     style = STYLE[styleName],
