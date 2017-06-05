@@ -92,11 +92,6 @@ canvas {
   border-radius: 1px;
   height: 95%;
   background-color: black;
-  user-select: none;
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -o-user-select: none;
 }
 #focusDisplayTag {
   color: #DDD;
@@ -139,10 +134,11 @@ canvas {
 }
 .select {
     overflow: hidden; 
-    height: 29px;    
-    position: relative;
-    margin: 0px 10px;
     display: inline-block;
+    position: relative;
+    height: 29px; 
+    margin: 0px 10px;
+    
 }
 .reader .select {
   height:22px;
@@ -170,28 +166,23 @@ select {
   border-radius: 0px;
   background-color: #3D3D3D;
   color:#DDD;
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -o-user-select: none;
-  user-select: none;
 }
 .reader .select:after {
    font-size:8px;
    padding: 8px;
 }
 .select:after {
+    font-size:10px;
+    width:15px;
+    padding: 10px 5px 6px 0px;
     content:" \25BC"; 
     color:#AAA;
     opacity: .5; 
-    padding: 10px 8px 6px 8px;
     position: absolute; 
     right: 5px; 
-    font-size:10px;
     top: 0;    
     z-index: 1;
     text-align: center;
-    width: 10%;
     height: 100%;      
     pointer-events: none;
     box-sizing: border-box;   
@@ -211,7 +202,7 @@ button {
   line-height: 20px;
   margin-top: 10px;
 }
-.reader select, .smallButton label {
+select, .smallButton label {
   background-color: #2D2D2D;
   color:#7a7a7a;
 }
@@ -220,11 +211,6 @@ button {
   font-size: 14px;
   padding: 5px 7px 3px;
   margin-right: 10px;
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -o-user-select: none;
-  user-select: none;
 }
 .smallButton input {
   display: none;
@@ -249,12 +235,11 @@ button {
   margin: 30px 0;
 }
 .reader.disabled {
-
   opacity:.3;
   color:#AAA !important;
   -webkit-filter: grayscale(1);
 }
-.reader.disabled .smallButton.focus,.reader.disabled > label, .reader.disabled .select{
+.reader.disabled > label, .reader.disabled p, .reader.disabled .select, .reader.disabled .smallButton.focus {
     pointer-events: none;
 }
 .reader.disabled select{
@@ -273,7 +258,7 @@ button {
   display: none;
 }
 .reader > label {
-  display: inline-block;
+  width:22px;
 }
 .reader > label:before {
   content: '';
@@ -296,54 +281,10 @@ button {
 .reader > input:checked+ label:before {
   border-color: rgba(0, 0, 0, 0);
 }
-.hoverText span.helpInfo {
-  display: none;
-  margin-top: .5em;
-  font-size: 12px;
-}
-.hoverText a.help:hover {
- background-color: rgba(0,0,0,.5);
- color:white;
-}
-.hoverText a.help{
-  background-color: rgba(0,0,0,.2);
-  border-radius: 9px;
-  width: 18px;
-  display: inline-block;
-  text-align: center;
-  font-size: 14px;
-  height: 18px;
-  color:rgba(255,255,255,.7);
-  font-weight: bold;
-  font-family: serif;
-}
-.hoverText-unchecked {
-  display: none;
-}
-#hoverTextWrapper {
-  background-color: rgba(130, 130, 130, .95);
-  position: absolute;
-  display: none;
-  margin-left: 1.5em;
-  padding: .5em;
-  width: 370px;
-}
-#hoverTextWrapper.hover:hover {
-  display: block;
-}
-.hoverText {
-  display: none;
-  font-size: 14px;
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -o-user-select: none;
-  user-select: none;
-}
-.reader > input + label, .item p{
+.reader p {
   color: #EEE;
 }
-.reader > input + label, #focusDisplayTag, #options {
+select, .reader p, #focusDisplayTag, #options, .smallButton label, #focusDisplay{
   -moz-user-select: none;
   -khtml-user-select: none;
   -webkit-user-select: none;
@@ -433,11 +374,14 @@ button {
 
 #interface p {
   display: inline-block;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.03em;
   font-size: 16px;
+  margin: 0px;
+}
+#interface .item p {
   margin-top: 6px;
 }
+
 
 /*customized select with ul li */
 
