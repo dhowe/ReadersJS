@@ -48,6 +48,7 @@ function createInterface() {
 
     var selectWrapper = createDiv("");
     selectWrapper.class("select");
+    selectWrapper.attribute("title", "speed");
     selectWrapper.parent(rb);
 
     var speedSelect = initSelect(
@@ -335,6 +336,9 @@ function createInterface() {
     var ele = event.target;
     if (ele.matches(".reader > label")) {
       onReaderSingleClick(ele);
+    }
+    if (ele.matches(".reader.disabled")) {
+      unsolo();
     }
   });
 
