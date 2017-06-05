@@ -27,10 +27,15 @@ var bgColor = 0,
 
 function createInterface() {
   Reader.instances.forEach(function(reader) {
-    var rb = createCheckbox(reader.name(), !reader.hidden);
+    var rb = createCheckbox(" ", !reader.hidden);
     rb.class("reader");
+    rb.elt.children[1].setAttribute("title","enable/disable");
     rb.id(reader.type);
     rb.parent("interface");
+
+
+    var text = createP(reader.name());
+    text.parent(rb);
 
     var focusButton = createCheckbox("F", false);
     focusButton.class("smallButton focus");
@@ -48,6 +53,7 @@ function createInterface() {
 
     var selectWrapper = createDiv("");
     selectWrapper.class("select");
+    selectWrapper.attribute("title", "speed");
     selectWrapper.parent(rb);
 
     var speedSelect = initSelect(
@@ -335,6 +341,9 @@ function createInterface() {
     var ele = event.target;
     if (ele.matches(".reader > label")) {
       onReaderSingleClick(ele);
+    }
+    if (ele.matches(".reader.disabled")) {
+      unsolo();
     }
   });
 
