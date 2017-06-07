@@ -18,7 +18,7 @@ var TEXTS = [{
 var notify, timerStart = Date.now(),
   textLoaded = [ TEXTS[0].title ];
 
-function loadTexts() {
+function loadTrigrams(callback) {
 
   if (typeof InstallTrigger !== 'undefined' && !location.href.includes('localhost')) {// tmp: Firefox
     document.getElementById('overlay').innerHTML = "<br>Currently runs only on Chrome/Chromium/Opera/Safari</p>";
@@ -26,10 +26,8 @@ function loadTexts() {
     return;
   }
 
-  loadTheFirst();
-
   var menu = document.getElementById('interface'),
-    overlay = document.getElementById('overlay');
+      overlay = document.getElementById('overlay');
 
   var monitor = function(element, callback) {
 
@@ -63,18 +61,22 @@ function loadTexts() {
     overlay.classList.toggle('fade', setTimeout(function () {
       // overlay.style.display = "none";
       var time = Date.now() - timerStart - 2000; // WHY -2000 ?
-      console.log('[LOAD] ' + TEXTS[0].title + ' ' + time + 'ms');
+      console.log('[INTERFACE]' + time + 'ms');
       reloadTheRest();
 
     }, 2000));
   });
+
+  loadTheFirst(callback);
 }
 
-function finishLoading(text) {
+function finishLoading(text, callback) {
 
   textLoaded.push(text);
   var time = Date.now() - timerStart;
-  console.log('[LOAD] ' + text + ' ' + time + 'ms');
+  console.log('[LOAD TRIGRAM] ' + text + ' ' + time + 'ms');
+  
+  if (callback) callback();
 
   if (overlay.classList.value === "" && notify === text) {
     overlay.classList.toggle('fade');
@@ -82,16 +84,18 @@ function finishLoading(text) {
   }
 }
 
-function createScriptTag(src, id) {
+function createScriptTag(src, id, callback) {
     var script = document.createElement("script");
     script.src = src;
     script.id = id;
-    document.getElementsByTagName("html")[0].appendChild(script);
-    script.onload = finishLoading(id);
+    document.getElementsByTagName("head")[0].append(script);
+    script.onload = function() {
+      finishLoading(id, callback);
+    };
 }
 
-function loadTheFirst() {
-    createScriptTag(TEXTS[0].trigrams, TEXTS[0].title);
+function loadTheFirst(callback) {
+    createScriptTag(TEXTS[0].trigrams, TEXTS[0].title, callback);
 }
 
 
@@ -101,4 +105,4 @@ function reloadTheRest() {
   }
 }
 
-window.onload = loadTexts;
+
