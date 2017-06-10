@@ -5,6 +5,7 @@ var pManager, font, bgColor, fps = false;
 function preload() {
 
   font = loadFont('fonts/Baskerville.ttf');
+  
 }
 
 function setup() {
@@ -17,29 +18,26 @@ function setup() {
 
     
   loadTexts(function() {
+      loadTrigrams(function() {
+          // do the layout
+          pManager = PageManager.getInstance(Reader.APP);
 
-     // do the layout
-     pManager = PageManager.getInstance(Reader.APP);
+          pManager.layout(TEXTS[0], 25, 40, 580, 650);
+          pManager.gridFill(colorToObject(255, 255, 255, 40));
 
-     setTimeout(function() {
-         pManager.layout(TEXTS[0], 25, 40, 580, 650);
-         pManager.gridFill(colorToObject(255, 255, 255, 40));
+          // add some readers
+          new PerigramReader(pManager.recto, SPEED.Fluent);
+          new MesosticReader(pManager.verso).hide(0);
+          new ObliquePerigramReader(pManager.verso);
+          new SpawningSimpleReader(pManager.recto);
+          new SpawningPerigramReader(pManager.verso);
 
-         // add some readers
-         new PerigramReader(pManager.recto, SPEED.Slowest);
-         // new MesosticReader(pManager.verso).hide(0);
-         // new ObliquePerigramReader(pManager.verso);
-         // new SpawningSimpleReader(pManager.recto);
-         // new SpawningPerigramReader(pManager.verso);
+          // pick one to get focus
+          pManager.focus(randomReader());
 
-         // pick one to get focus
-         pManager.focus(randomReader());
-
-         createInterface();
-
-     }, 100);
-
- }); 
+          createInterface();
+      });
+  });
 
 };
 
