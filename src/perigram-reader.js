@@ -10,6 +10,7 @@ function PerigramReader(g, rx, ry, speed) {
 
   this.consoleString = '';
   this.currentKey = '';
+  this.phrase = '';
   this.downWeighting = .6;
   this.upWeighting = .12;
   this.defaultColorDark = hexToRgb("#FA0007"); // red
@@ -94,18 +95,48 @@ PerigramReader.prototype.onExitCell = function (curr) {
 
 PerigramReader.prototype.textForServer = function () {
 
-	var tfs = "";
-
 	// info(this.currentKey); // DEBUG
-	var key = this.currentKey; // this is the current trigram key
-	key = key.slice(key.indexOf(' ') + 1); // get the bigram
-	// info("|" + key); // DEBUG
-	tfs = this.current.text() + ' ' + this.pman.bigramCount(key);
-	// console.log(tfs);
+	var key = this.currentKey || ''; // the current trigram key
+	// key = key.slice(key.indexOf(' ') + 1); // get the bigram // BIGRAMS
+	// info("KEY: " + key + this.pman.trigramCount(key)); // DEBUG
+	
+	if (this.pman.isTrigram(key, 0)) {
+		this.phrase = this.phrase + this.current.text() + ' ';
+		return undefined; // just adding the current word
+	}
 
-	if (this.pman.trigramCount(this.currentKey) < 10) tfs = "\n" + tfs;
+	var msg = this.phrase.trim();
+	this.phrase = this.current.text() + ' ';
+	// info(msg); // DEBUG
+  return msg;
+}
 
-  return tfs;
+PerigramReader.prototype.outputAsHTML = function (msg) {
+
+	if (!msg || !msg.length) return;
+
+	// replace spaces and line-breaks with html versions
+	msg = msg.replace(/\n/g, '<br>'); // removed: .replace(/ /g, '&nbsp;')
+
+	if (typeof createP === "function") {
+
+		// create a <p> tag as last element in 'focusDisplay'
+		createP(msg).parent("focusDisplay");
+
+		var display = document.getElementById("focusDisplay");
+
+		if (!(display && display.childNodes && display.childNodes.length)) {
+			return;
+		}
+
+		// now scroll up if necessary
+		var logEntries = display.childNodes.length;
+		while (logEntries > maxFocusLog) {
+
+			display.removeChild(display.childNodes[0]);
+			logEntries--;
+		}
+	}
 }
 
 PerigramReader.prototype._determineReadingPath = function (last, neighbors) {
@@ -164,7 +195,7 @@ PerigramReader.prototype._determineReadingPath = function (last, neighbors) {
   }
 
   this.lastDirection = wayToGo;
-  this.currentKey = this._makeKey(last, this.current, neighbors[wayToGo]);
+  this.currentKey = this.makeKey(last, this.current, neighbors[wayToGo]);
  
   switch (wayToGo) {
   case NE:
@@ -188,7 +219,7 @@ PerigramReader.prototype._isViableDirection = function (last, curr, neighbor, di
 
   dir = dir || -1;
 
-	key = this._makeKey(last, curr, neighbor);
+	key = this.makeKey(last, curr, neighbor);
 
   countThreshold = this._adjustForStopWords(0, key.split(S));
 
@@ -198,13 +229,6 @@ PerigramReader.prototype._isViableDirection = function (last, curr, neighbor, di
    //info("Perigram_isViable found: " + key + " (" + Grid.direction(dir) + ") " + countThreshold);
 	}
   return result;
-}
-
-PerigramReader.prototype._makeKey = function (last, curr, next) {
-  if (!last || !next || !curr) return '';
-  var S = ' ', key;
-	key = (last.text() + S + curr.text() + S + next.text()).toLowerCase();
-	return RiTa.stripPunctuation(key);
 }
 
 PerigramReader.prototype._adjustForStopWords = function (countThreshold, words) {

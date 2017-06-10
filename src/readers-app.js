@@ -1180,7 +1180,22 @@ Reader.prototype = {
     return h && h.length ? h[h.length - num] : null;
   },
 
-  selectNext: function () {
+	makeKey: function (last, curr, next) {
+	
+		var S = ' ', key = '';
+		if (arguments.length == 2) {
+			if (!last || !curr) return '';
+			key = RiTa.trimPunctuation(last.text()) + S + RiTa.trimPunctuation(curr.text());
+		} else {
+			if (!last || !next || !curr) return '';
+			key = RiTa.trimPunctuation(last.text()) + S + RiTa.trimPunctuation(curr.text()) + S + RiTa.trimPunctuation(next.text());
+		}
+		key = key.toLowerCase();
+		key = key.replace(/’|‘|\?/g, '');
+		return key;
+	},
+
+	selectNext: function () {
 
     return Grid.nextCell(this.current);
   },
@@ -1480,8 +1495,12 @@ var PageManager = function (host, port) {
 
       if (!(rts && rts.length == 3)) throw Error("fail: rts=" + rts);
 
-      key = RiTa.stripPunctuation((rts[0].text() + ' ' +
-        rts[1].text() + S + rts[2].text()).toLowerCase());
+      for (var i = 0; i < rts.length; i++) {
+      	key = key + RiTa.trimPunctuation(rts[i].text()) + ' ';
+      }
+      key = key.toLowerCase();
+      key = key.trim(key);
+			key = key.replace(/’|‘|\?/g, '');
     }
 
     return trigrams[key] || 0;
@@ -1500,9 +1519,14 @@ var PageManager = function (host, port) {
     if (is(rts, 'array')) {
 
       if (!(rts && rts.length == 2)) throw Error("fail: rts=" + rts);
-
-      key = RiTa.stripPunctuation((rts[0].text() + ' ' +
-        rts[1].text()).toLowerCase());
+      
+      key = '';
+      for (var i = 0; i < rts.length; i++) {
+      	key = key + RiTa.trimPunctuation(rts[i].text()) + ' ';
+      }
+      key = key.toLowerCase();
+      key = key.trim(key);
+			key = key.replace(/’|‘|\?/g, '');
     }
 
     return bigrams[key] || 0;
