@@ -17,6 +17,8 @@ function OnewayPerigramReader(g, rx, ry, speed, dir, parent) {
   this.parentLast = parent;
   this.selectedLast = null;
   this.consoleString = '';
+  this.currentKey = '';
+  this.phrase = '';
   this.freeCount = 0;
   this.maxFreeCount = 5;
   this.neighbors = [];

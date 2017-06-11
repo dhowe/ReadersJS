@@ -9,6 +9,8 @@ function PerigramReader(g, rx, ry, speed) {
   this.type = 'PerigramReader'; //  superclass variable(s)
 
   this.consoleString = '';
+  this.currentKey = '';
+  this.phrase = '';
   this.downWeighting = .6;
   this.upWeighting = .12;
   this.defaultColorDark = hexToRgb("#FA0007"); // red
@@ -93,13 +95,48 @@ PerigramReader.prototype.onExitCell = function (curr) {
 
 PerigramReader.prototype.textForServer = function () {
 
-	var tfs = "";
+	// info(this.currentKey); // DEBUG
+	var key = this.currentKey || ''; // the current trigram key
+	// key = key.slice(key.indexOf(' ') + 1); // get the bigram // BIGRAMS
+	// info("KEY: " + key + this.pman.trigramCount(key)); // DEBUG
+	
+	if (this.pman.isTrigram(key, 0)) {
+		this.phrase = this.phrase + this.current.text() + ' ';
+		return undefined; // just adding the current word
+	}
 
-	tfs = this.current.text();
+	var msg = this.phrase.trim();
+	this.phrase = this.current.text() + ' ';
+	// info(msg); // DEBUG
+  return msg;
+}
 
-	// tfs = "\n" + tfs;
+PerigramReader.prototype.outputAsHTML = function (msg) {
 
-  return tfs;
+	if (!msg || !msg.length) return;
+
+	// replace spaces and line-breaks with html versions
+	msg = msg.replace(/\n/g, '<br>'); // removed: .replace(/ /g, '&nbsp;')
+
+	if (typeof createP === "function") {
+
+		// create a <p> tag as last element in 'focusDisplay'
+		createP(msg).parent("focusDisplay");
+
+		var display = document.getElementById("focusDisplay");
+
+		if (!(display && display.childNodes && display.childNodes.length)) {
+			return;
+		}
+
+		// now scroll up if necessary
+		var logEntries = display.childNodes.length;
+		while (logEntries > maxFocusLog) {
+
+			display.removeChild(display.childNodes[0]);
+			logEntries--;
+		}
+	}
 }
 
 PerigramReader.prototype._determineReadingPath = function (last, neighbors) {
@@ -158,10 +195,11 @@ PerigramReader.prototype._determineReadingPath = function (last, neighbors) {
   }
 
   this.lastDirection = wayToGo;
-
+  this.currentKey = this.makeKey(last, this.current, neighbors[wayToGo]);
+ 
   switch (wayToGo) {
   case NE:
-    return neighbors[NE];
+	   return neighbors[NE];
 
   case SE:
     return neighbors[SE];
@@ -181,8 +219,7 @@ PerigramReader.prototype._isViableDirection = function (last, curr, neighbor, di
 
   dir = dir || -1;
 
-  key = (last.text() + S + curr.text() + S + neighbor.text()).toLowerCase();
-  key = RiTa.stripPunctuation(key);
+	key = this.makeKey(last, curr, neighbor);
 
   countThreshold = this._adjustForStopWords(0, key.split(S));
 

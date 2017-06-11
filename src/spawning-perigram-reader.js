@@ -9,6 +9,8 @@ function SpawningPerigramReader(g, rx, ry, speed) {
   this.type = 'SpawningPerigramReader'; //  superclass variable(s)
 
   this.consoleString = '';
+  this.currentKey = '';
+  this.phrase = '';
   this.downWeighting = .6;
   this.upWeighting = .12;
   this.defaultColorDark = hexToRgb("#FF5100"); // orange 
@@ -89,6 +91,7 @@ SpawningPerigramReader.prototype._determineReadingPath = function (last, neighbo
   }
 
   this.lastDirection = wayToGo;
+  this.currentKey = this.makeKey(last, this.current, neighbors[wayToGo]);
 
   switch (wayToGo) {
   case NE:

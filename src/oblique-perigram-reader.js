@@ -33,6 +33,8 @@ function ObliquePerigramReader(g, rx, ry, speed) {
   this.defaultColorDark = hexToRgb("#FF41B6"); // Pink
   this.defaultColorLight = hexToRgb("#D23495");
 
+  this.currentKey = '';
+  this.phrase = '';
   this.activeFill = this.defaultColorDark;
 
   // factors
@@ -177,6 +179,8 @@ ObliquePerigramReader.prototype._determineReadingPath = function (last, neighbor
   	}
   }
   nextCell = ((nextDir == Grid.DIRECTION.SE) && !nextCell[nextDir]) ? neighbors[Grid.DIRECTION.E] : nextCell; // got to be safe
+	
+  this.currentKey = this.makeKey(last, this.current, nextCell);
 	// info("heading: " + nextDir); // DEBUG
 
   if (!nextCell) Readers.error("nextCell is null!");
