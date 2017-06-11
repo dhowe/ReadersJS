@@ -81,7 +81,7 @@ function resetText(textName) {
   var textObj = textFromName(textName);
   pManager.layout(textObj, 25, 40, 580, 650);
 
-  activeReaders().forEach(function (r) {
+  Reader.instances.forEach(function (r) { // fix to #152 (was only active readers)
 
     // focused reader on verso, others distributed across pages
     var idx = (r.hasFocus()) ? 0 : (r.id % Grid.instances.length);
