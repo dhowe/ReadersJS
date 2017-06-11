@@ -1077,11 +1077,17 @@ Reader.prototype = {
       if (this.steps) {
 
         grid = Grid.gridFor(this.current);
+
+if (!grid) {
+  console.error('no grid for ', this.current, this);
+  throw Error();
+}
+
         this.onExitCell(this.current);
         this.current = this.selectNext();
 
         if (!this.current) { // added by JHC (DH: why should this happen repeatedly?)
-          //warn("Undefined or null result from selectNext()");
+          warn("Undefined or null result from selectNext()");
           return;
         }
 
@@ -1181,7 +1187,7 @@ Reader.prototype = {
   },
 
 	makeKey: function (last, curr, next) {
-	
+
 		var S = ' ', key = '';
 		if (arguments.length == 2) {
 			if (!last || !curr) return '';
@@ -1519,7 +1525,7 @@ var PageManager = function (host, port) {
     if (is(rts, 'array')) {
 
       if (!(rts && rts.length == 2)) throw Error("fail: rts=" + rts);
-      
+
       key = '';
       for (var i = 0; i < rts.length; i++) {
       	key = key + RiTa.trimPunctuation(rts[i].text()) + ' ';
@@ -1583,7 +1589,9 @@ var PageManager = function (host, port) {
     this.verso = this.recto;
     this.recto = next;
 
-    ensureFocusedReaderIsVisible && this.makeFocusedReaderVisible();
+    if (ensureFocusedReaderIsVisible) {
+      this.makeFocusedReaderVisible();
+    }
 
     return this;
   };

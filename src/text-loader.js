@@ -61,7 +61,7 @@ function loadTrigrams(callback) {
     overlay.classList.toggle('fade', setTimeout(function () {
       // overlay.style.display = "none";
       var time = Date.now() - timerStart - 2000; // WHY -2000 ?
-      console.log('[INTERFACE]' + time + 'ms');
+      console.log('[UI] Loaded (' + time + 'ms)');
       reloadTheRest();
 
     }, 2000));
@@ -74,8 +74,9 @@ function finishLoading(text, callback) {
 
   textLoaded.push(text);
   var time = Date.now() - timerStart;
-  console.log('[LOAD TRIGRAM] ' + text + ' ' + time + 'ms');
-  
+
+  console.log('[TRIGRAMS] ' + text + ' ' + time + 'ms');
+
   if (callback) callback();
 
   if (overlay.classList.value === "" && notify === text) {
@@ -98,11 +99,8 @@ function loadTheFirst(callback) {
     createScriptTag(TEXTS[0].trigrams, TEXTS[0].title, callback);
 }
 
-
 function reloadTheRest() {
   for (var i = 1; i < TEXTS.length; i++) { // skip the first text
-      createScriptTag(TEXTS[i].trigrams, TEXTS[i].title); 
+      createScriptTag(TEXTS[i].trigrams, TEXTS[i].title);
   }
 }
-
-

@@ -26,13 +26,14 @@ var bgColor = 0,
   maxFocusLog = Math.floor(window.innerHeight / 30);
 
 function createInterface() {
+
   Reader.instances.forEach(function(reader) {
+
     var rb = createCheckbox(" ", !reader.hidden);
     rb.class("reader");
     rb.elt.children[1].setAttribute("title","enable/disable");
     rb.id(reader.type);
     rb.parent("interface");
-
 
     var text = createP(reader.name());
     text.parent(rb);
@@ -94,6 +95,7 @@ function createInterface() {
 
   if (focused) {
     if (focused.hidden) {
+
       focused = randomReader();
       warn("Focus repair" + (focused ? ": " + focused.type // FIX ME
             : " failed: " + (activeReaders().length + " readers")));
@@ -104,6 +106,7 @@ function createInterface() {
   // Append elements to interface
   var descText = ["Text", "Style", "Theme"];
   for (var i = 0; i < uiElements.length; i++) {
+
     var wrapper = createDiv("");
     wrapper.addClass("item").parent("interface");
     createP(descText[i]).parent(wrapper);
@@ -146,7 +149,7 @@ function createInterface() {
 
   function resetFocus() {
     var focused = pManager.focus(), actives = activeReaders();
-    
+
     // if only one reader is active and its not focused, give it focus
     if (actives.length == 1 && actives[0] !== focused) {
       assignFocus(actives[0]);
@@ -166,13 +169,13 @@ function createInterface() {
     }
 
     clearFocus();
-    
+
     pManager.focus(focused);
     if (focused) {
       // only if we have an active reader
       document.getElementById(focused.type).className += " focused";
       pManager.makeFocusedReaderVisible();
-    } 
+    }
 
     // clear focusDisplay, change color
     $("#focusDisplay").html("");

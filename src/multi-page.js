@@ -5,7 +5,6 @@ var pManager, font, bgColor, fps = false;
 function preload() {
 
   font = loadFont('fonts/Baskerville.ttf');
-  
 }
 
 function setup() {
@@ -16,30 +15,27 @@ function setup() {
   RiText.defaults.paragraphLeading = 10;
   RiText.defaults.paragraphIndent = 0;
 
-    
   loadTexts(function() {
-      loadTrigrams(function() {
-          // do the layout
-          pManager = PageManager.getInstance(Reader.APP);
 
-          pManager.layout(TEXTS[0], 25, 40, 580, 650);
-          pManager.gridFill(colorToObject(255, 255, 255, 40));
+    // do the layout
+    pManager = PageManager.getInstance(Reader.APP);
 
-          // add some readers
-          new PerigramReader(pManager.recto, SPEED.Fluent);
-          new MesosticReader(pManager.verso).hide(0);
-          new ObliquePerigramReader(pManager.verso);
-          new SpawningSimpleReader(pManager.recto);
-          new SpawningPerigramReader(pManager.verso);
+    pManager.layout(TEXTS[0], 25, 40, 580, 650);
+    pManager.gridFill(colorToObject(255, 255, 255, 40));
 
-          // pick one to get focus
-          pManager.focus(randomReader());
+    // add some readers
+    new PerigramReader(pManager.recto, SPEED.Fluent);
+    new MesosticReader(pManager.verso).hide(0);
+    new ObliquePerigramReader(pManager.verso).hide(1);
+    new SpawningSimpleReader(pManager.recto).hide(1);
+    new SpawningPerigramReader(pManager.verso).hide(1);
 
-          createInterface();
-      });
+    // pick one to get focus
+    pManager.focus(randomReader());
+
+    createInterface();
   });
-
-};
+}
 
 function draw() {
 
@@ -65,11 +61,12 @@ function loadTexts(callback) {
 
   var count = 0,
     total = TEXTS.length;
+
   TEXTS.forEach(function (text) {
     RiTa.loadString(text.file, function (txt) {
       text.contents = txt;
       if (++count === total)
-        callback();
+        loadTrigrams(callback);
     });
   });
 }
@@ -91,10 +88,12 @@ function resetText(textName) {
     r.position(Grid.instances[idx], 0, 0);
   });
 
+  // Update text for mesostic
   var meso = Reader.firstOfType('MesosticReader');
   meso && (meso.mesostic = textObj.mesostic);
 
   themeChanged();
+
   Reader.pauseAll(false);
 }
 
@@ -135,8 +134,8 @@ function themeChanged() {
   var dark = (themeName === "Dark"),
     style = STYLE[styleName],
     col = dark ? COLOR.White : COLOR.Black;
-  
-  
+
+
   $('body').toggleClass("light", !dark).toggleClass("dark", dark);
   bgColor = dark ? 0 : 232; // global
   pManager.gridFill(colorToObject(col, style));
@@ -144,8 +143,8 @@ function themeChanged() {
 
   //focus
   $('#focusDisplayTag').css("color", getCSSFromColor(pManager.focus().activeFill));
-  
-  log("[UI] Theme/style: " + themeName + "/" + styleName); 
+
+  log("[UI] Theme/style: " + themeName + "/" + styleName);
 }
 
 function changeReadersColorTheme(isDark) {
