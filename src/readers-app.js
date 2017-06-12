@@ -1065,7 +1065,7 @@ Reader.prototype = {
         this.current = this.selectNext();
 
         if (!this.current) { // added by JHC (DH: why should this happen repeatedly?)
-          warn("Undefined or null result from selectNext()");
+          //warn("Undefined or null result from selectNext()");
           return;
         }
 
@@ -1233,8 +1233,8 @@ var PageManager = function (host, port) {
 
   this.notifyServer = this.mode != Reader.APP;
 
-  var msg = "PageManager.mode=" + Reader.modeName(this.mode);
-  info(this.notifyServer ? msg += " [http://" + this.host + ":" + this.port + "]" : msg);
+  //var msg = "PageManager.mode=" + Reader.modeName(this.mode);
+  //info(this.notifyServer ? msg += " [http://" + this.host + ":" + this.port + "]" : msg);
 
   this.gridFill = function (c) {
 

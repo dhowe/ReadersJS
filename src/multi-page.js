@@ -59,8 +59,11 @@ function keyPressed() {
 
 function loadTexts(callback) {
 
-  var count = 0,
-    total = TEXTS.length;
+  var count = 0, total = TEXTS.length;
+
+  $.get("package.json", function(json) {
+      console.log('[INFO] Readers.version ['+json.version+']');
+  });
 
   TEXTS.forEach(function (text) {
     RiTa.loadString(text.file, function (txt) {
