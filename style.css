@@ -59,7 +59,14 @@ canvas {
   left: 15px;
   top: 20px;
 }
-
+#options:hover {
+  background: white;
+  color: black;
+  -webkit-transition: all ease-out .5s;
+  -moz-transition: all ease-out .5s;
+  -o-transition: all ease-out .5s;
+  transition: all ease-out .5s;
+}
 /*#options:active + #interface,#options:hover + #interface, #interface:hover{
 	display: block;
 }
@@ -99,7 +106,6 @@ canvas {
   line-height: 24px;
   border-left: solid;
   border-color: rgba(255, 255, 255, .3);
-  cursor: default;
 }
 #focusDisplayTag #closeButton {
   font-size: 24px;
@@ -239,9 +245,9 @@ select, .smallButton label {
   color:#AAA !important;
   -webkit-filter: grayscale(1);
 }
-.reader.disabled > label, .reader.disabled p, .reader.disabled .select, .reader.disabled .smallButton.focus {
+/*.reader.disabled > label, .reader.disabled p, .reader.disabled .select, .reader.disabled .smallButton.focus {
     pointer-events: none;
-}
+}*/
 .reader.disabled select{
   color:#AAA !important;
 }
@@ -284,12 +290,13 @@ select, .smallButton label {
 .reader p {
   color: #EEE;
 }
-select, .reader p, #focusDisplayTag, #options, .smallButton label, #focusDisplay{
+#options, #interface, #focusDisplayTag, #focusDisplay{
   -moz-user-select: none;
   -khtml-user-select: none;
   -webkit-user-select: none;
   -o-user-select: none;
   user-select: none;
+  cursor: default;
 }
 
 /* Reader Color Scheme */
@@ -395,7 +402,6 @@ ul.select {
   width: 320px;
   -webkit-padding-start: 0px;
   display: inline-block;
-  cursor: default;
   margin-right: 20px;
 }
 ul.select li {
