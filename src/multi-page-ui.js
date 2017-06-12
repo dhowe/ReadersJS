@@ -345,7 +345,7 @@ function createInterface() {
     if (ele.matches(".reader > label")) {
       onReaderSingleClick(ele);
     }
-    if (ele.matches(".reader.disabled")) {
+    if (ele.matches(".reader.disabled") || ele.parentNode.matches(".reader.disabled") || ele.parentNode.parentNode.matches(".reader.disabled")) {
       unsolo();
     }
   });

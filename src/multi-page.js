@@ -155,6 +155,10 @@ function changeReadersColorTheme(isDark) {
 
 function textChanged() {
 
+  $('#focusDisplay').html("");
+  // hide the menu
+  document.getElementById("interface").style.display = 'none';
+
   var e = document.getElementById('textSelect'),
     textName = e.options[e.selectedIndex].value;
 
@@ -184,11 +188,7 @@ function textChanged() {
     notify = textName;
     overlay.classList.toggle('fade');
   }
-
-  $('#focusDisplay').html("");
-
-  // hide the menu
-  document.getElementById("interface").style.display = 'none';
+ 
 }
 
 function colorToArray(obj, overrideAlpha) { // takes optional 2nd argument for alpha
