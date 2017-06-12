@@ -342,11 +342,11 @@ function createInterface() {
 
   menu.addEventListener("click", function(event) {
     var ele = event.target;
-    if (ele.matches(".reader > label")) {
-      onReaderSingleClick(ele);
-    }
     if (ele.matches(".reader.disabled") || (ele.matches(".reader > label") && ele.parentNode.matches(".reader.disabled"))) {
       unsolo();
+    }
+    if (ele.matches(".reader > label")) {
+      onReaderSingleClick(ele);
     }
   });
 
