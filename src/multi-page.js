@@ -26,9 +26,9 @@ function setup() {
     // add some readers
     new PerigramReader(pManager.recto, SPEED.Fluent);
     new MesosticReader(pManager.verso).hide(0);
-    new ObliquePerigramReader(pManager.verso).hide(1);
-    new SpawningSimpleReader(pManager.recto).hide(1);
-    new SpawningPerigramReader(pManager.verso).hide(1);
+    new ObliquePerigramReader(pManager.verso);
+    new SpawningSimpleReader(pManager.recto);
+    new SpawningPerigramReader(pManager.verso);
 
     // pick one to get focus
     pManager.focus(randomReader());
@@ -188,7 +188,7 @@ function textChanged() {
     notify = textName;
     overlay.classList.toggle('fade');
   }
- 
+
 }
 
 function colorToArray(obj, overrideAlpha) { // takes optional 2nd argument for alpha

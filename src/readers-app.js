@@ -699,25 +699,8 @@ Grid.prototype = {
     return maxWordLength;
   },
 
-  // returns a single dimensional array of all rts on the grid
-  /*storeRiTexts: function () {
-
-    if (!this.allRiTexts) {
-
-      this.allRiTexts = [];
-      for (var i = 0, k = 0; this.cells.length > 0 && i < this.cells.length; i++) {
-        for (var j = 0; j < this.cells[i].length; j++)
-          this.allRiTexts[k++] = this.cells[i][j];
-      }
-    }
-
-    return this.allRiTexts;
-  },*/
-
   // returns a 2d string array of all cells at time of grid creation
   storeInitial: function () {
-
-    //console.log(RiText.defaultFill(), this.cellAt(1,1).fill());
 
     function toData(rt) {
       return {
@@ -1077,11 +1060,6 @@ Reader.prototype = {
       if (this.steps) {
 
         grid = Grid.gridFor(this.current);
-
-if (!grid) {
-  console.error('no grid for ', this.current, this);
-  throw Error();
-}
 
         this.onExitCell(this.current);
         this.current = this.selectNext();
