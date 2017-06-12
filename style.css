@@ -245,7 +245,7 @@ select, .smallButton label {
   color:#AAA !important;
   -webkit-filter: grayscale(1);
 }
-.reader.disabled p, .reader.disabled .select, .reader.disabled .smallButton.focus {
+.reader.disabled > label, .reader.disabled p, .reader.disabled .select, .reader.disabled .smallButton.focus {
     pointer-events: none;
 }
 .reader.disabled select{
@@ -284,13 +284,13 @@ select, .smallButton label {
 .reader:hover #hoverTextWrapper.hover {
   display: block;
 }
-.reader > input:checked+ label:before {
+.reader:not(.disabled) > input:checked+ label:before {
   border-color: rgba(0, 0, 0, 0);
 }
 .reader p {
   color: #EEE;
 }
-#options, #interface, #focusDisplayTag, #focusDisplay{
+#options, #interface, #focusDisplayTag{
   -moz-user-select: none;
   -khtml-user-select: none;
   -webkit-user-select: none;
@@ -309,19 +309,19 @@ select, .smallButton label {
   background-color: white;
   color:black;
 }
-.reader#MesosticReader input:checked + label:before{
+.reader:not(.disabled)#MesosticReader input:checked + label:before{
   background-color: #0095FF;
 }
-.reader#PerigramReader input:checked + label:before{
+.reader:not(.disabled)#PerigramReader input:checked + label:before{
   background-color: #FA0007;
 }
-.reader#ObliquePerigramReader input:checked + label:before{
+.reader:not(.disabled)#ObliquePerigramReader input:checked + label:before{
   background-color: #FF41B6;
 }
-.reader#SpawningSimpleReader input:checked + label:before{
+.reader:not(.disabled)#SpawningSimpleReader input:checked + label:before{
   background-color: #F3F100;
 }
-.reader#SpawningPerigramReader input:checked + label:before{
+.reader:not(.disabled)#SpawningPerigramReader input:checked + label:before{
   background-color: #FF5100;
 }
 
@@ -375,7 +375,7 @@ select, .smallButton label {
 }
  */
 
-.reader > input:checked~ .select, .reader > input:checked~ .smallButton {
+.reader:not(.disabled) > input:checked~ .select, .reader:not(.disabled) > input:checked~ .smallButton {
   display: inline-block;
 }
 
