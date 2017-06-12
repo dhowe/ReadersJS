@@ -269,8 +269,11 @@ function createInterface() {
           "smallButton solo"
       )[0].firstElementChild.checked = false;
       //if the reader is checked in interface, turn it on
-      if (readers[i].firstElementChild.checked === true && reader != r) {
+      if (readers[i].firstElementChild.checked === true) {
         reader.hide(false);
+      } else if ( reader === r) {
+         reader.hide(false);
+         readers[i].getElementsByTagName("input")[0].checked = true;
       }
     }
   }
@@ -342,10 +345,10 @@ function createInterface() {
 
   menu.addEventListener("click", function(event) {
     var ele = event.target;
-    if (ele.matches(".reader.disabled") || (ele.matches(".reader > label") && ele.parentNode.matches(".reader.disabled"))) {
-      unsolo();
-    }
-    if (ele.matches(".reader > label")) {
+    if (ele.matches(".reader.disabled") || ele.parentNode.matches(".reader.disabled")) {
+      var reader = Reader.firstOfType(ele.id) ? Reader.firstOfType(ele.id) : Reader.firstOfType(ele.parentNode.id);
+      unsolo(reader);
+    } else if (ele.matches(".reader > label")) {
       onReaderSingleClick(ele);
     }
   });
