@@ -245,9 +245,9 @@ select, .smallButton label {
   color:#AAA !important;
   -webkit-filter: grayscale(1);
 }
-/*.reader.disabled > label, .reader.disabled p, .reader.disabled .select, .reader.disabled .smallButton.focus {
+.reader.disabled p, .reader.disabled .select, .reader.disabled .smallButton.focus {
     pointer-events: none;
-}*/
+}
 .reader.disabled select{
   color:#AAA !important;
 }
