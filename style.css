@@ -138,6 +138,12 @@ canvas {
     background-color: rgba(0, 0, 0, .05) !important;
   }
 }
+@media only screen and (min-width: 1800px) {
+  #focusDisplayWrapper{
+   position:fixed;
+   left:1380px;
+  }
+  }
 .select {
     overflow: hidden; 
     display: inline-block;

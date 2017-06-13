@@ -337,19 +337,32 @@ function createInterface() {
 
   ////////////////////////////////////////////////////////////////////
 
-  function onReaderSingleClick(ele) {
-    var reader = Reader.firstOfType(ele.parentNode.id),
-      state = !ele.parentNode.getElementsByTagName("input")[0].checked;
+  function onReaderSingleClick(reader, state) {
     readerOnOffEvent(reader, state);
   }
 
+  function turnOffAllReaders(current) {
+      activeReaders().forEach(function(r) {
+          readerOnOffEvent(r, false);
+          if (r != current)
+          document.getElementById(r.type).getElementsByTagName("input")[0].checked = false;
+      });
+  }
+
   menu.addEventListener("click", function(event) {
-    var ele = event.target;
+    var ele = event.target, reader;
+
     if (ele.matches(".reader.disabled") || ele.parentNode.matches(".reader.disabled")) {
-      var reader = Reader.firstOfType(ele.id) ? Reader.firstOfType(ele.id) : Reader.firstOfType(ele.parentNode.id);
+      reader = Reader.firstOfType(ele.id) ? Reader.firstOfType(ele.id) : Reader.firstOfType(ele.parentNode.id);
       unsolo(reader);
     } else if (ele.matches(".reader > label")) {
-      onReaderSingleClick(ele);
+      reader = Reader.firstOfType(ele.parentNode.id);
+      var currentState = ele.parentNode.getElementsByTagName("input")[0].checked;
+      if(event.altKey && currentState === true) {
+        turnOffAllReaders(reader);
+        return;
+      }
+      onReaderSingleClick(reader, !currentState);
     }
   });
 
