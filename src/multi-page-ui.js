@@ -211,7 +211,7 @@ function createInterface() {
 
   function focusChanged(focused) {
     log("[UI] Focus: " + focused.type);
-    focused && pManager.focus(focused);
+    focused && pManager.focus(focused); // not needed?
     assignFocus(focused);
   }
 

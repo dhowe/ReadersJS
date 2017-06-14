@@ -1581,14 +1581,14 @@ var PageManager = function (host, port) {
 
       var grid = Grid.gridFor(reader.current);
 
-      // only position if not already visible
+      // only position (on recto) if not already visible
       if (grid !== this.recto && grid !== this.verso) {
 
         Grid.resetCell(reader.current);
-        reader.position(this.verso, -1, 0); // randomize x-pos
+        reader.position(this.recto, -1, 0); // randomize x-pos
 
         //uiLogging && console.log("[UI] Reposition: " + reader.type);
-        focusJump(reader, this.verso);
+        focusJump(reader, this.recto);
       }
     }
   };
