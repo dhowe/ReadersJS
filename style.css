@@ -43,10 +43,10 @@ canvas {
   line-height: 60px;
   color: #333;
   z-index: 100;
-  COMMENTED-opacity: 0.2;
+  opacity: 0.2;
   -webkit-transition: opacity .5s;
   /* Safari */
-  COMMENTED-transition: opacity .5s;
+  transition: opacity .5s;
 }
 #options.clear {
   opacity: 1;
@@ -168,7 +168,6 @@ select {
 
   -webkit-appearance: none;
   -moz-appearance: none;
-  appearance: none;
   /* remove default arrow */
   background: transparent;
   background-color: #3D3D3D;
@@ -277,8 +276,6 @@ select, .smallButton label {
   display: inline-block;
   width: 18px;
   height: 18px;
-  -moz-border-radius: 18px;
-  -webkit-border-radius: 18px;
   border-radius: 18px;
   margin: 0 10px -5px 0;
   border: 2px solid gray;
@@ -298,9 +295,8 @@ select, .smallButton label {
 }
 #options, #interface, #focusDisplayTag{
   -moz-user-select: none;
-  -khtml-user-select: none;
   -webkit-user-select: none;
-  -o-user-select: none;
+  -ms-user-select: none;
   user-select: none;
   cursor: default;
 }
@@ -348,35 +344,23 @@ select, .smallButton label {
 }
 
 .reader.focused#MesosticReader input:checked+ label:before {
-  -webkit-box-shadow: 0px 0px 15px 5px #0095FF;
-  -moz-box-shadow: 0px 0px 15px 5px #0095FF;
   box-shadow: 0px 0px 15px 5px #0095FF;
 }
 .reader.focused#PerigramReader input:checked+ label:before {
-  -webkit-box-shadow: 0px 0px 15px 5px #FA0007;
-  -moz-box-shadow: 0px 0px 15px 5px #FA0007;
   box-shadow: 0px 0px 15px 5px #FA0007;
 }
 .reader.focused#ObliquePerigramReader input:checked+ label:before {
-  -webkit-box-shadow: 0px 0px 15px 5px #FF41B6;
-  -moz-box-shadow: 0px 0px 15px 5px #FF41B6;
   box-shadow: 0px 0px 15px 5px #FF41B6;
 }
 .reader.focused#SpawningSimpleReader input:checked+ label:before {
-  -webkit-box-shadow: 0px 0px 15px 5px #F3F100;
-  -moz-box-shadow: 0px 0px 15px 5px #F3F100;
   box-shadow: 0px 0px 15px 5px #F3F100;
 }
 .reader.focused#SpawningPerigramReader input:checked+ label:before {
-  -webkit-box-shadow: 0px 0px 15px 5px #FF5100;
-  -moz-box-shadow: 0px 0px 15px 5px #FF5100;
   box-shadow: 0px 0px 15px 5px #FF5100;
 }
 
 /*
 .reader.focused#ObliqueSpawner input:checked + label:before {
-    -webkit-box-shadow: 0px 0px 15px 5px #FFD000;
-    -moz-box-shadow: 0px 0px 15px 5px #FFD000;
     box-shadow: 0px 0px 15px 5px #FFD000;
 }
  */
