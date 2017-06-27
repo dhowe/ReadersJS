@@ -1285,11 +1285,13 @@ var PageManager = function (host, port) {
     if (typeof txt === 'object') {
 
       this.perigrams[3] = Trigrams[txt.title.replace(/ /, '')];
-      console.log('[PMAN] Stored ' + Object.keys(this.perigrams[3]).length + ' 3-grams');
+      //console.log('[PMAN] Stored ' + Object.keys(this.perigrams[3]).length + ' 3-grams');
       txt = txt.contents;
     }
 
-    this.perigrams[2] = this._loadBigrams(txt);
+    ///this.perigrams[2] = this._loadBigrams(txt);
+    this.perigrams[2] = Bigrams;
+    console.log('[BIGRAMS] ' + Object.keys(this.perigrams[2]).length + ' unique pairs');
 
     this.x = x;
     this.y = y;
@@ -1641,7 +1643,7 @@ var PageManager = function (host, port) {
     return cells;
   };
 
-  this._loadBigrams = function (txt) {
+  /*this._loadBigrams = function (txt) {
 
     if (this.mode == Reader.CLIENT) return; // dumb-client, no need for data
 
@@ -1665,7 +1667,7 @@ var PageManager = function (host, port) {
     console.log("[PMAN] Stored " + num + " 2-grams");
 
     return bigrams;
-  };
+  };*/
 
   this.listenForUpdates = function () {
 

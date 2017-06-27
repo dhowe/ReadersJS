@@ -64,7 +64,8 @@ M.checkLines = function (targetLines, mode) {
       continue;
 
     // get matching words, ordered by x-distance
-    var matches = (mode > 0) ? searchLineForLetterUsingNgrams(getTheLetter(), rtg, lineIdx, mode)
+    var matches = (mode > 0) ?
+      searchLineForLetterUsingNgrams(getTheLetter(), rtg, lineIdx, mode)
         : searchLineForLetter(getTheLetter(), rtg, lineIdx);
 
     if (!matches.isEmpty())
