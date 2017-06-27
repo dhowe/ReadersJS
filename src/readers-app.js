@@ -649,7 +649,7 @@ Grid.prototype = {
   },
 
   /** Returns the RiText for last cell in the grid. */
-  lastCell: function () {
+  _lastCell: function () { // not used?
 
     var p = this.lastCellCoords();
     return this.cellAt(p.x, p.y);

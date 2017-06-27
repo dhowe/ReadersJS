@@ -13,20 +13,17 @@ function MesosticReader(g, rx, ry, speed) {
   this.upperCasing = true;
   this.letterIdx = 0;
   this.letter = null;
+
   this.defaultColorDark = hexToRgb("#0095FF"); // blue
   this.defaultColorLight = hexToRgb("#1C76D6");
-
   this.activeFill = this.defaultColorDark;
 }
 
 var M = MesosticReader.prototype;
 
-M.selectNext = function () {
+M.selectLetter =  function () {
 
-  var letter, next = this.current,
-    cf = Grid.coordsFor(this.current),
-    lineIdx = cf.y;
-
+  var letter;
   while (1) { // find the next letter
 
     letter = this.mesostic.charAt(this.letterIdx);
@@ -36,7 +33,7 @@ M.selectNext = function () {
 
     if (letter.match(/[A-Za-z]/)) { // non-punct
 
-      if (this.letterIdx == 1) // end-of-phrase
+      if (this.letterIdx === 1) // end-of-phrase
         this.sendLinebreak = true;
 
       letter = letter.toLowerCase();
@@ -48,7 +45,16 @@ M.selectNext = function () {
     }
   }
 
-  //letter = letter.toLowerCase();
+  return letter;
+}
+
+M.selectNext = function () {
+
+  var next = this.current,
+    cf = Grid.coordsFor(this.current),
+    lineIdx = cf.y;
+
+  var letter = this.selectLetter();
 
   while (1) { // find next word containing the letter (not on the same line)
 
