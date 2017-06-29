@@ -103,7 +103,8 @@ M.searchLineForLetter = function(letter, last, rtg, lineIdx, mode) {
 
   var rts, result = [], words = rtg.lineAt(lineIdx);
 
-  console.log('Search: line='+lineIdx+' mode='+mode+ ' curr='+this.current.text()+' last='+(last?last.text():'NULL'));
+console.log('Search('+letter+'): line='+lineIdx+' mode=' + mode +
+ ' curr=' + this.current.text()+' last=' + (last?last.text():'NULL'));
 
   try {
 
@@ -147,15 +148,16 @@ M.searchLineForLetter = function(letter, last, rtg, lineIdx, mode) {
     }
     return s.trim() + ']';
   }
-  console.log("Result="+str(result));
+
+console.log("Result="+str(result));
 
   return result;
 }
 
 M.onEnterCell = function (curr) {
-  if (this.lastRead())
-  // this.pman.defaultFill = curr.fill();
-  curr.fill(this.activeFill);
+  if (this.lastRead()) { // ignore first cell
+    curr.fill(this.activeFill);
+  }
 }
 
 M.onExitCell = function (curr) {

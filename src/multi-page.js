@@ -56,7 +56,18 @@ function keyPressed() {
 
   if (key === 'R') dumpMem(); // DEBUG: (PRESS 'r' FOR CONSOLE OUTPUT)
   if (key === 'F') toggleFPS(); // DEBUG: (PRESS 'f' FOR FRAME RATE)
+  if (key === ' ') togglePaused(); // DEBUG: (PRESS ' ' TO PAUSE)
 }
+
+function togglePaused() {
+  var state;
+  Reader.instances.forEach(function (r) { // fix to #152 (was only active readers
+    r.paused = !r.paused;
+    state = r.paused;
+  });
+  console.log('[UI] paused='+state);
+}
+
 
 function loadTexts(callback) {
 
@@ -89,12 +100,20 @@ function resetText(textName) {
 
     // focused reader on verso, others distributed across pages
     var idx = (r.hasFocus()) ? 0 : (r.id % Grid.instances.length);
+    r.history = [];
     r.position(Grid.instances[idx], 0, 0);
   });
 
-  // Update text for mesostic
-  var meso = Reader.firstOfType('MesosticReader');
-  meso && (meso.mesostic = textObj.mesostic);
+  // Update text for mesostic :: TODO: check multiple ***
+  var meso = Reader.firstOfType('MesosticReader')
+    || Reader.firstOfType('MesosticJumper');
+
+  if (meso) {
+    meso.mesostic = textObj.mesostic;
+    meso.sendLinebreak = false;
+    meso.letterIdx = 0;
+    meso.letter = null;
+  }
 
   themeChanged();
 
@@ -252,6 +271,7 @@ function cloneColor(obj) {
 function toggleFPS() {
   fps = !fps;
 }
+
 function dumpMem() {
 
   var stats = {},

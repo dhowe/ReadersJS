@@ -1621,10 +1621,8 @@ var PageManager = function (host, port) {
   this.draw = function () {
 
     Grid.updateAll();
-
     this.verso && (this.verso.draw(0));
     this.recto && (this.recto.draw(1));
-
     return this;
   };
 
