@@ -13,7 +13,7 @@ function SpawningPerigramReader(g, rx, ry, speed) {
   this.phrase = '';
   this.downWeighting = .6;
   this.upWeighting = .12;
-  this.defaultColorDark = hexToRgb("#FF5100"); // orange 
+  this.defaultColorDark = hexToRgb("#FF5100"); // orange
   this.defaultColorLight = hexToRgb("#D75F22");
 
   if (!speed) this.speed = SPEED.Fluent; // default speed for SpawningPerigramReaders
@@ -91,7 +91,7 @@ SpawningPerigramReader.prototype._determineReadingPath = function (last, neighbo
   }
 
   this.lastDirection = wayToGo;
-  this.currentKey = this.makeKey(last, this.current, neighbors[wayToGo]);
+  this.currentKey = [ last, this.current, neighbors[wayToGo] ];
 
   switch (wayToGo) {
   case NE:

@@ -77,7 +77,7 @@ SpawningSimpleReader.prototype.textForServer = function () {
 
 	var key = this.currentKey || ''; // the current trigram key
 	// info("KEY: " + key + this.pman.trigramCount(key)); // DEBUG
-	
+
 	if (this.pman.isTrigram(key, 19)) {
 		this.phrase = this.phrase + this.current.text() + ' ';
 		return undefined; // just adding the current word
@@ -98,7 +98,7 @@ SpawningSimpleReader.prototype._determineReadingPath = function (last, neighbors
 
   if (!this.current) throw Error("no current cell!");
 
-  this.currentKey = this.makeKey(last, this.current, neighbors[5] || this.current);
+  this.currentKey = [ last, this.current, neighbors[5] || this.current];
 
   return neighbors[5] || this.current; // 5 = E(ast), the natural next word
 

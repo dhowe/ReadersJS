@@ -8,9 +8,8 @@ function PerigramReader(g, rx, ry, speed) {
   Reader.call(this, g, rx, ry, speed); // superclass constructor
   this.type = 'PerigramReader'; //  superclass variable(s)
 
-  this.consoleString = '';
-  this.currentKey = '';
   this.phrase = '';
+  this.consoleString = '';
   this.downWeighting = .6;
   this.upWeighting = .12;
   this.defaultColorDark = hexToRgb("#FA0007"); // red
@@ -21,7 +20,6 @@ function PerigramReader(g, rx, ry, speed) {
   this.activeFill = this.defaultColorDark
   // this.neighborCol = [127, 10, 30, 255];
 
-  // factors
   this.fadeInFactor = .9;
   this.fadeOutFactor = 10;
   this.delayFactor = 3;
@@ -95,14 +93,9 @@ PerigramReader.prototype.onExitCell = function (curr) {
 
 PerigramReader.prototype.textForServer = function () {
 
-	// info(this.currentKey); // DEBUG
-	var key = this.currentKey || ''; // the current trigram key
-	// key = key.slice(key.indexOf(' ') + 1); // get the bigram // BIGRAMS
-	// info("KEY: " + key + this.pman.trigramCount(key)); // DEBUG
-	
-	if (this.pman.isTrigram(key, 0)) {
+	if (this.pman.isTrigram(this.currentKey)) {
 		this.phrase = this.phrase + this.current.text() + ' ';
-		return undefined; // just adding the current word
+		return; // just adding the current word
 	}
 
 	var msg = this.phrase.trim();
@@ -195,8 +188,8 @@ PerigramReader.prototype._determineReadingPath = function (last, neighbors) {
   }
 
   this.lastDirection = wayToGo;
-  this.currentKey = this.makeKey(last, this.current, neighbors[wayToGo]);
- 
+  this.currentKey = [last, this.current, neighbors[wayToGo]];
+
   switch (wayToGo) {
   case NE:
 	   return neighbors[NE];
@@ -211,23 +204,21 @@ PerigramReader.prototype._determineReadingPath = function (last, neighbors) {
 
 PerigramReader.prototype._isViableDirection = function (last, curr, neighbor, dir) {
 
-  var result, key, S = ' ',
-    countThreshold;
+  var result, countThreshold, S = ' ';
 
   if (!last || !curr || !neighbor)
     return false;
 
   dir = dir || -1;
 
-	key = this.makeKey(last, curr, neighbor);
-
   countThreshold = this._adjustForStopWords(0, key.split(S));
 
-  result = this.pman.isTrigram(key, countThreshold);
+  result = this.pman.isTrigram([last, curr, neighbor], countThreshold);
 
   if (result) {
    //info("Perigram_isViable found: " + key + " (" + Grid.direction(dir) + ") " + countThreshold);
 	}
+
   return result;
 }
 

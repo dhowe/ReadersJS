@@ -649,7 +649,7 @@ Grid.prototype = {
   },
 
   /** Returns the RiText for last cell in the grid. */
-  lastCell: function () {
+  _lastCell: function () { // not used?
 
     var p = this.lastCellCoords();
     return this.cellAt(p.x, p.y);
@@ -918,17 +918,22 @@ Reader.pauseAll = function (b) {
   }
 }
 
-Reader.findByType = function (type) {
+Reader.findByType = function (types) {
 
+  if (typeof types === 'string') { // string, not array
+    types = [ types ];
+  }
   var result = [];
-  for (var i = 0, j = Reader.instances.length; i < j; i++) {
-    if (Reader.instances[i].type === type)
-      result.push(Reader.instances[i]);
+  for (var j = 0;j < types.length; j++) {
+    for (var i = 0, j = Reader.instances.length; i < j; i++) {
+      if (Reader.instances[i].type === types[j])
+        result.push(Reader.instances[i]);
+    }
   }
   return result;
 }
 
-Reader.firstOfType = function (type) {
+Reader.firstOfType = function (type) { // remove
 
   for (var i = 0, j = Reader.instances.length; i < j; i++) {
     if (Reader.instances[i].type === type)
@@ -1070,8 +1075,7 @@ Reader.prototype = {
         }
 
         this.history.push(this.current); // or .text()?
-        while (this.history.length > Reader.HISTORY_SIZE) {
-
+        while (this.history.length > Reader.HISTORY_SIZE) { // preserve history size
           this.history.splice(0, 1);
         }
 
@@ -1163,21 +1167,6 @@ Reader.prototype = {
     var h = this.history;
     return h && h.length ? h[h.length - num] : null;
   },
-
-	makeKey: function (last, curr, next) {
-
-		var S = ' ', key = '';
-		if (arguments.length == 2) {
-			if (!last || !curr) return '';
-			key = RiTa.trimPunctuation(last.text()) + S + RiTa.trimPunctuation(curr.text());
-		} else {
-			if (!last || !next || !curr) return '';
-			key = RiTa.trimPunctuation(last.text()) + S + RiTa.trimPunctuation(curr.text()) + S + RiTa.trimPunctuation(next.text());
-		}
-		key = key.toLowerCase();
-		key = key.replace(/’|‘|\?/g, '');
-		return key;
-	},
 
 	selectNext: function () {
 
@@ -1285,11 +1274,13 @@ var PageManager = function (host, port) {
     if (typeof txt === 'object') {
 
       this.perigrams[3] = Trigrams[txt.title.replace(/ /, '')];
-      console.log('[PMAN] Stored ' + Object.keys(this.perigrams[3]).length + ' 3-grams');
+      //console.log('[PMAN] Stored ' + Object.keys(this.perigrams[3]).length + ' 3-grams');
       txt = txt.contents;
     }
 
-    this.perigrams[2] = this._loadBigrams(txt);
+    ///this.perigrams[2] = this._loadBigrams(txt);
+    this.perigrams[2] = Bigrams;
+    console.log('[BIGRAMS] ' + Object.keys(this.perigrams[2]).length + ' unique pairs');
 
     this.x = x;
     this.y = y;
@@ -1467,67 +1458,116 @@ var PageManager = function (host, port) {
     this.perigrams[n] = obj;
   };
 
-  this.trigramCount = function (rts) {
 
-    var key = rts,
-      count, words = [],
-      trigrams = this.perigrams[3];
+	// makeKey: function (last, curr, next) {
+  //
+	// 	var S = ' ', key = '';
+	// 	if (arguments.length == 2) {
+	// 		if (!last || !curr) return '';
+	// 		key = RiTa.trimPunctuation(last.text()) + S + RiTa.trimPunctuation(curr.text());
+	// 	} else {
+	// 		if (!last || !next || !curr) return '';
+	// 		key = RiTa.trimPunctuation(last.text()) + S + RiTa.trimPunctuation(curr.text()) + S + RiTa.trimPunctuation(next.text());
+	// 	}
+	// 	key = key.toLowerCase().replace(/’|‘|\?/g, '');
+	// 	return key;
+	// },
 
-    if (!trigrams) throw Error("No 3-grams loaded!");
+  function makeKey(parts) {
 
-    if (is(rts, 'array')) {
+    // if (!arguments.length) throw Error('bad args');
+    //
+    // var s = 'makeKey(';
+    // for (var i = 0; i < arguments.length; i++) {
+    //   s += arguments[i]+',';
+    // }
+    // s += ');';
+    // console.log(s);
+    //
+    // var parts;
+    // if (arguments.length === 1) {
+    //   parts = arguments[0];
+    // }
+    // if (arguments.length > 1) {
+    //   parts = [ arguments[0], arguments[1]];
+    // }
+    // if (arguments.length > 2) {
+    //   parts.push(arguments[2]);
+    // }
 
-      if (!(rts && rts.length == 3)) throw Error("fail: rts=" + rts);
+    //console.log('makeKey -> '+ parts.length);
 
-      for (var i = 0; i < rts.length; i++) {
-      	key = key + RiTa.trimPunctuation(rts[i].text()) + ' ';
-      }
-      key = key.toLowerCase();
-      key = key.trim(key);
-			key = key.replace(/’|‘|\?/g, '');
+    if (typeof parts === 'string' || parts.length < 2 || parts.length > 3)
+      throw Error('invalid arg: ' + parts);
+
+    var key = '';
+    for (var i = 0; i < parts.length; i++) {
+      if (!parts[i]) continue;
+      var part = (typeof parts[i].text === 'string' ? parts[i] : parts[i].text());
+      key += RiTa.trimPunctuation(part) + ' ';
     }
-
-    return trigrams[key] || 0;
+    //key = key.trim().replace(/’|‘|\?/g, '');
+    return key.toLowerCase().trim().replace(/[’‘?]+/g, '');
   };
 
-  this.isTrigram = function (rts, threshold) {
-    return this.trigramCount(rts) > threshold;
+  this.isBigram = function (rts, threshold) {
+
+    threshold = threshold || 0;
+    return this.bigramCount(rts) > threshold;
   };
 
   this.bigramCount = function (rts) {
 
-    var key = rts, words = [], bigrams = this.perigrams[2];
+    var count = 0, key = '', words = [];
 
-    if (!bigrams) throw Error("No 2-grams loaded!");
+    if (!this.perigrams[2])
+      throw Error("No 2-grams loaded!");
 
-    if (is(rts, 'array')) {
+    if (rts) {
 
-      if (!(rts && rts.length == 2)) throw Error("fail: rts=" + rts);
+      if (!Array.isArray(rts))
+        throw Error('Bad arg: '+typeof rts.length);
 
-      key = '';
-      for (var i = 0; i < rts.length; i++) {
-      	key = key + RiTa.trimPunctuation(rts[i].text()) + ' ';
-      }
-      key = key.toLowerCase();
-      key = key.trim(key);
-			key = key.replace(/’|‘|\?/g, '');
+      key = makeKey(rts);
+      count = this.perigrams[2][key] || 0;
     }
 
-    return bigrams[key] || 0;
+    //console.log('  bigram? '+key+" -> "+count);
+
+    return count;
   };
 
-  this.isBigram = function (rts, threshold) {
-    return this.bigramCount(rts) > threshold;
+  this.isTrigram = function (rts, threshold) {
+
+    threshold = threshold || 0;
+    return this.trigramCount(rts) > threshold;
   };
 
-  // this seems only to work in the browser for smaller files
-  // better to include the file as a regular JS-object
+  this.trigramCount = function (rts) {
+
+    var count = 0, key = '', words = [];
+
+    if (!this.perigrams[3])
+      throw Error("No 3-grams loaded!");
+
+    if (rts) {
+
+      if (!Array.isArray(rts))
+        throw Error('Bad arg: '+typeof rts);
+
+      key = makeKey(rts);
+      count = this.perigrams[3][key] || 0;
+    }
+
+    //console.log('  trigram? '+key+" -> "+count);
+    return count;
+  };
+
   this.loadTrigrams = function (pfile, callback) {
 
     if (this.mode == Reader.CLIENT) return; // dumb-client, no need for data
 
-    var pMan = this,
-      msg = 'Load/hash trigrams';
+    var pMan = this, msg = 'Load/hash trigrams';
 
     console.time(msg);
 
@@ -1620,10 +1660,8 @@ var PageManager = function (host, port) {
   this.draw = function () {
 
     Grid.updateAll();
-
     this.verso && (this.verso.draw(0));
     this.recto && (this.recto.draw(1));
-
     return this;
   };
 
@@ -1641,7 +1679,7 @@ var PageManager = function (host, port) {
     return cells;
   };
 
-  this._loadBigrams = function (txt) {
+  /*this._loadBigrams = function (txt) {
 
     if (this.mode == Reader.CLIENT) return; // dumb-client, no need for data
 
@@ -1665,7 +1703,7 @@ var PageManager = function (host, port) {
     console.log("[PMAN] Stored " + num + " 2-grams");
 
     return bigrams;
-  };
+  };*/
 
   this.listenForUpdates = function () {
 
