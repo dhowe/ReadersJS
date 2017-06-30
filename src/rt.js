@@ -881,7 +881,7 @@
       return this._rs._text.concat(riText.text());
     },
 
-    includes: function (text) {
+    containsWord: function (text) {
 
       return this._rs.indexOf(text) > -1;
     },

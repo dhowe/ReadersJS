@@ -1,61 +1,52 @@
-///////////////////// MesosticJumper /////////////////////
+///////////////////// MesosticReader /////////////////////
 
-subclass(MesosticJumper, MesosticReader);
+subclass(MesosticJumper, Reader);
 
 function MesosticJumper(g, rx, ry, speed) {
 
-  MesosticReader.call(this, g, rx, ry, speed); // superclass constructor
+  Reader.call(this, g, rx, ry, speed); // superclass constructor
   this.type = 'MesosticJumper'; //  superclass variable(s)
+
+  this.maxWordLen = Grid.maxWordLength();
+  this.mesostic = TEXTS[0].mesostic;
+  this.sendLinebreak = false;
+  this.upperCasing = true;
+  this.letterIdx = 0;
+  this.letter = null;
   this.activeFill = colorToObject(0, 149, 255, 255); // #0095FF
 }
 
-var M = MesosticJumper.prototype, DBUG = true;
+var M = MesosticReader.prototype;
 
 M.selectNext = function () {
 
-  //if (this.current !== this.lastRead()) // TODO: quick fix for page-turning
-    //letter = this.advanceLetter();
-  var letter = this.advanceLetter(), dbug = 0;
+  var letter = this.selectLetter();
 
-  if (!letter)
-    throw Error('No letter in MesosticJumper.selectNext');
+  RiText result = this.checkLines(ngramLineIdxs, 3);
 
-  var next, ngramLineIdxs = [ 1, 2, 3, 4, 5, 6 ], last = this.lastRead(2);
-
-  if (last) { // ignore n-grams if no last
-
-    next = this.checkLines(letter, ngramLineIdxs, 3, last);
-
-    // got nothing, now retry, with bigrams
-    if (!next) {
-      dbug && console.log("MesoJumper: no trigrams for '" + letter + "',  trying bigrams..."+(last?'':' no last!'));
-      next = this.checkLines(letter, ngramLineIdxs, 2, last);
-    }
+  // got nothing, now retry, with digrams
+  if (!result) {
+    DBUG && console.log("MesoJumper: no perigrams for '" + letter + "',  trying digrams...");
+    result = this.checkLines(ngramLineIdxs, 2);
   }
 
   // got nothing, now retry, ignoring ngrams
-  if (!next) {
-    dbug && console.log("MesoJumper: no bigrams for '" + letter + "',  trying w'out n-grams...");
-    next = this.checkLines(letter, [1, 2, 3, 4 ], 0);
+  if (!result) {
+    DBUG && console.log("MesoJumper: no digrams for '" + letter + "',  trying w'out ngrams...");
+    result = cthis.checkLines([1, 2, 3, 4 ], 0);
   }
 
-  if (next) {
+  // got nothing, now default to standard mesostic-reader
+  if (!result) result = superSelectNext.superSelectNext(letter);
 
-    this.letter = letter;
-    return this.adjustSelected(next);
-  }
-
-  this.revertLetter(); // hack
-  dbug && console.log("MesoJumper: nothing found for '" + letter + "',  trying superSelectNext ***");
-
-  return Object.getPrototypeOf(MesosticJumper.prototype).selectNext.call(this);
+  return result;
 }
 
-M.checkLines = function (letter, targetLines, mode, last) {
+M.checkLines = function (targetLines, mode) {
 
   var result, p = Grid.coordsFor(this.current), grid = p.grid;
 
-  OUTER: for (var j = 0; j < targetLines.length; j++)
+  OUTER: for (int j = 0; j < targetLines.length; j++)
   {
     var rtg = grid;
 
@@ -73,15 +64,16 @@ M.checkLines = function (letter, targetLines, mode, last) {
       continue;
 
     // get matching words, ordered by x-distance
-    var matches = this.searchLineForLetter(letter, last, rtg, lineIdx, mode);
+    var matches = (mode > 0) ? searchLineForLetterUsingNgrams(getTheLetter(), rtg, lineIdx, mode)
+        : searchLineForLetter(getTheLetter(), rtg, lineIdx);
 
-    if (matches.length)
+    if (!matches.isEmpty())
     {
-      result = matches[0];
+      result = (RiText) matches.get(0);
 
-      if (result && mode != 0 && result.distanceTo(this.current) > 500)
+      if (result != null && mode != 0 && result.distanceTo(currentCell) > 500)
       {
-        console.log("skipping big dist");
+        // System.out.println("skipping big dist");
         result = null;
       }
       else
@@ -92,71 +84,69 @@ M.checkLines = function (letter, targetLines, mode, last) {
   return result;
 }
 
-M.searchLineForLetter = function(letter, last, rtg, lineIdx, mode) {
 
-  if (!letter)
-    throw Error("Bad letter: " + letter);
+M.superSelectNext = function (letter) {
 
-  if (lineIdx > rtg.numLines() - 1)
-    throw Error("Bad line index: " + lineIdx);
+  var next = this.current,
+    cf = Grid.coordsFor(this.current),
+    lineIdx = cf.y;
 
-  var rts, result = [], words = rtg.lineAt(lineIdx);
+  //letter = letter.toLowerCase();
 
-  //console.log('Search('+letter+'): line='+lineIdx+' mode=' + mode +
-   //' curr=' + this.current.text()+' last=' + (last?last.text():'NULL'));
+  while (1) { // find next word containing the letter (not on the same line)
 
-  try {
+    next = Grid.nextCell(next);
 
-    // try each word in the line
-    for (var i = 0; i < words.length; i++) {
+    if (lineIdx == Grid.coordsFor(next).y) // ignore same line
+      continue;
 
-      if (words[i] && words[i].includes(letter)) {
+    if (next.text().match(letter)) {
 
-        if (mode === 3) {
-          rts = [ last, this.current, words[i] ];
-          if (!this.pman.isTrigram(rts))
-            continue;
-        }
-        else if (mode === 2) {
-          rts = [ this.current, words[i] ];
-          //console.log('key', key);
-          if (!this.pman.isBigram(rts))
-            continue;
-        }
+      if (this.upperCasing) {
 
-        result.push(words[i]);
+        var originalWidth = next.textWidth();
+        next.replaceChar(next.indexOf(letter), letter.toUpperCase());
+        next.x -= (next.textWidth() - originalWidth) / 2;
       }
+
+      this.letter = letter;
+
+      return next; // retun the cell
     }
   }
-  catch (e) {
-    console.warn("searchLineForLetter() error...");
-    throw e;
-  }
+}
 
-  var currentCell = this.current;
-  result.sort(function(x, y) {          // TODO: verify this sort is working correctly
-    var d1 = currentCell.distanceTo(x);
-    var d2 = currentCell.distanceTo(y);
-    return y > x ? -1 : 1;
-  });
+M.selectLetter = function() {
+  var letter;
 
-  function str(r) {
-    var s = '[';
-    for (var i = 0; r && i < r.length; i++) {
-      s += r[i].text() +' ';
+  while (1) { // find the next letter
+
+    letter = this.mesostic.charAt(this.letterIdx);
+
+    if (++this.letterIdx == this.mesostic.length)
+      this.letterIdx = 0;
+
+    if (letter.match(/[A-Za-z]/)) { // non-punct
+
+      if (this.letterIdx == 1) // end-of-phrase
+        this.sendLinebreak = true;
+
+      letter = letter.toLowerCase();
+      break;
+
+    } else { // for punct, just send line-break
+
+      this.sendLinebreak = true; // a space
     }
-    return s.trim() + ']';
   }
 
-  // console.log("Result="+str(result));
-
-  return result;
+  return letter;
 }
 
 M.onEnterCell = function (curr) {
-  if (this.lastRead()) { // ignore first cell
-    curr.fill(this.activeFill);
-  }
+
+  // this.pman.defaultFill = curr.fill();
+  curr.fill(this.activeFill);
 }
 
 M.onExitCell = function (curr) {
