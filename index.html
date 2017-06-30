@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <title>The Readers Project</title>
   <script src="node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="data/all-bigrams.js"></script>
   <script src="src/text-loader.js"></script>
   <link rel="stylesheet" href="fonts/webfont/font.css">
   <link rel="stylesheet" href="style.css">
@@ -35,14 +36,14 @@
 </body>
 
 <!--script src="node_modules/p5/lib/p5.js"></script-->
-<script src="lib/p5.js"></script>
-
+<script src="lib/p5.js"></script> <!-- different than node version? -->
 <script src="node_modules/p5/lib/addons/p5.dom.js"></script>
 <script src="node_modules/rita/lib/rita-tiny.js"></script>
 
 <script src="src/rt.js"></script>
 <script src="src/readers-app.js"></script>
 <script src="src/mesostic-reader.js"></script>
+<script src="src/mesostic-jumper.js"></script>
 <script src="src/perigram-reader.js"></script>
 <script src="src/oblique-perigram-reader.js"></script>
 <script src="src/spawning-simple-reader.js"></script>
@@ -51,5 +52,7 @@
 
 <script src="src/multi-page.js"></script>
 <script src="src/multi-page-ui.js"></script>
-<!-- Trigrams Created Dynamically -->
+
+<!-- note: trigrams are loaded dynamically -->
+
 </html>

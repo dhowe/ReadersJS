@@ -1,5 +1,6 @@
 if (typeof Trigrams === 'undefined') var Trigrams = {};
 Trigrams.MisspeltLandings = {
+'and face the':1, //dch
 '— and 1620':1239,
 '— the 1620':1110,
 'pilgrim 1620 —':79,
