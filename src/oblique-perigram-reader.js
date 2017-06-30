@@ -179,8 +179,8 @@ ObliquePerigramReader.prototype._determineReadingPath = function (last, neighbor
   	}
   }
   nextCell = ((nextDir == Grid.DIRECTION.SE) && !nextCell[nextDir]) ? neighbors[Grid.DIRECTION.E] : nextCell; // got to be safe
-	
-  this.currentKey = this.makeKey(last, this.current, nextCell);
+
+  this.currentKey = [last, this.current, nextCell];
 	// info("heading: " + nextDir); // DEBUG
 
   if (!nextCell) Readers.error("nextCell is null!");
@@ -196,20 +196,23 @@ ObliquePerigramReader.prototype._determineReadingPath = function (last, neighbor
 };
 
 ObliquePerigramReader.prototype._getThreshold = function (key) {
-  return key ? this._adjustForStopWords(0, key.split(' ')) : Number.MAX_SAFE_INTEGER;
+  return key ? this._adjustForStopWords(0, key/*.split(' ')*/) : Number.MAX_SAFE_INTEGER;
 };
 
 ObliquePerigramReader.prototype._directionalCount = function (key, dir) {
-  dir = dir || -1;
+  dir = dir || -1; // DOES THIS DO ANYTHING?  JC??
+  if (key && !Array.isArray(key))
+    throw Error('Bad arg: '+(typeof key));
   return key ? this.pman.trigramCount(key) : 0;
 };
 
 ObliquePerigramReader.prototype._assembleKey = function (last, curr, neighbor) {
   var result, key, S = ' ';
   if (!last || !curr || !neighbor)
-    return null;
-  key = (last.text() + S + curr.text() + S + neighbor.text()).toLowerCase();
-  return RiTa.stripPunctuation(key);
+    return;
+  // key = (last.text() + S + curr.text() + S + neighbor.text()).toLowerCase();
+  // return RiTa.stripPunctuation(key);
+  return [last, curr, neighbor];
 };
 
 ObliquePerigramReader.prototype._isViableDirection = function (count, threshold) {

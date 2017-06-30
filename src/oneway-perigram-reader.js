@@ -108,10 +108,7 @@ OnewayPerigramReader.prototype._isViableDirection = function (curr, neighbor) {
 
   if (!curr || !neighbor) return false;
 
-  var key = RiTa.stripPunctuation((curr.text() + ' ' + neighbor.text()).toLowerCase()),
-    countThreshold = 0; // this._adjustForStopWords(0, key.split(S));
-
-  return this.pman.isBigram(key, countThreshold);
+  return this.pman.isBigram([curr, neighbor]);
 }
 
 //////////////////////// Exports ////////////////////////
