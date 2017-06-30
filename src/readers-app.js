@@ -918,17 +918,22 @@ Reader.pauseAll = function (b) {
   }
 }
 
-Reader.findByType = function (type) {
+Reader.findByType = function (types) {
 
+  if (typeof types === 'string') { // string, not array
+    types = [ types ];
+  }
   var result = [];
-  for (var i = 0, j = Reader.instances.length; i < j; i++) {
-    if (Reader.instances[i].type === type)
-      result.push(Reader.instances[i]);
+  for (var j = 0;j < types.length; j++) {
+    for (var i = 0, j = Reader.instances.length; i < j; i++) {
+      if (Reader.instances[i].type === types[j])
+        result.push(Reader.instances[i]);
+    }
   }
   return result;
 }
 
-Reader.firstOfType = function (type) {
+Reader.firstOfType = function (type) { // remove
 
   for (var i = 0, j = Reader.instances.length; i < j; i++) {
     if (Reader.instances[i].type === type)

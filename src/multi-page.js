@@ -104,15 +104,13 @@ function resetText(textName) {
     r.position(Grid.instances[idx], 0, 0);
   });
 
-  // Update text for mesostic :: TODO: check multiple ***
-  var meso = Reader.firstOfType('MesosticReader')
-    || Reader.firstOfType('MesosticJumper');
+  var mesos = Reader.findByType(['MesosticReader', 'MesosticJumper']);
 
-  if (meso) {
-    meso.mesostic = textObj.mesostic;
-    meso.sendLinebreak = false;
-    meso.letterIdx = 0;
-    meso.letter = null;
+  for (var i = 0; i < mesos.length; i++) {
+    mesos[i].mesostic = textObj.mesostic;
+    mesos[i].sendLinebreak = false;
+    mesos[i].letterIdx = 0;
+    mesos[i].letter = null;
   }
 
   themeChanged();
