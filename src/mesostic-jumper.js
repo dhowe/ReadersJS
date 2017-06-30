@@ -15,9 +15,7 @@ M.selectNext = function () {
 
   //if (this.current !== this.lastRead()) // TODO: quick fix for page-turning
     //letter = this.advanceLetter();
-
-  //var lastLetter = letter;
-  var letter = this.advanceLetter();
+  var letter = this.advanceLetter(), dbug = 0;
 
   if (!letter)
     throw Error('No letter in MesosticJumper.selectNext');
@@ -30,14 +28,14 @@ M.selectNext = function () {
 
     // got nothing, now retry, with bigrams
     if (!next) {
-      console.log("MesoJumper: no trigrams for '" + letter + "',  trying bigrams..."+(last?'':' no last!'));
+      dbug && console.log("MesoJumper: no trigrams for '" + letter + "',  trying bigrams..."+(last?'':' no last!'));
       next = this.checkLines(letter, ngramLineIdxs, 2, last);
     }
   }
 
   // got nothing, now retry, ignoring ngrams
   if (!next) {
-    console.log("MesoJumper: no bigrams for '" + letter + "',  trying w'out n-grams...");
+    dbug && console.log("MesoJumper: no bigrams for '" + letter + "',  trying w'out n-grams...");
     next = this.checkLines(letter, [1, 2, 3, 4 ], 0);
   }
 
@@ -48,7 +46,8 @@ M.selectNext = function () {
   }
 
   this.revertLetter(); // hack
-  console.log("MesoJumper: nothing found for '" + letter + "',  trying superSelectNext ***");
+  dbug && console.log("MesoJumper: nothing found for '" + letter + "',  trying superSelectNext ***");
+
   return Object.getPrototypeOf(MesosticJumper.prototype).selectNext.call(this);
 }
 
@@ -103,8 +102,8 @@ M.searchLineForLetter = function(letter, last, rtg, lineIdx, mode) {
 
   var rts, result = [], words = rtg.lineAt(lineIdx);
 
-console.log('Search('+letter+'): line='+lineIdx+' mode=' + mode +
- ' curr=' + this.current.text()+' last=' + (last?last.text():'NULL'));
+  //console.log('Search('+letter+'): line='+lineIdx+' mode=' + mode +
+   //' curr=' + this.current.text()+' last=' + (last?last.text():'NULL'));
 
   try {
 
@@ -149,7 +148,7 @@ console.log('Search('+letter+'): line='+lineIdx+' mode=' + mode +
     return s.trim() + ']';
   }
 
-console.log("Result="+str(result));
+  // console.log("Result="+str(result));
 
   return result;
 }

@@ -1494,7 +1494,7 @@ var PageManager = function (host, port) {
     key = this.makeKey(rts);
     count = this.perigrams[3][key] || 0;
 
-    console.log('  trigram? '+key+" -> "+count);
+    //console.log('  trigram? '+key+" -> "+count);
 
     return count;
   };
@@ -1517,7 +1517,7 @@ var PageManager = function (host, port) {
     key = this.makeKey(rts);
     count = this.perigrams[2][key] || 0;
 
-    console.log('  bigram? '+key+" -> "+count);
+    //console.log('  bigram? '+key+" -> "+count);
 
     return count;
   };

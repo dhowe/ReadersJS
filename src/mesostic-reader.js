@@ -8,11 +8,8 @@ function MesosticReader(g, rx, ry, speed) {
   this.type = 'MesosticReader'; //  superclass variable(s)
 
   this.maxWordLen = Grid.maxWordLength();
-  this.mesostic = TEXTS[0].mesostic;
-  this.sendLinebreak = false;
+  this.setMesostic(TEXTS[0].mesostic);
   this.upperCasing = true;
-  this.letterIdx = 0;
-  this.letter = null;
 
   this.defaultColorDark = hexToRgb("#0095FF"); // blue
   this.defaultColorLight = hexToRgb("#1C76D6");
@@ -23,6 +20,13 @@ var M = MesosticReader.prototype;
 
 M.revertLetter =  function () {
   this.letterIdx = this.lastLetterIdx;
+}
+
+M.setMesostic =  function (mesostic) {
+  this.mesostic = mesostic;
+  this.sendLinebreak = false;
+  this.letterIdx = 0;
+  this.letter = null;
 }
 
 M.advanceLetter =  function () {

@@ -24,12 +24,12 @@ function setup() {
     pManager.gridFill(colorToObject(255, 255, 255, 40));
 
     // add some readers
-    //new PerigramReader(pManager.recto, SPEED.Fluent);
+    new PerigramReader(pManager.recto, SPEED.Fluent);
     new MesosticJumper(pManager.verso).hide(0);
-    //new MesosticReader(pManager.verso).hide(0);
-    //new ObliquePerigramReader(pManager.verso);
-    //new SpawningSimpleReader(pManager.recto);
-    //new SpawningPerigramReader(pManager.verso);
+    //new MesosticReader(pManager.verso);
+    new ObliquePerigramReader(pManager.verso);
+    new SpawningSimpleReader(pManager.recto);
+    new SpawningPerigramReader(pManager.verso);
 
     // pick one to get focus
     pManager.focus(randomReader());
@@ -96,25 +96,19 @@ function resetText(textName) {
   var textObj = textFromName(textName);
   pManager.layout(textObj, 25, 40, 580, 650);
 
-  Reader.instances.forEach(function (r) { // fix to #152 (was only active readers)
-
+  Reader.instances.forEach(function (r) {
+    r.history = []; // reset state
     // focused reader on verso, others distributed across pages
     var idx = (r.hasFocus()) ? 0 : (r.id % Grid.instances.length);
-    r.history = [];
     r.position(Grid.instances[idx], 0, 0);
   });
 
-  var mesos = Reader.findByType(['MesosticReader', 'MesosticJumper']);
-
-  for (var i = 0; i < mesos.length; i++) {
-    mesos[i].mesostic = textObj.mesostic;
-    mesos[i].sendLinebreak = false;
-    mesos[i].letterIdx = 0;
-    mesos[i].letter = null;
-  }
+  Reader.findByType(['MesosticReader', 'MesosticJumper'])
+    .forEach(function(m) {
+      m.setMesostic(textObj.mesostic); // new mesostic
+    });
 
   themeChanged();
-
   Reader.pauseAll(false);
 }
 
