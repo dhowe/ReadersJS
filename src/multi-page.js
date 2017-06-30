@@ -25,8 +25,7 @@ function setup() {
 
     // add some readers
     new PerigramReader(pManager.recto, SPEED.Fluent);
-    new MesosticJumper(pManager.verso).hide(0);
-    //new MesosticReader(pManager.verso);
+    new MesosticReader(pManager.verso).hide(0);
     new ObliquePerigramReader(pManager.verso);
     new SpawningSimpleReader(pManager.recto);
     new SpawningPerigramReader(pManager.verso);
@@ -56,18 +55,7 @@ function keyPressed() {
 
   if (key === 'R') dumpMem(); // DEBUG: (PRESS 'r' FOR CONSOLE OUTPUT)
   if (key === 'F') toggleFPS(); // DEBUG: (PRESS 'f' FOR FRAME RATE)
-  if (key === ' ') togglePaused(); // DEBUG: (PRESS ' ' TO PAUSE)
 }
-
-function togglePaused() {
-  var state;
-  Reader.instances.forEach(function (r) { // fix to #152 (was only active readers
-    r.paused = !r.paused;
-    state = r.paused;
-  });
-  console.log('[UI] paused='+state);
-}
-
 
 function loadTexts(callback) {
 
@@ -96,19 +84,19 @@ function resetText(textName) {
   var textObj = textFromName(textName);
   pManager.layout(textObj, 25, 40, 580, 650);
 
-  Reader.instances.forEach(function (r) {
-    r.history = []; // reset state
+  Reader.instances.forEach(function (r) { // fix to #152 (was only active readers)
+
     // focused reader on verso, others distributed across pages
     var idx = (r.hasFocus()) ? 0 : (r.id % Grid.instances.length);
     r.position(Grid.instances[idx], 0, 0);
   });
 
-  Reader.findByType(['MesosticReader', 'MesosticJumper'])
-    .forEach(function(m) {
-      m.setMesostic(textObj.mesostic); // new mesostic
-    });
+  // Update text for mesostic
+  var meso = Reader.firstOfType('MesosticReader');
+  meso && (meso.mesostic = textObj.mesostic);
 
   themeChanged();
+
   Reader.pauseAll(false);
 }
 
@@ -263,7 +251,6 @@ function cloneColor(obj) {
 function toggleFPS() {
   fps = !fps;
 }
-
 function dumpMem() {
 
   var stats = {},

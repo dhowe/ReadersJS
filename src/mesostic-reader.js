@@ -8,98 +8,69 @@ function MesosticReader(g, rx, ry, speed) {
   this.type = 'MesosticReader'; //  superclass variable(s)
 
   this.maxWordLen = Grid.maxWordLength();
-  this.setMesostic(TEXTS[0].mesostic);
+  this.mesostic = TEXTS[0].mesostic;
+  this.sendLinebreak = false;
   this.upperCasing = true;
-
+  this.letterIdx = 0;
+  this.letter = null;
   this.defaultColorDark = hexToRgb("#0095FF"); // blue
   this.defaultColorLight = hexToRgb("#1C76D6");
+
   this.activeFill = this.defaultColorDark;
 }
 
 var M = MesosticReader.prototype;
 
-M.revertLetter =  function () {
-  this.letterIdx = this.lastLetterIdx;
-}
+M.selectNext = function () {
 
-M.setMesostic =  function (mesostic) {
-  this.mesostic = mesostic;
-  this.sendLinebreak = false;
-  this.letterIdx = 0;
-  this.letter = null;
-}
-
-M.advanceLetter =  function () {
-
-  //console.log('MesosticReader.advanceLetter');
-  var letter;
+  var letter, next = this.current,
+    cf = Grid.coordsFor(this.current),
+    lineIdx = cf.y;
 
   while (1) { // find the next letter
 
     letter = this.mesostic.charAt(this.letterIdx);
 
-    this.lastLetterIdx = this.letterIdx;
     if (++this.letterIdx == this.mesostic.length)
       this.letterIdx = 0;
 
     if (letter.match(/[A-Za-z]/)) { // non-punct
 
-      if (this.letterIdx === 1) // end-of-phrase
+      if (this.letterIdx == 1) // end-of-phrase
         this.sendLinebreak = true;
 
       letter = letter.toLowerCase();
       break;
 
-    } else {
+    } else { // for punct, just send line-break
 
-      this.sendLinebreak = true; // for punct/space, just send line-break
+      this.sendLinebreak = true; // a space
     }
   }
 
-  return letter;
-}
-
-M.adjustSelected =  function (sel) {
-
-  sel.text(sel.text().replace(/[()’‘?]/g,''));
-  if (this.upperCasing) {
-    this.doUpperCasing(sel);
-  }
-  return sel;
-}
-
-M.selectNext = function () {
-
-  console.log('MesosticReader.selectNext');
-
-  var next = this.current,
-    cf = Grid.coordsFor(this.current),
-    lineIdx = cf.y;
-
-  var letter = this.advanceLetter();
+  //letter = letter.toLowerCase();
 
   while (1) { // find next word containing the letter (not on the same line)
 
     next = Grid.nextCell(next);
 
-    var nt = next.text(); // tmp
     if (lineIdx == Grid.coordsFor(next).y) // ignore same line
       continue;
 
     if (next.text().match(letter)) {
 
+      if (this.upperCasing) {
+
+        var originalWidth = next.textWidth();
+        next.replaceChar(next.indexOf(letter), letter.toUpperCase());
+        next.x -= (next.textWidth() - originalWidth) / 2;
+      }
+
       this.letter = letter;
 
-      return this.adjustSelected(next);
+      return next;
     }
   }
-}
-
-M.doUpperCasing = function(next) {
-
-    var originalWidth = next.textWidth();
-    next.replaceChar(next.indexOf(this.letter), this.letter.toUpperCase());
-    next.x -= (next.textWidth() - originalWidth) / 2;
 }
 
 M.onEnterCell = function (curr) {
