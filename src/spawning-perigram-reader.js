@@ -31,8 +31,10 @@ SpawningPerigramReader.prototype.selectNext = function () {
 
   var last = this.lastRead(2),
     neighbors = Grid.gridFor(this.current).neighborhood(this.current);
+  var selected = this._determineReadingPath(last, neighbors);
+  // info("bigram count of " + this.current.text() + "+" + selected.text() + ": " + this.pman.bigramCount([this.current, selected]));
 
-  return this._determineReadingPath(last, neighbors);
+  return selected; // DEBUGGING this._determineReadingPath(last, neighbors);
 }
 
 SpawningPerigramReader.prototype._determineReadingPath = function (last, neighbors) {
