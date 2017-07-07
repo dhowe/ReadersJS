@@ -13,14 +13,18 @@ function OnewayPerigramReader(g, rx, ry, speed, dir, parent) {
   this.type = 'OnewayPerigramReader';
 
   this.wayToGo = dir;
-  this.altWayToGo = (dir == 2) ? 1 : 7; // allowing N or S for NE or SE
+  // allow N if dir is NE, or S if dir is SE:
+  this.altWayToGo = (dir == 2) ? 1 : 7;
   this.parentLast = parent;
   this.selectedLast = null;
   this.consoleString = '';
   this.currentKey = '';
   this.phrase = '';
   this.freeCount = 0;
-  this.maxFreeCount = 5;
+  // if maxFreeCount is 0, no non-bigram moves allowed
+  this.maxFreeCount = 0;
+  // adjust for bigram count threshold:
+  this.bigramThreshold = 0;
   this.neighbors = [];
   this.darkThemeFade = colorToObject(191, 191, 191, 255);
   this.lightThemeFade = colorToObject(63, 63, 63, 255);
@@ -74,7 +78,7 @@ OnewayPerigramReader.prototype._determineReadingPath = function (last, neighbors
   var nextCell = this._chooseCell(vectorNeighbors);
 
   if (nextCell) {
-  	// info("Found bigram"); // DEBUG
+  	// info("Found " + this.current.text() + "+" + nextCell.text() + ": " + this.pman.bigramCount([this.current,nextCell])); // DEBUG
   	this.freeCount = 0;
   }
 
@@ -108,7 +112,7 @@ OnewayPerigramReader.prototype._isViableDirection = function (curr, neighbor) {
 
   if (!curr || !neighbor) return false;
 
-  return this.pman.isBigram([curr, neighbor]);
+  return this.pman.isBigram([curr, neighbor], this.bigramThreshold);
 }
 
 //////////////////////// Exports ////////////////////////
