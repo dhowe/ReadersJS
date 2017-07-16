@@ -1180,6 +1180,15 @@ Reader.prototype = {
     }
   },
 
+  inHistory: function (check) { // added 7/17/17
+
+    for (var i = 0, j = this.history.length; i < j; i++) {
+      if (this.history[i].text() === check)
+        return true;
+    };
+    return false;
+  },
+
   dumpHistory: function () {
 
     var s = '[';
