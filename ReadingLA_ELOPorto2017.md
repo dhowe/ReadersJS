@@ -13,6 +13,15 @@ Reading, Reading as Art, Digital Language Art, Text Generation, Philosophy of La
 
 ***
 
+## Readings / Performances
+
+### Cayley's choice of reader and reading:
+* Spawning Perigram Reader: Focused, Fluent – with all other readers off except Mesostic Jumper
+* Theme: Light
+* Text: The Image or Misspelt Landings (depending on what DCH wants to read or perform from)
+
+***
+
 #### Original Submission - Dec 22, 2016
 
 We have no trouble with the proposition that writing is art. But is there an art of reading? Is there, that is, a creative, generative art of reading, as opposed to there being good and artful ways to read? Any difficulties we may have with the acknowledgement that there is (or is not) an art of reading may be attributable to a conventional prejudice that reading is neither creative nor generative; it is merely the practice that we apply – receptively, passively – to the appreciation and interpretation of writing. Contemporary culture and aesthetic practices present us with a number of challenges to such prejudice, including the simple assertion, by artist-curators, that reading is art and its presentation as such (see: Simon Morris’ Reading as Art, Bury Art Museum, 2016).
