@@ -6,7 +6,8 @@
 Reading, Reading as Art, Digital Language Art, Text Generation, Philosophy of Language, Linguistic Ontology, Algorithmic Reading, Algorithmic Writing
 
 ***
-[ **0000 hi Daniel, I'm copying the submission draft into this space now and I'm going to begin to edit it into a 'presentatble' form with indication of where demos and readings will come.** ]
+[ **0000 hi Daniel, I'm copying the submission draft into this space now and I'm going to begin to edit it into a 'presentable' form with indication of where demos and readings will come.** ] <br>
+[ ** ok - shall we plan to alternate reading paragraphs? it may be difficult to orchestrate an  actual performance, as we dont have a server, or a means of viewing multiple outputs ** ]
 
 Is there an art of reading? Is there, that is, a creative, generative art of reading, as opposed to there being good and artful ways to read? Any difficulties we may have with the acknowledgement that there is (or is not) an art of reading may be attributable to a conventional prejudice that reading is neither creative nor generative; it is merely the practice that we apply – receptively, passively – to the appreciation and interpretation of writing. Contemporary culture and aesthetic practices present us with a number of challenges to such prejudice, including the simple assertion, by artist-curators, that reading is art and its presentation as such (see: Simon Morris’ Reading as Art, Bury Art Museum, 2016, August-November, 2016).
 
@@ -22,10 +23,13 @@ Certain practices of digital language art provide a particular and insightful pe
 
 ## Readings / Performances
 
-### Cayley's choice of reader and reading:
+### Choices of reader for reading:
 * Spawning Perigram Reader: Focused, Fluent – with all other readers off except Mesostic Jumper
 * Theme: Light
 * Text: The Image or Misspelt Landings (depending on what DCH wants to read or perform from)
+
+* Mesostic Jumper: Focused, Fluent or Steady
+* Text: The Image
 
 ***
 
