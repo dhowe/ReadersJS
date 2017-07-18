@@ -141,14 +141,6 @@ M._pad = function (raw, c, idx) {
   return padStr + raw;
 }
 
-/* M._resetLine = function(rt) {
-		var cf = Grid.coordsFor(rt);
-		var line = cf.grid.lineAt(cf.y), s='';
-		for(var i=0,j=line.length; i<j; i++)
-		s += line[i].text() + " ";
-		console.log(s);
-}*/
-
 if (typeof module != 'undefined' && module.exports) { // for node
 
   module.exports = MesosticReader;

@@ -9,12 +9,11 @@ function MesosticJumper(g, rx, ry, speed) {
   this.activeFill = colorToObject(0, 149, 255, 255); // #0095FF
 }
 
-var M = MesosticJumper.prototype, DBUG = true;
-
-M.selectNext = function () {
+MesosticJumper.prototype.selectNext = function () {
 
   //if (this.current !== this.lastRead()) // TODO: quick fix for page-turning
     //letter = this.advanceLetter();
+
   var letter = this.advanceLetter(), dbug = 0;
 
   if (!letter)
@@ -51,7 +50,7 @@ M.selectNext = function () {
   return Object.getPrototypeOf(MesosticJumper.prototype).selectNext.call(this);
 }
 
-M.checkLines = function (letter, targetLines, mode, last) {
+MesosticJumper.prototype.checkLines = function (letter, targetLines, mode, last) {
 
   var result, p = Grid.coordsFor(this.current), grid = p.grid;
 
@@ -92,7 +91,7 @@ M.checkLines = function (letter, targetLines, mode, last) {
   return result;
 }
 
-M.searchLineForLetter = function(letter, last, rtg, lineIdx, mode) {
+MesosticJumper.prototype.searchLineForLetter = function(letter, last, rtg, lineIdx, mode) {
 
   if (!letter)
     throw Error("Bad letter: " + letter);
@@ -153,46 +152,46 @@ M.searchLineForLetter = function(letter, last, rtg, lineIdx, mode) {
   return result;
 }
 
-M.onEnterCell = function (curr) {
+MesosticJumper.prototype.onEnterCell = function (curr) {
   if (this.lastRead()) { // ignore first cell
     curr.fill(this.activeFill);
   }
 }
 
-M.onExitCell = function (curr) {
+// M.onExitCell = function (curr) {
+//
+//   curr.colorTo(this.pman.defaultFill, 1);
+//   Grid.resetCell(curr, true);
+// }
 
-  curr.colorTo(this.pman.defaultFill, 1);
-  Grid.resetCell(curr, true);
-}
+// M.textForServer = function () {
+//
+//   var lett, tfs, txt = this.current.text();
+//
+//   if (!this.letter) return '';
+//
+//   lett = this.letter.toUpperCase();
+//   tfs = this._pad(txt, lett, txt.indexOf(lett));
+//
+//   if (this.sendLinebreak) {
+//     this.sendLinebreak = false;
+//     tfs = "\n" + tfs;
+//   }
+//
+//   return tfs;
+// },
 
-M.textForServer = function () {
-
-  var lett, tfs, txt = this.current.text();
-
-  if (!this.letter) return '';
-
-  lett = this.letter.toUpperCase();
-  tfs = this._pad(txt, lett, txt.indexOf(lett));
-
-  if (this.sendLinebreak) {
-    this.sendLinebreak = false;
-    tfs = "\n" + tfs;
-  }
-
-  return tfs;
-},
-
-M._pad = function (raw, c, idx) {
-
-  var pre = raw.substring(0, idx), padStr = '';
-
-  for (var i = 0; i < this.maxWordLen - pre.length - 1; i++)
-    padStr += ' ';
-
-  return padStr + raw;
-}
+// M._pad = function (raw, c, idx) {
+//
+//   var pre = raw.substring(0, idx), padStr = '';
+//
+//   for (var i = 0; i < this.maxWordLen - pre.length - 1; i++)
+//     padStr += ' ';
+//
+//   return padStr + raw;
+// }
 
 if (typeof module != 'undefined' && module.exports) { // for node
 
-  module.exports = MesosticReader;
+  module.exports = MesosticJumper;
 }

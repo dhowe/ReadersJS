@@ -145,12 +145,12 @@ canvas {
   }
   }
 .select {
-    overflow: hidden; 
+    overflow: hidden;
     display: inline-block;
     position: relative;
-    height: 29px; 
+    height: 29px;
     margin: 0px 10px;
-    
+
 }
 .reader .select {
   height:22px;
@@ -159,7 +159,7 @@ canvas {
 .reader select {
   font-size: 12px;
   padding: 4px 10px 4px 5px;
-  height: 22px; 
+  height: 22px;
 }
 select {
   font-size: 14px;
@@ -173,7 +173,7 @@ select {
   background-color: #3D3D3D;
   border: none;
   letter-spacing: 0.06em;
-  
+
   border-radius: 0px;
   background-color: #3D3D3D;
   color:#DDD;
@@ -186,17 +186,17 @@ select {
     font-size:10px;
     width:15px;
     padding: 10px 5px 6px 0px;
-    content:" \25BC"; 
+    content:" \25BC";
     color:#AAA;
-    opacity: .5; 
-    position: absolute; 
-    right: 5px; 
-    top: 0;    
+    opacity: .5;
+    position: absolute;
+    right: 5px;
+    top: 0;
     z-index: 1;
     text-align: center;
-    height: 100%;      
+    height: 100%;
     pointer-events: none;
-    box-sizing: border-box;   
+    box-sizing: border-box;
 }
 select:focus {
   outline:none;
@@ -314,6 +314,9 @@ select, .smallButton label {
 .reader:not(.disabled)#MesosticReader input:checked + label:before{
   background-color: #0095FF;
 }
+.reader:not(.disabled)#MesosticJumper input:checked + label:before{
+  background-color: #0095FF;
+}
 .reader:not(.disabled)#PerigramReader input:checked + label:before{
   background-color: #FA0007;
 }
@@ -330,6 +333,9 @@ select, .smallButton label {
 .reader#MesosticReader input+ label:hover:before {
   border-color: #0095FF;
 }
+.reader#MesosticJumper input+ label:hover:before {
+  border-color: #0095FF;
+}
 .reader#PerigramReader input+ label:hover:before {
   border-color: #FA0007;
 }
@@ -344,6 +350,9 @@ select, .smallButton label {
 }
 
 .reader.focused#MesosticReader input:checked+ label:before {
+  box-shadow: 0px 0px 15px 5px #0095FF;
+}
+.reader.focused#MesosticJumper input:checked+ label:before {
   box-shadow: 0px 0px 15px 5px #0095FF;
 }
 .reader.focused#PerigramReader input:checked+ label:before {

@@ -726,6 +726,30 @@ Grid.prototype = {
 
 // //////////////////// STATICS ////////////////////////
 
+/**
+ * Returns the number of lines between the RiTexts assuming 2 conditions: 1)
+ * that the first comes before the second and 2) that they are on subsequent
+ * grids in the text. If either condition is false, will return
+ * Integer.MAX_VALUE.
+ */
+Grid.yDist = function(rt1, rt2) {
+
+  var grid1 = Grid.gridFor(rt1);
+  var grid2 = Grid.gridFor(rt2);
+  var y1 = Grid.coordsFor(rt1).y;
+  var y2 = Grid.coordsFor(rt2).y;
+
+  if (grid1 === grid2)
+    return (y2 < y1) ? Number.MAX_VALUE : (y2 - y1);
+
+  if (grid1.next != grid2)
+    return Number.MAX_VALUE;
+
+  var distToEnd = grid1.numLines() - y1;
+
+  return y2 + distToEnd;
+}
+
 Grid.findById = function (id) {
 
   for (var i = 0, j = Grid.instances.length; i < j; i++) {
@@ -1688,32 +1712,6 @@ var PageManager = function (host, port) {
     return cells;
   };
 
-  /*this._loadBigrams = function (txt) {
-
-    if (this.mode == Reader.CLIENT) return; // dumb-client, no need for data
-
-    var num = 0,
-      words = txt.split(/\s+/),
-      last = words[0],
-      bigrams = {};
-
-    for (var i = 1, j = words.length; i < j; i++) {
-
-      if (!words[i].length || words[i].match(/<pb?\/?>/)) { // <p/> or <pb/>
-        continue;
-      }
-      var key = RiTa.stripPunctuation((last + ' ' + words[i]).toLowerCase());
-      bigrams[key] = 1; // JHC changed this: a minimal count
-      //console.log(last+' '+words[i]);
-      last = words[i];
-      num++;
-    };
-
-    console.log("[PMAN] Stored " + num + " 2-grams");
-
-    return bigrams;
-  };*/
-
   this.listenForUpdates = function () {
 
     var grid, lastGrid, reader, lastCell, pman = this;
@@ -1736,16 +1734,16 @@ var PageManager = function (host, port) {
 
       reader.current = grid.cellAt(data.x, data.y);
 
-      // TMP: hack for changing cell text in mesostic
-      if (data.type === 'MesosticReader')
-        reader.current.text(data.text.replace(/[\s\r\n]+/, ''));
-
       if (!reader.current) {
 
         var pt = Grid.coordsFor(lastCell);
-        info('left: ' + pt.x + ',' + pt.y + ", '" + lastCell.text() + "'");
-        err('no cell for: ' + data.x + ',' + data.y);
+        err('no cell for: ' + data.x + ',' + data.y, ' left:'
+          + pt.x + ',' + pt.y + ", '" + lastCell.text() + "'");
       }
+
+      // TMP: hack for changing cell text in mesostic
+      if (data.type.startWith('Mesostic'))
+        reader.current.text(data.text.replace(/[\s\r\n]+/, ''));
 
       reader.onEnterCell(reader.current);
       reader.steps++;
