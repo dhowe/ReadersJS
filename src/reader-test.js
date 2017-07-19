@@ -24,12 +24,7 @@ function setup() {
     pManager.gridFill(colorToObject(255, 255, 255, 40));
 
     // add some readers
-    new PerigramReader(pManager.recto, SPEED.Fluent);
-    new MesosticJumper(pManager.verso).hide(0);
-    //new MesosticReader(pManager.verso);
-    new ObliquePerigramReader(pManager.verso);
-    new SpawningSimpleReader(pManager.recto);
-    new SpawningPerigramReader(pManager.verso);
+    new LookaheadReader(pManager.recto, SPEED.Fluent);
 
     // pick one to get focus
     pManager.focus(randomReader());
@@ -47,23 +42,9 @@ function draw() {
     textSize(14);
     text(round(frameRate()), width-20,15);
   }
-  // TODO: show reader name after manual focus change
 }
 
 function keyPressed() {
-
-
-  if (keyCode > 48 && keyCode < 58) { // or up/down arrow
-    var idx = keyCode - 49,
-      rdrs = activeReaders();
-    if (idx < rdrs.length) {
-
-      console.log("[KEY] Focus: " + rdrs[idx].type);
-      assignFocus(rdrs[idx]);
-
-      // TODO: show reader name after manual focus change
-    }
-  }
 
   keyCode == 39 && (pManager.nextPage(1));
   keyCode == 37 && (pManager.lastPage(1));
@@ -170,13 +151,8 @@ function themeChanged() {
   pManager.gridFill(colorToObject(col, style));
   changeReadersColorTheme(dark);
 
-  // focus
-  var focused = pManager.focus();
-  if (!focused) {
-    console.warn('No focused reader!');
-    return;
-  }
-  $('#focusDisplayTag').css("color", getCSSFromColor(focused.activeFill));
+  //focus
+  $('#focusDisplayTag').css("color", getCSSFromColor(pManager.focus().activeFill));
 
   log("[UI] Theme/style: " + themeName + "/" + styleName);
 }
@@ -190,7 +166,6 @@ function changeReadersColorTheme(isDark) {
 function textChanged() {
 
   $('#focusDisplay').html("");
-
   // hide the menu
   document.getElementById("interface").style.display = 'none';
 
@@ -224,44 +199,6 @@ function textChanged() {
     overlay.classList.toggle('fade');
   }
 
-}
-
-
-function assignFocus(focused) {
-
-  if (!focused) {
-    var actives = activeReaders(); // pick a random reader for focus
-    focused = actives.length && actives[floor(random(actives.length))];
-  }
-
-  clearFocus();
-
-  pManager.focus(focused);
-  if (focused) {
-    // only if we have an active reader
-    document.getElementById(focused.type).className += " focused";
-    pManager.makeFocusedReaderVisible();
-  }
-
-  // clear focusDisplay, change color
-  $("#focusDisplay").html("");
-  $("#focusDisplayTag").css("color", focused ?
-    getCSSFromColor(focused.activeFill) : "#EEE"
-  );
-
-  // turn off other focusButtons
-  var eles = document.getElementsByClassName("smallButton focus");
-  for (var i = 0; i < eles.length; i++) {
-    eles[i].firstElementChild.checked = eles[i].parentNode.id === focused.type
-      ? true : false;
-  }
-}
-
-function clearFocus() {
-  var rdrs = document.getElementsByClassName("reader");
-  for (var i = 0; i < rdrs.length; i++) {
-    rdrs[i].className = rdrs[i].className.replace(" focused", "");
-  }
 }
 
 function colorToArray(obj, overrideAlpha) { // takes optional 2nd argument for alpha

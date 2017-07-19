@@ -162,42 +162,6 @@ function createInterface() {
     }
   }
 
-  function assignFocus(focused) {
-    if (!focused) {
-      var actives = activeReaders(); // pick a random reader for focus
-      focused = actives.length && actives[floor(random(actives.length))];
-    }
-
-    clearFocus();
-
-    pManager.focus(focused);
-    if (focused) {
-      // only if we have an active reader
-      document.getElementById(focused.type).className += " focused";
-      pManager.makeFocusedReaderVisible();
-    }
-
-    // clear focusDisplay, change color
-    $("#focusDisplay").html("");
-    $("#focusDisplayTag").css("color", focused ?
-      getCSSFromColor(focused.activeFill) : "#EEE"
-    );
-
-    // turn off other focusButtons
-    var eles = document.getElementsByClassName("smallButton focus");
-    for (var i = 0; i < eles.length; i++) {
-      eles[i].firstElementChild.checked = eles[i].parentNode.id === focused.type
-        ? true : false;
-    }
-  }
-
-  function clearFocus() {
-    var rdrs = document.getElementsByClassName("reader");
-    for (var i = 0; i < rdrs.length; i++) {
-      rdrs[i].className = rdrs[i].className.replace(" focused", "");
-    }
-  }
-
   function readerOnOffEvent(reader, onOffSwitch) {
     reader.hide(!onOffSwitch);
 
@@ -211,7 +175,7 @@ function createInterface() {
 
   function focusChanged(focused) {
     log("[UI] Focus: " + focused.type);
-    focused && pManager.focus(focused); // not needed?
+    //focused && pManager.focus(focused); // not needed?
     assignFocus(focused);
   }
 
