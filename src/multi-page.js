@@ -1,6 +1,6 @@
 p5.disableFriendlyErrors = true; // opt
 
-var pManager, font, bgColor, fps = false;
+var pManager, font, bgColor, showFocus, fps = false;
 
 function preload() {
 
@@ -47,6 +47,11 @@ function draw() {
     textSize(14);
     text(round(frameRate()), width-20,15);
   }
+  if (pManager && showFocus) {
+    fill(255);
+    textSize(14);
+    text(pManager.focus().type,width-155,height-5);
+  }
   // TODO: show reader name after manual focus change
 }
 
@@ -54,14 +59,12 @@ function keyPressed() {
 
 
   if (keyCode > 48 && keyCode < 58) { // or up/down arrow
+    showFocus = true;
     var idx = keyCode - 49,
       rdrs = activeReaders();
-    if (idx < rdrs.length) {
-
+    if (idx < rdrs.length && rdrs[idx] !== pManager.focus()) {
       console.log("[KEY] Focus: " + rdrs[idx].type);
       assignFocus(rdrs[idx]);
-
-      // TODO: show reader name after manual focus change
     }
   }
 
@@ -237,6 +240,7 @@ function assignFocus(focused) {
   clearFocus();
 
   pManager.focus(focused);
+
   if (focused) {
     // only if we have an active reader
     document.getElementById(focused.type).className += " focused";
