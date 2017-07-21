@@ -104,34 +104,6 @@ PerigramReader.prototype.textForServer = function () {
   return msg;
 }
 
-PerigramReader.prototype.outputAsHTML = function (msg) {
-
-	if (!msg || !msg.length) return;
-
-	// replace spaces and line-breaks with html versions
-	msg = msg.replace(/\n/g, '<br>'); // removed: .replace(/ /g, '&nbsp;')
-
-	if (typeof createP === "function") {
-
-		// create a <p> tag as last element in 'focusDisplay'
-		createP(msg).parent("focusDisplay");
-
-		var display = document.getElementById("focusDisplay");
-
-		if (!(display && display.childNodes && display.childNodes.length)) {
-			return;
-		}
-
-		// now scroll up if necessary
-		var logEntries = display.childNodes.length;
-		while (logEntries > maxFocusLog) {
-
-			display.removeChild(display.childNodes[0]);
-			logEntries--;
-		}
-	}
-}
-
 PerigramReader.prototype._determineReadingPath = function (last, neighbors) {
 
   if (!neighbors) throw Error("no neighbors");

@@ -127,6 +127,7 @@ canvas {
 }
 #focusDisplay p {
   font-family: monospace;
+  margin: 0 0 15px 0;
 }
 @media only screen and (min-width: 1550px) {
   #focusDisplay, #focusDisplayTag {
