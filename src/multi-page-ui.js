@@ -23,7 +23,8 @@ var COLOR = {
 var bgColor = 0,
   uiLogging = true,
   activeReadersBeforeSolo,
-  maxFocusLog = Math.floor(window.innerHeight / 30);
+  maximumLogHeight = calculateMaximumLogHeight();
+
 
 function createInterface() {
 
@@ -264,8 +265,8 @@ function createInterface() {
   ////////////////////////////////////////////////////////////////////
 
   window.onresize = function() {
-    // recalculate maxLog when window height changes
-    maxFocusLog = Math.floor(window.innerHeight / 30);
+    // recalculate maximumLogHeight
+    maximumLogHeight = calculateMaximumLogHeight();
   };
 
   document.getElementById("options").addEventListener(
@@ -366,6 +367,10 @@ function getCSSFromColor(colorObj) {
 function pauseInterface(val) {
   Reader.pauseAll(val);
   if (!val) themeChanged();
+}
+
+function calculateMaximumLogHeight() {
+    return window.innerHeight - $("#focusDisplayTag").outerHeight() - parseInt($("#focusDisplay").css("padding-top"));
 }
 
 // handle cases where tab is not the active tab, sleep, screensaver

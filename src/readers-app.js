@@ -1136,33 +1136,45 @@ Reader.prototype = {
     }, reader.stepTime);
   },
 
-  outputAsHTML: function (msg) {
+    outputAsHTML: function(msg) {
 
-    if (!msg || !msg.length) return;
+        if (!msg || !msg.length) return;
 
-    // replace spaces and line-breaks with html versions
-    msg = msg.replace(/ /g, '&nbsp;').replace(/\n/g, '<br>');
+        // replace spaces and line-breaks with html versions
+        msg = msg.replace(/ /g, '&nbsp;').replace(/\n/g, '<br>');
 
-    if (typeof createP === "function") {
+        if (typeof createP === "function") {
 
-      // create a <p> tag as last element in 'focusDisplay'
-      createP(msg).parent("focusDisplay");
+            // create a <p> tag as last element in 'focusDisplay'
+            createP(msg).parent("focusDisplay");
 
-      var display = document.getElementById("focusDisplay");
+            var display = document.getElementById("focusDisplay");
 
-      if (!(display && display.childNodes && display.childNodes.length)) {
-        return;
-      }
+            if (!(display && display.childNodes && display.childNodes.length)) {
+                return;
+            }
 
-      // now scroll up if necessary
-      var logEntries = display.childNodes.length;
-      while (logEntries > maxFocusLog) {
+            // now scroll up if necessary
+            var totalLogHeight = 0;
+            for (var i = 0; i < display.childNodes.length; i++) {
+                var el = display.childNodes[i];
+                totalLogHeight += this.getBoxHeight(el);
+            }
+         
+            while (totalLogHeight > maximumLogHeight) {
+                var lastEl = display.childNodes[0];
+                display.removeChild(lastEl);
+                totalLogHeight -= this.getBoxHeight(lastEl);
+            }
+        }
+    },
 
-        display.removeChild(display.childNodes[0]);
-        logEntries--;
-      }
-    }
-  },
+    getBoxHeight: function(el) {
+        var elHeight = el.offsetHeight;
+        elHeight += parseInt(window.getComputedStyle(el).getPropertyValue('margin-top'));
+        elHeight += parseInt(window.getComputedStyle(el).getPropertyValue('margin-bottom'));
+        return elHeight;
+    },
 
   formatMessage: function (msg) {
 
