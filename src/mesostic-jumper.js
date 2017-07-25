@@ -112,14 +112,11 @@ MesosticJumper.prototype.searchLineForLetter = function(letter, last, rtg, lineI
       if (words[i] && words[i].includes(letter)) {
 
         if (mode === 3) {
-          rts = [ last, this.current, words[i] ];
-          if (!this.pman.isTrigram(rts))
+          if (!this.pman.isTrigram(last.text(), this.current.text(), words[i].text()))
             continue;
         }
         else if (mode === 2) {
-          rts = [ this.current, words[i] ];
-          //console.log('key', key);
-          if (!this.pman.isBigram(rts))
+          if (!this.pman.isBigram(this.current.text(), words[i].text()))
             continue;
         }
 

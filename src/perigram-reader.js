@@ -23,6 +23,7 @@ function PerigramReader(g, rx, ry, speed) {
   this.fadeInFactor = .9;
   this.fadeOutFactor = 10;
   this.delayFactor = 3;
+  this.currentKey = undefined;
 }
 
 PerigramReader.prototype.selectNext = function () {
@@ -93,7 +94,14 @@ PerigramReader.prototype.onExitCell = function (curr) {
 
 PerigramReader.prototype.textForServer = function () {
 
-	if (this.pman.isTrigram(this.currentKey)) {
+  var rts = this.currentKey;
+
+  if (!rts) continue;
+  
+  if (rts.length !== 3)
+    throw Error("Invalid args: "+arguments[0]);
+
+	if (this.pman.isTrigram(rts[0].text(),rts[1].text(),rts[2].text())) {
 		this.phrase = this.phrase + this.current.text() + ' ';
 		return; // just adding the current word
 	}
@@ -176,16 +184,16 @@ PerigramReader.prototype._determineReadingPath = function (last, neighbors) {
 
 PerigramReader.prototype._isViableDirection = function (last, curr, neighbor, dir) {
 
-  var result, countThreshold, S = ' ';
+  dir = dir || -1;
+
+  var result, countThreshold;
 
   if (!last || !curr || !neighbor)
     return false;
 
-  dir = dir || -1;
+  countThreshold = this._adjustForStopWords(0, key.split(' '));
 
-  countThreshold = this._adjustForStopWords(0, key.split(S));
-
-  result = this.pman.isTrigram([last, curr, neighbor], countThreshold);
+  result = this.pman.isTrigram(last.text(), curr.text(), neighbor.text(), countThreshold);
 
   if (result) {
    //info("Perigram_isViable found: " + key + " (" + Grid.direction(dir) + ") " + countThreshold);

@@ -1160,7 +1160,7 @@ Reader.prototype = {
                 var el = display.childNodes[i];
                 totalLogHeight += this.getBoxHeight(el);
             }
-         
+
             while (totalLogHeight > maximumLogHeight) {
                 var lastEl = display.childNodes[0];
                 display.removeChild(lastEl);
@@ -1518,11 +1518,27 @@ var PageManager = function (host, port) {
 	// 	return key;
 	// },
 
-  function makeKey(parts) {
+  function makeKey() {
+
+    if (arguments.length < 2 || arguments.length > 3
+      || typeof arguments[0] !== 'string') {
+        throw Error('invalid arg: ' + arguments.length +
+          ' ' + (typeof arguments[0]));
+    }
+
+    var key = '';
+    for (var i = 0; i < arguments.length; i++) {
+      if (!arguments[i]) continue;
+      key += RiTa.trimPunctuation(arguments[i]) + ' ';
+    }
+    return key.toLowerCase().trim().replace(/[’‘?]+/g,'');
+  }
+
+  function makeXKey(parts) {
 
     // if (!arguments.length) throw Error('bad args');
     //
-    // var s = 'makeKey(';
+    // var s = 'makeXKey(';
     // for (var i = 0; i < arguments.length; i++) {
     //   s += arguments[i]+',';
     // }
@@ -1540,7 +1556,7 @@ var PageManager = function (host, port) {
     //   parts.push(arguments[2]);
     // }
 
-    //console.log('makeKey -> '+ parts.length);
+    //console.log('makeXKey -> '+ parts.length);
 
     if (typeof parts === 'string' || parts.length < 2 || parts.length > 3)
       throw Error('invalid arg: ' + parts);
@@ -1555,54 +1571,42 @@ var PageManager = function (host, port) {
     return key.toLowerCase().trim().replace(/[’‘?]+/g, '');
   };
 
-  this.isBigram = function (rts, threshold) {
+  this.isBigram = function (w1, w2, threshold) {
 
-    threshold = threshold || 0;
-    return this.bigramCount(rts) > threshold;
+    return this.bigramCount(w1, w2) > (threshold || 0);
   };
 
-  this.bigramCount = function (rts) {
+  this.bigramCount = function (w1, w2) {
 
-    var count = 0, key = '', words = [];
+    if (arguments.length !== 2)
+      throw Error("Invalid args"+arguments);
 
     if (!this.perigrams[2])
       throw Error("No 2-grams loaded!");
 
-    if (rts) {
-
-      if (!Array.isArray(rts))
-        throw Error('Bad arg: '+typeof rts.length);
-
-      key = makeKey(rts);
-      count = this.perigrams[2][key] || 0;
-    }
+    var key = makeKey(w1, w2);
+    var count = this.perigrams[2][key] || 0;
 
     //console.log('  bigram? '+key+" -> "+count);
 
     return count;
   };
 
-  this.isTrigram = function (rts, threshold) {
+  this.isTrigram = function (w1, w2, w3, threshold) {
 
-    threshold = threshold || 0;
-    return this.trigramCount(rts) > threshold;
+    return this.trigramCount(w1, w2, w3) > (threshold || 0);
   };
 
-  this.trigramCount = function (rts) {
+  this.trigramCount = function (w1, w2, w3) {
 
-    var count = 0, key = '', words = [];
+    if (arguments.length !== 3)
+      throw Error("Invalid args"+arguments);
 
     if (!this.perigrams[3])
       throw Error("No 3-grams loaded!");
 
-    if (rts) {
-
-      if (!Array.isArray(rts))
-        throw Error('Bad arg: '+typeof rts);
-
-      key = makeKey(rts);
-      count = this.perigrams[3][key] || 0;
-    }
+    var key = makeKey(w1, w2, w3);
+    var count = this.perigrams[3][key] || 0;
 
     //console.log('  trigram? '+key+" -> "+count);
     return count;
