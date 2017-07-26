@@ -1503,21 +1503,6 @@ var PageManager = function (host, port) {
     this.perigrams[n] = obj;
   };
 
-
-	// makeKey: function (last, curr, next) {
-  //
-	// 	var S = ' ', key = '';
-	// 	if (arguments.length == 2) {
-	// 		if (!last || !curr) return '';
-	// 		key = RiTa.trimPunctuation(last.text()) + S + RiTa.trimPunctuation(curr.text());
-	// 	} else {
-	// 		if (!last || !next || !curr) return '';
-	// 		key = RiTa.trimPunctuation(last.text()) + S + RiTa.trimPunctuation(curr.text()) + S + RiTa.trimPunctuation(next.text());
-	// 	}
-	// 	key = key.toLowerCase().replace(/’|‘|\?/g, '');
-	// 	return key;
-	// },
-
   function makeKey() {
 
     if (arguments.length < 2 || arguments.length > 3
@@ -1533,43 +1518,6 @@ var PageManager = function (host, port) {
     }
     return key.toLowerCase().trim().replace(/[’‘?]+/g,'');
   }
-
-  function makeXKey(parts) {
-
-    // if (!arguments.length) throw Error('bad args');
-    //
-    // var s = 'makeXKey(';
-    // for (var i = 0; i < arguments.length; i++) {
-    //   s += arguments[i]+',';
-    // }
-    // s += ');';
-    // console.log(s);
-    //
-    // var parts;
-    // if (arguments.length === 1) {
-    //   parts = arguments[0];
-    // }
-    // if (arguments.length > 1) {
-    //   parts = [ arguments[0], arguments[1]];
-    // }
-    // if (arguments.length > 2) {
-    //   parts.push(arguments[2]);
-    // }
-
-    //console.log('makeXKey -> '+ parts.length);
-
-    if (typeof parts === 'string' || parts.length < 2 || parts.length > 3)
-      throw Error('invalid arg: ' + parts);
-
-    var key = '';
-    for (var i = 0; i < parts.length; i++) {
-      if (!parts[i]) continue;
-      var part = (typeof parts[i].text === 'string' ? parts[i] : parts[i].text());
-      key += RiTa.trimPunctuation(part) + ' ';
-    }
-    //key = key.trim().replace(/’|‘|\?/g, '');
-    return key.toLowerCase().trim().replace(/[’‘?]+/g, '');
-  };
 
   this.isBigram = function (w1, w2, threshold) {
 
@@ -1782,7 +1730,7 @@ var PageManager = function (host, port) {
 
     var cf, data;
 
-    if (typeof io == 'undefined') {
+    if (typeof io === 'undefined') {
       warn('no io!');
       this.warnAndWait(reader);
       return;

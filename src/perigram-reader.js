@@ -96,10 +96,15 @@ PerigramReader.prototype.textForServer = function () {
 
   var rts = this.currentKey;
 
-  if (!rts) continue;
-  
+  if (!rts || !rts.length || !rts[0]) {
+    //console.warn("Waiting for currentKey...");
+    return;
+  }
+
   if (rts.length !== 3)
     throw Error("Invalid args: "+arguments[0]);
+
+  //console.log('textForServer: ',rts[0].text(),rts[1].text(),rts[2].text());
 
 	if (this.pman.isTrigram(rts[0].text(),rts[1].text(),rts[2].text())) {
 		this.phrase = this.phrase + this.current.text() + ' ';
