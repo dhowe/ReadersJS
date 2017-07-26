@@ -134,14 +134,20 @@ ObliquePerigramReader.prototype._determineReadingPath = function (last, neighbor
   for (var directionIdx = 0; directionIdx < 9; directionIdx++)
   {
     // only try path if not null and not current or next or west
-    if (neighbors[directionIdx] && (directionIdx != Grid.DIRECTION.W) && (directionIdx != Grid.DIRECTION.E) && (directionIdx != Grid.DIRECTION.C))
-    {
-      var newScore, USE_PERIGRAMS = false; // TODO: does not USE_PERIGRAMS
-      if (USE_PERIGRAMS)
-        newScore = this.tryPath(neighbors[directionIdx], pathWeighting[directionIdx], perigrams);
-      else {
-      	newScore = this._directionalCount(this._assembleKey(last, this.current, neighbors[directionIdx]), directionIdx) * pathWeighting[directionIdx];
+    if (neighbors[directionIdx] && (directionIdx != Grid.DIRECTION.W) && (directionIdx != Grid.DIRECTION.E)
+      && (directionIdx != Grid.DIRECTION.C)) {
+
+      var newScore = 0;
+
+      // USE_PERIGRAMS = false; // TODO: does not USE_PERIGRAMS
+      // if (USE_PERIGRAMS) newScore = this.tryPath(neighbors[directionIdx], pathWeighting[directionIdx], perigrams);
+
+      if (last) { // JC: better check this
+
+        var tcount = this.pman.trigramCount(last.text(), this.current.text(), neighbors[directionIdx].text());
+    	  newScore = tcount /*, directionIdx)*/ * pathWeighting[directionIdx]; // directionIdx appeared unused
       }
+
 			// info("bestscore newScore: " + bestScore + " " + newScore); // DEBUG
       // make wayToGo the highest scoring neighbor
       if (newScore > bestScore)
@@ -161,13 +167,14 @@ ObliquePerigramReader.prototype._determineReadingPath = function (last, neighbor
   	if (nextDir == -1) {
 			nextDir = Grid.DIRECTION.E;
   	} else {
+
   	// info((nextDir == -1 ? "nothing viable" : "progressing on a 1 in 7 chance")); // DEBUG
   		var viableDir = false;
   		for (nextDir = 6; nextDir < 9; nextDir++) {
 				if (neighbors[nextDir]) {
-					var key = this._assembleKey(last, this.current, neighbors[nextDir]);
-					var count = this._directionalCount(key, nextDir);
-					var threshold = this._getThreshold(key);
+					//var key = this.makeKey(last, this.current, neighbors[nextDir]);
+          var count = this.pman.trigramCount(last.text(), this.current.text(), neighbors[nextDir].text()) || 0;
+					var threshold = this._weightStopWords(0, last, this.current, neighbors[nextDir]);
 					viableDir = this._isViableDirection(count, threshold);
 				}
 				if (viableDir) {
@@ -195,8 +202,10 @@ ObliquePerigramReader.prototype._determineReadingPath = function (last, neighbor
   return nextCell;
 };
 
+/* // JC: needed?
+
 ObliquePerigramReader.prototype._getThreshold = function (key) {
-  return key ? this._adjustForStopWords(0, key/*.split(' ')*/) : Number.MAX_SAFE_INTEGER;
+  return key ? this._ adjustForStopWords(0, key) : Number.MAX_SAFE_INTEGER;
 };
 
 ObliquePerigramReader.prototype._directionalCount = function (key, dir) {
@@ -213,7 +222,7 @@ ObliquePerigramReader.prototype._assembleKey = function (last, curr, neighbor) {
   // key = (last.text() + S + curr.text() + S + neighbor.text()).toLowerCase();
   // return RiTa.stripPunctuation(key);
   return [last, curr, neighbor];
-};
+};*/
 
 ObliquePerigramReader.prototype._isViableDirection = function (count, threshold) {
   return count > threshold;

@@ -25,14 +25,13 @@ function setup() {
 
     // add some readers
     new PerigramReader(pManager.recto, SPEED.Fluent);
-    new MesosticJumper(pManager.verso).hide(0);
-    //new MesosticReader(pManager.verso);
     new ObliquePerigramReader(pManager.verso);
     new SpawningSimpleReader(pManager.recto);
     new SpawningPerigramReader(pManager.verso);
+    new MesosticJumper(pManager.verso);
 
     // pick one to get focus
-    pManager.focus(randomReader());
+    pManager.focus('SpawningSimpleReader');//randomReader());
 
     createInterface();
   });

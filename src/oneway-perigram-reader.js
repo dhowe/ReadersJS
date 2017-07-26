@@ -72,6 +72,7 @@ OnewayPerigramReader.prototype._determineReadingPath = function (last, neighbors
 
   if (this._isViableDirection(this.current, neighbors[this.wayToGo]))
   	vectorNeighbors.push(neighbors[this.wayToGo]);
+
   if (this._isViableDirection(this.current, neighbors[this.altWayToGo]))
   	vectorNeighbors.push(neighbors[this.altWayToGo]);
 
@@ -112,7 +113,7 @@ OnewayPerigramReader.prototype._isViableDirection = function (curr, neighbor) {
 
   if (!curr || !neighbor) return false;
 
-  return this.pman.isBigram([curr, neighbor], this.bigramThreshold);
+  return this.pman.isBigram(curr.text(), neighbor.text(), this.bigramThreshold);
 }
 
 //////////////////////// Exports ////////////////////////
