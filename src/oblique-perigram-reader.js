@@ -174,7 +174,7 @@ ObliquePerigramReader.prototype._determineReadingPath = function (last, neighbor
 				if (neighbors[nextDir]) {
 					//var key = this.makeKey(last, this.current, neighbors[nextDir]);
           var count = this.pman.trigramCount(last.text(), this.current.text(), neighbors[nextDir].text()) || 0;
-					var threshold = this._adjustForStopWords(0, [last, this.current, neighbors[nextDir]]);
+					var threshold = this._weightStopWords(0, last, this.current, neighbors[nextDir]);
 					viableDir = this._isViableDirection(count, threshold);
 				}
 				if (viableDir) {
@@ -205,7 +205,7 @@ ObliquePerigramReader.prototype._determineReadingPath = function (last, neighbor
 /* // JC: needed?
 
 ObliquePerigramReader.prototype._getThreshold = function (key) {
-  return key ? this._adjustForStopWords(0, key) : Number.MAX_SAFE_INTEGER;
+  return key ? this._ adjustForStopWords(0, key) : Number.MAX_SAFE_INTEGER;
 };
 
 ObliquePerigramReader.prototype._directionalCount = function (key, dir) {

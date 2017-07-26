@@ -31,7 +31,7 @@ function setup() {
     new MesosticJumper(pManager.verso);
 
     // pick one to get focus
-    pManager.focus(randomReader());
+    pManager.focus('SpawningSimpleReader');//randomReader());
 
     createInterface();
   });

@@ -96,10 +96,8 @@ PerigramReader.prototype.textForServer = function () {
 
   var rts = this.currentKey;
 
-  if (!rts || !rts.length || !rts[0]) {
-    //console.warn("Waiting for currentKey...");
+  if (!rts || !rts.length || !rts[0])
     return;
-  }
 
   if (rts.length !== 3)
     throw Error("Invalid args: "+arguments[0]);
@@ -107,12 +105,13 @@ PerigramReader.prototype.textForServer = function () {
   //console.log('textForServer: ',rts[0].text(),rts[1].text(),rts[2].text());
 
 	if (this.pman.isTrigram(rts[0].text(),rts[1].text(),rts[2].text())) {
+
 		this.phrase = this.phrase + this.current.text() + ' ';
 		return; // just adding the current word
 	}
 
 	var msg = this.phrase.trim();
-	this.phrase = this.current.text() + ' ';
+	this.phrase = this.current.text() + ' ';  // huh? awk
 	// info(msg); // DEBUG
   return msg;
 }
@@ -196,7 +195,8 @@ PerigramReader.prototype._isViableDirection = function (last, curr, neighbor, di
   if (!last || !curr || !neighbor)
     return false;
 
-  countThreshold = this._adjustForStopWords(0, key.split(' '));
+  //countThreshold = this._adjustForStopWords(0, key.split(' ')); // JC: no key here ??
+  countThreshold = this._weightStopWords(0, last, curr, neighbor);
 
   result = this.pman.isTrigram(last.text(), curr.text(), neighbor.text(), countThreshold);
 
@@ -207,7 +207,35 @@ PerigramReader.prototype._isViableDirection = function (last, curr, neighbor, di
   return result;
 }
 
-PerigramReader.prototype._adjustForStopWords = function (countThreshold, words) {
+PerigramReader.prototype._weightStopWords = function (countThreshold, word1, word2, word3) {
+
+  if (arguments.length !== 4)
+    throw Error('Invalid args1: '+arguments.length);
+
+  var thresholdCount = Array.prototype.shift.apply(arguments);
+
+  if (arguments.length !== 3)
+    throw Error('Invalid args2: '+arguments.length);
+
+  for (var i = 0; i < arguments.length; i++) {
+
+    // order of testing is significant
+    // actual stop words first (more of them with more 'semantics'
+    // so they don't require as high an initial countThreshold rise)
+
+    if (Reader.STOP_WORDS.indexOf(arguments[i]) > -1)
+      thresholdCount += (thresholdCount < 5) ? 5 : 50;
+
+    if (Reader.CLOSED_CLASS_WORDS.indexOf(arguments[i]) > -1)
+      thresholdCount += (thresholdCount < 10) ? 15 : 175;
+  }
+
+  return thresholdCount;
+}
+
+/*PerigramReader.prototype._adjustForStopWords = function (countThreshold, words) {
+
+  // JC: replaced with _weightStopWords above
 
   for (var i = 0; i < words.length; i++) {
     // order of testing is significant
@@ -221,8 +249,8 @@ PerigramReader.prototype._adjustForStopWords = function (countThreshold, words) 
       countThreshold += (countThreshold < 10) ? 15 : 175;
   }
 
-  return countThreshold;
-}
+  return countThreshold; // JC: bad practice to change and return a parameter
+}*/
 
 //////////////////////// Exports ////////////////////////
 

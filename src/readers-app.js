@@ -957,7 +957,7 @@ Reader.findByType = function (types) {
   return result;
 }
 
-Reader.firstOfType = function (type) { // remove
+Reader.firstOfType = function (type) {
 
   for (var i = 0, j = Reader.instances.length; i < j; i++) {
     if (Reader.instances[i].type === type)
@@ -1643,10 +1643,13 @@ var PageManager = function (host, port) {
     return this;
   };
 
-  this.focus = function (reader) {
+  this.focus = function (reader) { // accepts reader object or name
 
     if (arguments.length) {
 
+      if (typeof arguments[0] === 'string') {
+        reader = Reader.firstOfType(reader);
+      }
       this.focused = reader;
       return this;
     }
