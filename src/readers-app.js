@@ -948,8 +948,8 @@ Reader.findByType = function (types) {
     types = [ types ];
   }
   var result = [];
-  for (var j = 0;j < types.length; j++) {
-    for (var i = 0, j = Reader.instances.length; i < j; i++) {
+  for (var j = 0; j < types.length; j++) {
+    for (var i = 0; i < Reader.instances.length; i++) {
       if (Reader.instances[i].type === types[j])
         result.push(Reader.instances[i]);
     }
