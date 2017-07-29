@@ -1160,14 +1160,16 @@ Reader.prototype = {
 
             while (totalLogHeight > maximumLogHeight) {
                 var lastEl = display.childNodes[0];
-                display.removeChild(lastEl);
                 totalLogHeight -= this.getBoxHeight(lastEl);
+                display.removeChild(lastEl);
+                
             }
         }
     },
 
     getBoxHeight: function(el) {
         var elHeight = el.offsetHeight;
+        // console.log(elHeight, window.getComputedStyle(el).getPropertyValue('margin-top'),parseInt(window.getComputedStyle(el).getPropertyValue('margin-top')));
         elHeight += parseInt(window.getComputedStyle(el).getPropertyValue('margin-top'));
         elHeight += parseInt(window.getComputedStyle(el).getPropertyValue('margin-bottom'));
         return elHeight;
