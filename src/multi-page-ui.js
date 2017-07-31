@@ -25,14 +25,13 @@ var bgColor = 0,
   activeReadersBeforeSolo,
   maximumLogHeight = calculateMaximumLogHeight();
 
-
 function createInterface() {
 
-  Reader.instances.forEach(function(reader) {
+  Reader.instances.forEach(function (reader) {
 
     var rb = createCheckbox(" ", !reader.hidden);
     rb.class("reader");
-    rb.elt.children[1].setAttribute("title","enable/disable");
+    rb.elt.children[1].setAttribute("title", "enable/disable");
     rb.id(reader.type);
     rb.parent("interface");
 
@@ -71,11 +70,13 @@ function createInterface() {
     // rb.child(document.getElementById('hoverTextWrapper').cloneNode(true)); // onhover message
   });
 
-  var textSelect,
-    styleSelect,
-    themeSelect,
+  var textSelect, styleSelect, themeSelect,
     uiElements = [
-      (textSelect = initSelect("textSelect", "full", textNames(), textChanged)),
+      (textSelect = initSelect(
+        "textSelect",
+        "full",
+        textNames(),
+        textChanged)),
       (styleSelect = initSelect(
         "styleSelect",
         "half",
@@ -84,8 +85,7 @@ function createInterface() {
       )),
       (themeSelect = initSelect(
         "themeSelect",
-        "half",
-        ["Dark", "Light"],
+        "half", ["Dark", "Light"],
         themeChanged
       ))
     ];
@@ -99,7 +99,8 @@ function createInterface() {
 
       focused = randomReader();
       warn("Focus repair" + (focused ? ": " + focused.type // FIX ME
-            : " failed: " + (activeReaders().length + " readers")));
+        :
+        " failed: " + (activeReaders().length + " readers")));
     }
     focusChanged(focused);
   }
@@ -125,7 +126,7 @@ function createInterface() {
 
   function textNames() {
     var names = [];
-    TEXTS.forEach(function(text) {
+    TEXTS.forEach(function (text) {
       names.push(text.title);
     });
     return names;
@@ -149,7 +150,8 @@ function createInterface() {
   // }
 
   function resetFocus() {
-    var focused = pManager.focus(), actives = activeReaders();
+    var focused = pManager.focus(),
+      actives = activeReaders();
 
     // if only one reader is active and its not focused, give it focus
     if (actives.length == 1 && actives[0] !== focused) {
@@ -175,12 +177,14 @@ function createInterface() {
   }
 
   function focusChanged(focused) {
+
     log("[UI] Focus: " + focused.type);
     //focused && pManager.focus(focused); // not needed?
     assignFocus(focused);
   }
 
   function focusButtonPushed() {
+
     if (this.elt.firstElementChild.checked) {
       focusChanged(Reader.firstOfType(this.elt.parentElement.id));
     } else {
@@ -190,12 +194,14 @@ function createInterface() {
   }
 
   function soloButtonPushed() {
+
     var targetReader = Reader.firstOfType(this.elt.parentElement.id);
     if (this.elt.firstElementChild.checked) solo(targetReader);
     else unsolo();
   }
 
   function solo(targetReader) {
+
     var readers = document.getElementsByClassName("reader");
 
     // disable all other readers, turn off active readers in the background
@@ -218,11 +224,11 @@ function createInterface() {
     focusChanged(targetReader);
     document
       .getElementById(targetReader.type)
-      .getElementsByClassName("smallButton focus"
-      )[0].firstElementChild.checked = true;
+      .getElementsByClassName("smallButton focus")[0].firstElementChild.checked = true;
   }
 
   function unsolo(r) {
+
     // turn on other readers
     var readers = document.getElementsByClassName("reader");
 
@@ -231,21 +237,22 @@ function createInterface() {
       readers[i].classList.remove("disabled");
       readers[i].classList.remove("solo");
       readers[i].getElementsByClassName(
-          "smallButton solo"
+        "smallButton solo"
       )[0].firstElementChild.checked = false;
       //if the reader is checked in interface, turn it on
       if (readers[i].firstElementChild.checked === true) {
         reader.hide(false);
-      } else if ( reader === r) {
-         reader.hide(false);
-         readers[i].getElementsByTagName("input")[0].checked = true;
+      } else if (reader === r) {
+        reader.hide(false);
+        readers[i].getElementsByTagName("input")[0].checked = true;
       }
     }
   }
 
   function speedToName(spd) {
+
     var result;
-    Object.keys(SPEED).forEach(function(name) {
+    Object.keys(SPEED).forEach(function (name) {
       if (SPEED[name] === spd) result = name;
     });
     if (!result) throw Error("unknown speed: " + spd);
@@ -253,25 +260,28 @@ function createInterface() {
   }
 
   function speedChanged() {
+
     var spd = this.value();
     this.source.speed = SPEED[spd];
     log("[UI] " + this.source.type + ".speed=" + this.source.speed);
   }
 
   function log() {
+
     uiLogging && console.log.apply(console, arguments);
   }
 
   ////////////////////////////////////////////////////////////////////
 
-  window.onresize = function() {
+  window.onresize = function () {
+
     // recalculate maximumLogHeight
     maximumLogHeight = calculateMaximumLogHeight();
   };
 
   document.getElementById("options").addEventListener(
     "click",
-    function() {
+    function () {
       if (menu.offsetHeight === 0) {
         menu.style.display = "block";
         instructions.style.visibility = "hidden";
@@ -288,7 +298,7 @@ function createInterface() {
   // hide interface
   document.getElementsByTagName("body")[0].addEventListener(
     "click",
-    function(event) {
+    function (event) {
       var ui = document.getElementById("interface");
       if (
         ui.offsetHeight > 0 &&
@@ -303,19 +313,22 @@ function createInterface() {
   ////////////////////////////////////////////////////////////////////
 
   function onReaderSingleClick(reader, state) {
+
     readerOnOffEvent(reader, state);
   }
 
   function turnOffAllReaders(current) {
-      activeReaders().forEach(function(r) {
-          readerOnOffEvent(r, false);
-          if (r != current)
-          document.getElementById(r.type).getElementsByTagName("input")[0].checked = false;
-      });
+
+    activeReaders().forEach(function (r) {
+      readerOnOffEvent(r, false);
+      if (r != current)
+        document.getElementById(r.type).getElementsByTagName("input")[0].checked = false;
+    });
   }
 
-  menu.addEventListener("click", function(event) {
-    var ele = event.target, reader;
+  menu.addEventListener("click", function (event) {
+    var ele = event.target,
+      reader;
 
     if (ele.matches(".reader.disabled") || ele.parentNode.matches(".reader.disabled")) {
       reader = Reader.firstOfType(ele.id) ? Reader.firstOfType(ele.id) : Reader.firstOfType(ele.parentNode.id);
@@ -323,7 +336,7 @@ function createInterface() {
     } else if (ele.matches(".reader > label")) {
       reader = Reader.firstOfType(ele.parentNode.id);
       var currentState = ele.parentNode.getElementsByTagName("input")[0].checked;
-      if(event.altKey && currentState === true) {
+      if (event.altKey && currentState === true) {
         turnOffAllReaders(reader);
         return;
       }
@@ -342,7 +355,7 @@ function createInterface() {
   //   }
   // })
 
-  menu.addEventListener("mouseout", function(event) {
+  menu.addEventListener("mouseout", function (event) {
     if (timeoutId) {
       window.clearTimeout(timeoutId);
       timeoutId = null;
@@ -370,11 +383,11 @@ function pauseInterface(val) {
 }
 
 function calculateMaximumLogHeight() {
-    return window.innerHeight - $("#focusDisplayTag").outerHeight() - parseInt($("#focusDisplay").css("padding-top"));
+  return window.innerHeight - $("#focusDisplayTag").outerHeight() - parseInt($("#focusDisplay").css("padding-top"));
 }
 
 // handle cases where tab is not the active tab, sleep, screensaver
-document.addEventListener("visibilitychange", function() {
+document.addEventListener("visibilitychange", function () {
   if (!document.hidden) console.log("[UI] Tab reactivated");
   pauseInterface(document.hidden);
 });
@@ -393,22 +406,22 @@ $(window).focus(function() {
 });
 */
 
-$(document).ready(function() {
+$(document).ready(function () {
 
-  $("#focusDisplayTag").click(function() {
+  $("#focusDisplayTag").click(function () {
     var tag = $("#focusDisplay:visible").length === 0 ? " - " : " + ";
     $("#focusDisplay").toggle("slide");
     $("#status").html(tag);
   });
 
-  $("body").on("click", "ul.select li.init", function() {
+  $("body").on("click", "ul.select li.init", function () {
     // hide other select list if opened
     $("ul").children("li:not(.init)").hide();
     $("ul").children("li.init").show();
     $(this).closest("ul").children("li").toggle();
   });
 
-  $("body").on("click", "ul.select li:not(.init)", function() {
+  $("body").on("click", "ul.select li:not(.init)", function () {
     var allOptions = $("ul").children("li:not(.init)");
     allOptions.removeClass("selected");
     $(this).addClass("selected");

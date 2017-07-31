@@ -114,13 +114,11 @@ M.onExitCell = function (curr) {
 
 M.textForServer = function () {
 
-  var lett, tfs, txt = this.current.text();
-
   if (!this.letter) return '';
 
-  lett = this.letter.toUpperCase();
-
-  tfs = this._pad(txt, lett, txt.indexOf(lett));
+  var lett = this.letter.toUpperCase();
+  var txt = this.current.text().replace(/\./,'');
+  var tfs = this._pad(txt, lett, txt.indexOf(lett));
 
   if (this.sendLinebreak) {
 
@@ -133,10 +131,10 @@ M.textForServer = function () {
 
 M._pad = function (raw, c, idx) {
 
-  var pre = raw.substring(0, idx),
-    padStr = '';
-  for (var i = 0; i < this.maxWordLen - pre.length - 1; i++)
+  var pre = raw.substring(0, idx), padStr = '';
+  for (var i = 0; i < this.maxWordLen - pre.length - 1; i++) {
     padStr += ' ';
+  }
 
   return padStr + raw;
 }

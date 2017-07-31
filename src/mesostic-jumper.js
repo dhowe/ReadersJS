@@ -4,8 +4,8 @@ subclass(MesosticJumper, MesosticReader);
 
 function MesosticJumper(g, rx, ry, speed) {
 
-  MesosticReader.call(this, g, rx, ry, speed); // superclass constructor
-  this.type = 'MesosticJumper'; //  superclass variable(s)
+  MesosticReader.call(this, g, rx, ry, speed);
+  this.type = 'MesosticJumper';
   this.activeFill = colorToObject(0, 149, 255, 255); // #0095FF
 }
 
@@ -144,7 +144,7 @@ MesosticJumper.prototype.searchLineForLetter = function(letter, last, rtg, lineI
     return s.trim() + ']';
   }
 
-  // console.log("Result="+str(result));
+  //console.log("Result="+str(result));
 
   return result;
 }
@@ -154,39 +154,6 @@ MesosticJumper.prototype.onEnterCell = function (curr) {
     curr.fill(this.activeFill);
   }
 }
-
-// M.onExitCell = function (curr) {
-//
-//   curr.colorTo(this.pman.defaultFill, 1);
-//   Grid.resetCell(curr, true);
-// }
-
-// M.textForServer = function () {
-//
-//   var lett, tfs, txt = this.current.text();
-//
-//   if (!this.letter) return '';
-//
-//   lett = this.letter.toUpperCase();
-//   tfs = this._pad(txt, lett, txt.indexOf(lett));
-//
-//   if (this.sendLinebreak) {
-//     this.sendLinebreak = false;
-//     tfs = "\n" + tfs;
-//   }
-//
-//   return tfs;
-// },
-
-// M._pad = function (raw, c, idx) {
-//
-//   var pre = raw.substring(0, idx), padStr = '';
-//
-//   for (var i = 0; i < this.maxWordLen - pre.length - 1; i++)
-//     padStr += ' ';
-//
-//   return padStr + raw;
-// }
 
 if (typeof module != 'undefined' && module.exports) { // for node
 

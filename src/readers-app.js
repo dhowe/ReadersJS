@@ -1136,48 +1136,43 @@ Reader.prototype = {
     }, reader.stepTime);
   },
 
-    outputAsHTML: function(msg) {
+  outputAsHTML: function (msg) {
 
-        if (!msg || !msg.length) return;
+    if (!msg || !msg.length) return;
 
-        if (typeof createP === "function") {
+    if (typeof createP === "function") {
 
-            // create a <p> tag as last element in 'focusDisplay'
-            createP(msg).parent("focusDisplay");
+      // create a <p> tag as last element in 'focusDisplay'
+      createP(msg).parent("focusDisplay");
 
-            var display = document.getElementById("focusDisplay");
+      var display = document.getElementById("focusDisplay");
 
-            if (!(display && display.childNodes && display.childNodes.length)) {
-                return;
-            }
+      if (!(display && display.childNodes && display.childNodes.length)) {
+        return;
+      }
 
-            // now scroll up if necessary
-            var totalLogHeight = 0;
-            for (var i = 0; i < display.childNodes.length; i++) {
-                var el = display.childNodes[i];
-                totalLogHeight += this.getBoxHeight(el);
-            }
+      // now scroll up if necessary
+      var totalLogHeight = 0;
+      for (var i = 0; i < display.childNodes.length; i++) {
+        var el = display.childNodes[i];
+        totalLogHeight += this.getBoxHeight(el);
+      }
 
-            while (totalLogHeight > maximumLogHeight) {
-                var lastEl = display.childNodes[0];
-                totalLogHeight -= this.getBoxHeight(lastEl);
-                display.removeChild(lastEl);
-                
-            }
-        }
-    },
+      while (totalLogHeight > maximumLogHeight) {
+        var lastEl = display.childNodes[0];
+        totalLogHeight -= this.getBoxHeight(lastEl);
+        display.removeChild(lastEl);
+      }
+    }
+  },
 
-    getBoxHeight: function(el) {
-        var elHeight = el.offsetHeight;
-        // console.log(elHeight, window.getComputedStyle(el).getPropertyValue('margin-top'),parseInt(window.getComputedStyle(el).getPropertyValue('margin-top')));
-        elHeight += parseInt(window.getComputedStyle(el).getPropertyValue('margin-top'));
-        elHeight += parseInt(window.getComputedStyle(el).getPropertyValue('margin-bottom'));
-        return elHeight;
-    },
+  getBoxHeight: function (el) {
 
-  formatMessage: function (msg) {
-
-    return
+    var elHeight = el.offsetHeight;
+    // console.log(elHeight, window.getComputedStyle(el).getPropertyValue('margin-top'),parseInt(window.getComputedStyle(el).getPropertyValue('margin-top')));
+    elHeight += parseInt(window.getComputedStyle(el).getPropertyValue('margin-top'));
+    elHeight += parseInt(window.getComputedStyle(el).getPropertyValue('margin-bottom'));
+    return elHeight;
   },
 
   hasFocus: function () {
