@@ -4,7 +4,7 @@ var pManager, font, bgColor, showFocus, fps = false;
 
 function preload() {
 
-  font = loadFont('fonts/Baskerville.ttf');
+  font = loadFont('fonts/SongtiSCRegular.ttf');
 }
 
 function setup() {
