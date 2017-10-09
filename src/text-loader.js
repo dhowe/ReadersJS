@@ -2,6 +2,8 @@ var TEXTS = [{
   title: 'Xingxiang',
   file: 'data/image_cn.txt',
   trigrams: 'data/theImage_cn-trigrams.js',
+  file: 'data/image_ch.txt',
+  trigrams: 'data/theImage_ch-trigrams.js',
   mesostic: 'comes in is over goes out is done lolls in stays there is had no more'
 }, {
   title: 'Misspelt Landings',
@@ -15,7 +17,7 @@ var TEXTS = [{
   mesostic: 'reading as writing through'
 }, {
   title: 'The Image',
-  file: 'data/image_ch.txt',
+  file: 'data/image.txt',
   trigrams: 'data/theImage-trigrams.js',
   mesostic: 'comes in is over goes out is done lolls in stays there is had no more'
 }];
