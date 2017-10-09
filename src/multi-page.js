@@ -24,14 +24,15 @@ function setup() {
     pManager.gridFill(colorToObject(255, 255, 255, 40));
 
     // add some readers
-    new PerigramReader(pManager.recto, SPEED.Fluent);
+    new MarkovJumper(pManager.verso, SPEED.Fluent);
+    // new PerigramReader(pManager.recto, SPEED.Fluent);
     new ObliquePerigramReader(pManager.verso);
     new SpawningSimpleReader(pManager.recto);
     new SpawningPerigramReader(pManager.verso);
-    new MesosticJumper(pManager.verso);
+    // new MesosticJumper(pManager.verso);
 
     // pick one to get focus
-    pManager.focus('SpawningSimpleReader');//randomReader());
+    pManager.focus('MarkovJumper');//randomReader());
 
     createInterface();
   });
