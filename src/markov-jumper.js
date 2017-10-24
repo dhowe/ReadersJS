@@ -25,6 +25,7 @@ function MarkovJumper(g, rx, ry, speed) {
   this.currentKey = undefined;
 }
 
+/* 
 MarkovJumper.prototype.selectNext = function () {
 
   var last = this.lastRead(2),
@@ -32,7 +33,9 @@ MarkovJumper.prototype.selectNext = function () {
 
   return this._determineReadingPath(last, neighbors);
 }
+ */
 
+/* 
 MarkovJumper.prototype.onEnterCell = function (curr) {
 
   // console.log('onEnter: '+ curr.text() + " " + this.speed + " " + this.stepTime);
@@ -73,24 +76,9 @@ MarkovJumper.prototype.onEnterCell = function (curr) {
   curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack + this.speed); // delayBeforeFadeBack
 
 }
+ */
 
-MarkovJumper.prototype.onExitCell = function (curr) {
-
-  // console.log('onExit: '+curr);
-  //curr.colorTo(this.neighborCol, this.speed * .8, this.speed); // DCH: 2/2/2017
-  //curr.showBounds(0);
-}
-
-/*MarkovJumper.prototype.hide = function (v) { // needed?
-	this.hidden = v;
-	if (this.hidden) {
-		var c = RiText.defaultFill();
-		//setTimeout(function(){},100);
-		this.current.stopBehaviors();
-	  this.current.fill(c);
-	}
-}*/
-
+/* 
 MarkovJumper.prototype.textForServer = function () {
 
   var rts = this.currentKey;
@@ -114,10 +102,14 @@ MarkovJumper.prototype.textForServer = function () {
 	// info(msg); // DEBUG
   return msg;
 }
+ */
 
+/* 
 MarkovJumper.prototype._determineReadingPath = function (last, neighbors) {
 
   if (!neighbors) throw Error("no neighbors");
+
+	return neighbors[E]; // DEBUG TEMP
 
   if (!this.current) throw Error("no current cell!");
 
@@ -184,7 +176,9 @@ MarkovJumper.prototype._determineReadingPath = function (last, neighbors) {
     return neighbors[E] || this.current;
   }
 }
+ */
 
+/* 
 MarkovJumper.prototype._isViableDirection = function (last, curr, neighbor, dir) {
 
   dir = dir || -1;
@@ -205,7 +199,9 @@ MarkovJumper.prototype._isViableDirection = function (last, curr, neighbor, dir)
 
   return result;
 }
+ */
 
+/* 
 MarkovJumper.prototype._weightStopWords = function (countThreshold, word1, word2, word3) {
 
   if (arguments.length !== 4)
@@ -231,25 +227,7 @@ MarkovJumper.prototype._weightStopWords = function (countThreshold, word1, word2
 
   return thresholdCount;
 }
-
-/*MarkovJumper.prototype._adjustForStopWords = function (countThreshold, words) {
-
-  // JC: replaced with _weightStopWords above
-
-  for (var i = 0; i < words.length; i++) {
-    // order of testing is significant
-    // actual stop words first (more of them with more 'semantics'
-    // so they don't require as high an initial countThreshold rise)
-
-    if (Reader.STOP_WORDS.indexOf(words[i]) > -1)
-      countThreshold += (countThreshold < 5) ? 5 : 50;
-
-    if (Reader.CLOSED_CLASS_WORDS.indexOf(words[i]) > -1)
-      countThreshold += (countThreshold < 10) ? 15 : 175;
-  }
-
-  return countThreshold; // JC: bad practice to change and return a parameter
-}*/
+ */
 
 //////////////////////// Exports ////////////////////////
 
