@@ -25,15 +25,14 @@ function MarkovJumper(g, rx, ry, speed) {
   this.currentKey = undefined;
 }
 
-/* 
 MarkovJumper.prototype.selectNext = function () {
 
   var last = this.lastRead(2),
     neighbors = Grid.gridFor(this.current).neighborhood(this.current);
+    info(this.current.text() + " neighbors: " + neighbors); // DEBUG
 
   return this._determineReadingPath(last, neighbors);
 }
- */
 
 /* 
 MarkovJumper.prototype.onEnterCell = function (curr) {
@@ -104,12 +103,9 @@ MarkovJumper.prototype.textForServer = function () {
 }
  */
 
-/* 
 MarkovJumper.prototype._determineReadingPath = function (last, neighbors) {
 
   if (!neighbors) throw Error("no neighbors");
-
-	return neighbors[E]; // DEBUG TEMP
 
   if (!this.current) throw Error("no current cell!");
 
@@ -123,6 +119,8 @@ MarkovJumper.prototype._determineReadingPath = function (last, neighbors) {
     SE = 8,
     wayToGo = E,
     conText;
+
+	return neighbors[E]; // DEBUG TEMP
 
   this.consoleString = '';
 
@@ -176,7 +174,6 @@ MarkovJumper.prototype._determineReadingPath = function (last, neighbors) {
     return neighbors[E] || this.current;
   }
 }
- */
 
 /* 
 MarkovJumper.prototype._isViableDirection = function (last, curr, neighbor, dir) {
