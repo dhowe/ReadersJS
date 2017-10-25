@@ -1,7 +1,7 @@
 var TEXTS = [{
   title: 'Xingxiang',
-  file: 'data/image_ch.txt',
-  trigrams: 'data/theImage_ch-trigrams.js',
+  file: 'data/image_cn.txt',
+  trigrams: 'data/theImage_cn-trigrams.js',
   mesostic: 'comes in is over goes out is done lolls in stays there is had no more'
 }, {
   title: 'Misspelt Landings',
