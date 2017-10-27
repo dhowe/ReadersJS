@@ -476,6 +476,71 @@ Grid.prototype = {
 
   },
 
+  cnNeighborhood: function (center) {
+
+    if (!center) {
+      warn("Null RiText passed to Grid.cnNeighborhood()");
+      return []; // returning an empty array. Was: new RiText[9];
+    }
+
+    var over, under; // rt's (not arrays)
+    var pOver, pUnder; // points: grid x,y's of over and under
+    var pCenter = Grid.coordsFor(center); // point object
+
+    if (!pCenter) {
+      warn("No coords " + "for center: " + center + ", returning []!");
+      return [];
+    }
+
+    var g = pCenter.grid,
+      nextGrid = g.getNext(),
+      lineY = pCenter.y,
+      lineX = pCenter.x,
+      rts = [];
+
+    // get cell directly above if not 1st line
+    // we do not allow the first line to wrap back to end of text
+    if (lineY > 0) {
+	  rts[1] = g.cellAt(pCenter.x, pCenter.y - 1);
+    } else {
+      // J: on first line of grid, do nothing - 'over' remains undefined
+    }
+
+    // get cell directly below
+    if (lineY < g.numLines() - 1) { // not the last line
+      rts[7] = g.cellAt(pCenter.x, pCenter.y + 1);
+    } else {
+      rts[7] = nextGrid.cellAt(pCenter.x, 0);
+    }
+
+    // center row (3,4,5)
+    // the lineX > 0 here means that if Grid.ALLOW_ACROSTIC_NEIGHBORS is false
+    // then a previous word at the end of the line above will not be put into rts[3] West
+    if (lineX > 0 || Grid.ALLOW_ACROSTIC_NEIGHBORS) {
+      rts[3] = Grid.previousCell(center);
+    }
+
+    rts[4] = undefined; // DEBUG or: center if center is allowed to be a neighbor
+
+    // always wrap, to defer test: if (x < (y).length - 1)
+    rts[5] = Grid.nextCell(center); // JC: what if rts[5] is on the next grid?
+
+    // top row (2,1,0)
+    if (rts[1]) {
+      rts[2] = Grid.nextCell(rts[1]);
+      rts[0] = Grid.previousCell(rts[1]);
+    }
+
+    // bottom row (8,7,6)
+    if (rts[7]) {
+      rts[8] = Grid.nextCell(rts[7]);
+      rts[6] = Grid.previousCell(rts[7]);
+    }
+
+    return rts;
+
+  },
+
   /**
    * Returns all words whose bounding boxes contain the x position of the RiText
    * specified, plus or minus the amount of 'slop' specified.

@@ -28,8 +28,8 @@ function MarkovJumper(g, rx, ry, speed) {
 MarkovJumper.prototype.selectNext = function () {
 
   var last = this.lastRead(2),
-    neighbors = Grid.gridFor(this.current).neighborhood(this.current);
-    info(this.current.text() + " neighbors: " + neighbors); // DEBUG
+    neighbors = Grid.gridFor(this.current).cnNeighborhood(this.current);
+    // info(this.current.text() + " neighbors: " + neighbors); // DEBUG
 
   return this._determineReadingPath(last, neighbors);
 }
@@ -120,83 +120,41 @@ MarkovJumper.prototype._determineReadingPath = function (last, neighbors) {
     wayToGo = E,
     conText;
 
-	return neighbors[E]; // DEBUG TEMP
-
   this.consoleString = '';
 
-  // only go NE if it is viable
-  if (this._isViableDirection(last, this.current, neighbors[NE], NE)) {
-    wayToGo = NE;
-    NEViable = true;
+  var rankedDirs = [8,7,6,2,1,5]
+  
+  for (var i = 0; i < rankedDirs.length; i++) {
+  	if (this._isViableDirection(last, this.current, neighbors[rankedDirs[i]])) {
+  	  wayToGo = rankedDirs[i];
+  	  if (Math.floor(Math.random() * 2) == 0) break;
+  	} else {
+  	  // info("no: " + this.current.text()); // DEBUG
+  	}
   }
-
-  if (wayToGo == NE) {
-    // collect the context in any case
-    NEConText = this.current.text() + " " + neighbors[NE].text();
-
-    // but only actually go NE rarely
-    wayToGo = (Math.random() < this.upWeighting) ? NE : E;
-  }
-
-  // only go SE if it is viable
-  if (this._isViableDirection(last, this.current, neighbors[SE], SE))
-    SEViable = true;
-
-  if (SEViable && wayToGo == E)
-    wayToGo = SE;
-
-  if (wayToGo == SE) {
-    // collect the context in any case
-    SEConText = this.current.text() + " " + neighbors[SE].text();
-
-    // but only actually go SE occasionally
-    wayToGo = (Math.random() < this.downWeighting) ? SE : E;
-  }
-
-  //this._buildConTextForServer(wayToGo, neighbors);
-  conText = neighbors[wayToGo].text().replace("—", "-"); // TEMP!
-
-  if (neighbors[wayToGo]) {
-//     this.consoleString = (neighbors[wayToGo].text() + " (" + Grid.direction(wayToGo) + ") ");
-  }
-
-  this.lastDirection = wayToGo;
-  this.currentKey = [last, this.current, neighbors[wayToGo]];
-
-  switch (wayToGo) {
-  case NE:
-	   return neighbors[NE];
-
-  case SE:
-    return neighbors[SE];
-
-  default:
-    return neighbors[E] || this.current;
-  }
+  
+  return neighbors[wayToGo] || this.current;
 }
 
-/* 
 MarkovJumper.prototype._isViableDirection = function (last, curr, neighbor, dir) {
 
   dir = dir || -1;
 
   var result, countThreshold;
 
-  if (!last || !curr || !neighbor)
+  if (!curr || !neighbor) // !last || - no need to check for this with Chinese bigrams
     return false;
+  var key = curr.text() + " " + neighbor.text();
+  result = (key in cnBigrams) ? cnBigrams[key] : 0; // very simple
 
-  //countThreshold = this._adjustForStopWords(0, key.split(' ')); // JC: no key here ??
-  countThreshold = this._weightStopWords(0, last, curr, neighbor);
-
-  result = this.pman.isTrigram(last.text(), curr.text(), neighbor.text(), countThreshold);
-
+/* 
   if (result) {
-   //info("Markov _isViable found: " + key + " (" + Grid.direction(dir) + ") " + countThreshold);
-	}
-
-  return result;
-}
+    info("Markov _isViable found: " + key + " (" + Grid.direction(dir) + ") " + countThreshold);
+  }
  */
+  
+  return result > 0;
+}
 
 /* 
 MarkovJumper.prototype._weightStopWords = function (countThreshold, word1, word2, word3) {
