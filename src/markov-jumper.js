@@ -23,6 +23,7 @@ function MarkovJumper(g, rx, ry, speed) {
   this.fadeOutFactor = 10;
   this.delayFactor = 3;
   this.currentKey = undefined;
+  this.bigramCount = 0;
 }
 
 MarkovJumper.prototype.selectNext = function () {
@@ -34,7 +35,6 @@ MarkovJumper.prototype.selectNext = function () {
   return this._determineReadingPath(last, neighbors);
 }
 
-/* 
 MarkovJumper.prototype.onEnterCell = function (curr) {
 
   // console.log('onEnter: '+ curr.text() + " " + this.speed + " " + this.stepTime);
@@ -75,9 +75,7 @@ MarkovJumper.prototype.onEnterCell = function (curr) {
   curr.colorTo(this.pman.defaultFill, this.fadeOutTime, this.delayBeforeFadeBack + this.speed); // delayBeforeFadeBack
 
 }
- */
 
-/* 
 MarkovJumper.prototype.textForServer = function () {
 
   var rts = this.currentKey;
@@ -85,12 +83,12 @@ MarkovJumper.prototype.textForServer = function () {
   if (!rts || !rts.length || !rts[0])
     return;
 
-  if (rts.length !== 3)
+  if (rts.length !== 2)
     throw Error("Invalid args: "+arguments[0]);
 
   //console.log('textForServer: ',rts[0].text(),rts[1].text(),rts[2].text());
 
-	if (this.pman.isTrigram(rts[0].text(),rts[1].text(),rts[2].text())) {
+	if (cnBigrams[rts[0].text() + " " + rts[1].text()] > 1) {
 
 		this.phrase = this.phrase + this.current.text() + ' ';
 		return; // just adding the current word
@@ -101,7 +99,6 @@ MarkovJumper.prototype.textForServer = function () {
 	// info(msg); // DEBUG
   return msg;
 }
- */
 
 MarkovJumper.prototype._determineReadingPath = function (last, neighbors) {
 
@@ -132,7 +129,9 @@ MarkovJumper.prototype._determineReadingPath = function (last, neighbors) {
   	  // info("no: " + this.current.text()); // DEBUG
   	}
   }
-  
+
+  this.currentKey = [this.current, neighbors[wayToGo]];
+
   return neighbors[wayToGo] || this.current;
 }
 
@@ -140,12 +139,12 @@ MarkovJumper.prototype._isViableDirection = function (last, curr, neighbor, dir)
 
   dir = dir || -1;
 
-  var result, countThreshold;
+  var countThreshold;
 
   if (!curr || !neighbor) // !last || - no need to check for this with Chinese bigrams
     return false;
   var key = curr.text() + " " + neighbor.text();
-  result = (key in cnBigrams) ? cnBigrams[key] : 0; // very simple
+  this.bigramCount = (key in cnBigrams) ? cnBigrams[key] : 0; // very simple
 
 /* 
   if (result) {
@@ -153,7 +152,7 @@ MarkovJumper.prototype._isViableDirection = function (last, curr, neighbor, dir)
   }
  */
   
-  return result > 0;
+  return this.bigramCount > 0;
 }
 
 /* 
