@@ -476,10 +476,10 @@ Grid.prototype = {
 
   },
 
-  cnNeighborhood: function (center) {
+  charNeighborhood: function (center) {
 
     if (!center) {
-      warn("Null RiText passed to Grid.cnNeighborhood()");
+      warn("Null RiText passed to Grid.charNeighborhood()");
       return []; // returning an empty array. Was: new RiText[9];
     }
 

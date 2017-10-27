@@ -14,7 +14,7 @@ function MarkovJumper(g, rx, ry, speed) {
   this.defaultColorDark = hexToRgb("#FA0007"); // red
   this.defaultColorLight = hexToRgb("#C711F24");
 
-  if (!speed) this.speed = SPEED.Fluent; // default speed for MarkovJumpers
+  if (!speed) this.speed = SPEED.Fast; // default speed for MarkovJumpers
 
   this.activeFill = this.defaultColorDark
   // this.neighborCol = [127, 10, 30, 255];
@@ -29,7 +29,7 @@ function MarkovJumper(g, rx, ry, speed) {
 MarkovJumper.prototype.selectNext = function () {
 
   var last = this.lastRead(2),
-    neighbors = Grid.gridFor(this.current).cnNeighborhood(this.current);
+    neighbors = Grid.gridFor(this.current).charNeighborhood(this.current);
     // info(this.current.text() + " neighbors: " + neighbors); // DEBUG
 
   return this._determineReadingPath(last, neighbors);
