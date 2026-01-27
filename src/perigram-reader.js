@@ -28,10 +28,12 @@ function PerigramReader(g, rx, ry, speed) {
 
 PerigramReader.prototype.selectNext = function () {
 
-  var last = this.lastRead(2),
-    neighbors = Grid.gridFor(this.current).neighborhood(this.current);
+  var last = this.lastRead(2);
+  let grid = Grid.gridFor(this.current);
+  let line = grid.lineAt(grid.y);
+  neighbors = grid.neighborhood(this.current);
 
-  return this._determineReadingPath(last, neighbors);
+  return this._determineReadingPath(last, neighbors, grid);
 }
 
 PerigramReader.prototype.onEnterCell = function (curr) {
@@ -116,7 +118,8 @@ PerigramReader.prototype.textForServer = function () {
   return msg;
 }
 
-PerigramReader.prototype._determineReadingPath = function (last, neighbors) {
+PerigramReader.prototype._determineReadingPath = function (last, neighbors, grid) {
+  //console.log('drp', last, neighbors, grid);
 
   if (!neighbors) throw Error("no neighbors");
 
@@ -167,9 +170,10 @@ PerigramReader.prototype._determineReadingPath = function (last, neighbors) {
   //this._buildConTextForServer(wayToGo, neighbors);
   conText = neighbors[wayToGo].text().replace("—", "-"); // TEMP!
 
-  if (neighbors[wayToGo]) {
-//     this.consoleString = (neighbors[wayToGo].text() + " (" + Grid.direction(wayToGo) + ") ");
-  }
+  // info(this.type + ': ' + JSON.stringify(data));
+  // if (neighbors[wayToGo]) {
+  //   console.log(neighbors[wayToGo].text() + " (" + Grid.direction(wayToGo) + ") ");
+  // }
 
   this.lastDirection = wayToGo;
   this.currentKey = [last, this.current, neighbors[wayToGo]];

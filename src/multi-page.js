@@ -31,8 +31,7 @@ function setup() {
     new MesosticJumper(pManager.verso);
 
     // pick one to get focus
-    pManager.focus('SpawningSimpleReader');//randomReader());
-
+    pManager.focus('PerigramReader');
     createInterface();
   });
 }
@@ -73,6 +72,7 @@ function keyPressed() {
   if (key === 'R') dumpMem(); // DEBUG: (PRESS 'r' FOR CONSOLE OUTPUT)
   if (key === 'F') toggleFPS(); // DEBUG: (PRESS 'f' FOR FRAME RATE)
   if (key === ' ') togglePaused(); // DEBUG: (PRESS ' ' TO PAUSE)
+  if (key === 'C') console.log(JSON.stringify(pManager.compressionData));
 }
 
 function togglePaused() {

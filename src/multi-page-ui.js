@@ -366,6 +366,8 @@ function createInterface() {
     }
   });
 
+  var targetReader = Reader.firstOfType('PerigramReader');
+  solo(targetReader);
 } // end createInterface
 
 function focusJump(focused) {
@@ -428,4 +430,5 @@ $(document).ready(function () {
     $(this).closest("ul").children(".init").html($(this).html());
     $(this).closest("ul").children("li").toggle();
   });
+  
 });

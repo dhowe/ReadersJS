@@ -1081,7 +1081,7 @@ Reader.prototype = {
     });
   },
 
-  step: function () {
+  step: function () { // superclass step
 
     var grid, msg, reader = this; // for anonymous function
     if (!this.paused && !this.hidden) {
@@ -1089,6 +1089,44 @@ Reader.prototype = {
       if (this.steps) {
 
         grid = Grid.gridFor(this.current);
+        let coords = Grid.coordsFor(this.current);
+        let lineNum = coords.y;
+        let rts = grid.cells[lineNum];
+        let words = rts.map(c => c.text()); 
+        let line = RiTa.untokenize(words);
+        let testData = this.pman.compressionData;
+        if (!testData[lineNum]) {
+          testData[lineNum] = { 
+            words:  [],
+            y: lineNum,
+            length: line.length
+          };
+        }
+        let lineUntil = words.slice(0, coords.x);
+        let charIndex = RiTa.untokenize(lineUntil).length + (coords.x === 0 ? 0 : 1);
+        let wordData = {
+          word: this.current.text(),
+          x: this.current.x,
+          y: this.current.y,
+          charIndex
+        };
+
+        // store this object for the yth line
+        let lineData = testData[lineNum];
+        lineData.words.push(wordData);
+        let currentState = new Array(lineData.length).fill('_');
+        for (let j = 0; j < lineData.words.length; j++) {
+          let w = lineData.words[j];
+          for (let i = 0; i < w.word.length; i++) {
+            currentState[w.charIndex+i] = w.word[i];
+
+          }
+        }
+        lineData.line = currentState.join('');
+        
+        // JSON
+        //console.log(JSON.stringify(testData,0,2));
+        
 
         this.onExitCell(this.current);
         this.current = this.selectNext();
@@ -1244,6 +1282,7 @@ var PageManager = function (host, port) {
   // constructor
   this.socket = null;
   this.perigrams = {};
+  this.compressionData = [];
   this.defaultFill = colorToObject(0, 255, 0);
 
   // tmp-hack to force mode (TODO: fix me)
