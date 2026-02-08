@@ -15,7 +15,7 @@ function PerigramReader(g, rx, ry, speed) {
   this.defaultColorDark = hexToRgb("#FA0007"); // red
   this.defaultColorLight = hexToRgb("#C711F24");
 
-  if (!speed) this.speed = SPEED.Fluent; // default speed for PerigramReaders
+  if (!speed) this.speed = SPEED.Fast; // default speed for PerigramReaders
 
   this.activeFill = this.defaultColorDark
   // this.neighborCol = [127, 10, 30, 255];
@@ -56,9 +56,9 @@ PerigramReader.prototype.onEnterCell = function (curr) {
 
   // filter recently read words out of the neighborhood
   this.neighborsToFade = [];
-  for  (var i = 0; i < this.neighborhood.length; i++) {
-  	// warn("curr is found in a neighborhood."); // DEBUG
-    if (this.neighborhood[i] &&  (this.neighborhood[i] != curr) && (this.neighborhood[i] != this.lastRead(2)) && (this.neighborhood[i] != this.lastRead(3))) {
+  for (var i = 0; i < this.neighborhood.length; i++) {
+    // warn("curr is found in a neighborhood."); // DEBUG
+    if (this.neighborhood[i] && (this.neighborhood[i] != curr) && (this.neighborhood[i] != this.lastRead(2)) && (this.neighborhood[i] != this.lastRead(3))) {
       if (this.neighborsToFade.indexOf(this.neighborhood[i]) < 0) this.neighborsToFade.push(this.neighborhood[i]);
     }
   }
@@ -85,13 +85,13 @@ PerigramReader.prototype.onExitCell = function (curr) {
 }
 
 /*PerigramReader.prototype.hide = function (v) { // needed?
-	this.hidden = v;
-	if (this.hidden) {
-		var c = RiText.defaultFill();
-		//setTimeout(function(){},100);
-		this.current.stopBehaviors();
-	  this.current.fill(c);
-	}
+  this.hidden = v;
+  if (this.hidden) {
+    var c = RiText.defaultFill();
+    //setTimeout(function(){},100);
+    this.current.stopBehaviors();
+    this.current.fill(c);
+  }
 }*/
 
 PerigramReader.prototype.textForServer = function () {
@@ -101,20 +101,24 @@ PerigramReader.prototype.textForServer = function () {
   if (!rts || !rts.length || !rts[0])
     return;
 
-  if (rts.length !== 3)
-    throw Error("Invalid args: "+arguments[0]);
+  if (rts.length !== 3) throw Error("Invalid args: " + arguments[0]);
 
   //console.log('textForServer: ',rts[0].text(),rts[1].text(),rts[2].text());
 
-	if (this.pman.isTrigram(rts[0].text(),rts[1].text(),rts[2].text())) {
+  let hasTrigram = false;
+  try {
+    hasTrigram = this.pman.isTrigram(rts[0].text(), rts[1].text(), rts[2].text());
+    if (hasTrigram) {
+      this.phrase = this.phrase + this.current.text() + ' ';
+      return; // just adding the current word
+    }
+  } catch (e) {
+    console.log('no trigrams yet');
+  }
 
-		this.phrase = this.phrase + this.current.text() + ' ';
-		return; // just adding the current word
-	}
-
-	var msg = this.phrase.trim();
-	this.phrase = this.current.text() + ' ';  // huh? awk
-	// info(msg); // DEBUG
+  var msg = this.phrase.trim();
+  this.phrase = this.current.text() + ' ';  // huh? awk
+  // info(msg); // DEBUG
   return msg;
 }
 
@@ -179,14 +183,14 @@ PerigramReader.prototype._determineReadingPath = function (last, neighbors, grid
   this.currentKey = [last, this.current, neighbors[wayToGo]];
 
   switch (wayToGo) {
-  case NE:
-	   return neighbors[NE];
+    case NE:
+      return neighbors[NE];
 
-  case SE:
-    return neighbors[SE];
+    case SE:
+      return neighbors[SE];
 
-  default:
-    return neighbors[E] || this.current;
+    default:
+      return neighbors[E] || this.current;
   }
 }
 
@@ -202,11 +206,16 @@ PerigramReader.prototype._isViableDirection = function (last, curr, neighbor, di
   //countThreshold = this._adjustForStopWords(0, key.split(' ')); // JC: no key here ??
   countThreshold = this._weightStopWords(0, last, curr, neighbor);
 
-  result = this.pman.isTrigram(last.text(), curr.text(), neighbor.text(), countThreshold);
+  try {
+    result = this.pman.isTrigram(last.text(), curr.text(), neighbor.text(), countThreshold);
 
+  } catch (error) {
+    console.log('no trigrams yet 2');
+    result = true; // ??
+  }
   if (result) {
-   //info("Perigram_isViable found: " + key + " (" + Grid.direction(dir) + ") " + countThreshold);
-	}
+    //info("Perigram_isViable found: " + key + " (" + Grid.direction(dir) + ") " + countThreshold);
+  }
 
   return result;
 }
@@ -214,12 +223,12 @@ PerigramReader.prototype._isViableDirection = function (last, curr, neighbor, di
 PerigramReader.prototype._weightStopWords = function (countThreshold, word1, word2, word3) {
 
   if (arguments.length !== 4)
-    throw Error('Invalid args1: '+arguments.length);
+    throw Error('Invalid args1: ' + arguments.length);
 
   var thresholdCount = Array.prototype.shift.apply(arguments);
 
   if (arguments.length !== 3)
-    throw Error('Invalid args2: '+arguments.length);
+    throw Error('Invalid args2: ' + arguments.length);
 
   for (var i = 0; i < arguments.length; i++) {
 

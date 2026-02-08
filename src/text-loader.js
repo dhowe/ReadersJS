@@ -1,4 +1,4 @@
-var TEXTS = [{
+var TEXTS = [/*{
   title: 'Misspelt Landings',
   file: 'data/misspeltLandings.txt',
   trigrams: 'data/misspeltLandings-trigrams.js',
@@ -8,7 +8,7 @@ var TEXTS = [{
   file: 'data/poeticCaption.txt',
   trigrams: 'data/poeticCaption-trigrams.js',
   mesostic: 'reading as writing through'
-}, {
+},*/ {
   title: 'The Image',
   file: 'data/image.txt',
   trigrams: 'data/theImage-trigrams.js',

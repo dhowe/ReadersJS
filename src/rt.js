@@ -76,8 +76,9 @@
 
     if (RiTa.SILENT || !console) return;
 
-    for (var i = 0; i < arguments.length; i++)
+    for (var i = 0; i < arguments.length; i++) {
       console.log(arguments[i]);
+    }
   }
 
   function isNode() {

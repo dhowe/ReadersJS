@@ -1,3 +1,5 @@
+.DS_STORE
+misc
 src/*.java
 node_modules
 node_modules/*

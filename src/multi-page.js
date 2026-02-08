@@ -4,7 +4,8 @@ var pManager, font, bgColor, showFocus, fps = false;
 
 function preload() {
 
-  font = loadFont('fonts/Baskerville.ttf');
+  //font = loadFont('fonts/Baskerville.ttf');
+  font = loadFont('fonts/IBMPlexMono-Regular.ttf');
 }
 
 function setup() {
@@ -15,7 +16,7 @@ function setup() {
   RiText.defaults.paragraphLeading = 10;
   RiText.defaults.paragraphIndent = 0;
 
-  loadTexts(function() {
+  loadTexts(function () {
 
     // do the layout
     pManager = PageManager.getInstance(Reader.APP);
@@ -24,14 +25,14 @@ function setup() {
     pManager.gridFill(colorToObject(255, 255, 255, 40));
 
     // add some readers
-    new PerigramReader(pManager.recto, SPEED.Fluent);
-    new ObliquePerigramReader(pManager.verso);
-    new SpawningSimpleReader(pManager.recto);
-    new SpawningPerigramReader(pManager.verso);
-    new MesosticJumper(pManager.verso);
+    new PerigramReader(pManager.verso, .01);
+    // new ObliquePerigramReader(pManager.verso);
+    // new SpawningSimpleReader(pManager.recto);
+    // new SpawningPerigramReader(pManager.verso);
+    // new MesosticJumper(pManager.verso);
 
     // pick one to get focus
-    pManager.focus('PerigramReader');
+    // pManager.focus('PerigramReader');
     createInterface();
   });
 }
@@ -43,18 +44,17 @@ function draw() {
   if (fps) {
     fill(255);
     textSize(14);
-    text(round(frameRate()), width-20,15);
+    text(round(frameRate()), width - 20, 15);
   }
   if (pManager && showFocus) {
     fill(255);
     textSize(14);
-    text(pManager.focus().type,width-155,height-5);
+    text(pManager.focus().type, width - 155, height - 5);
   }
   // TODO: show reader name after manual focus change
 }
 
 function keyPressed() {
-
 
   if (keyCode > 48 && keyCode < 58) { // or up/down arrow
     showFocus = true;
@@ -72,7 +72,10 @@ function keyPressed() {
   if (key === 'R') dumpMem(); // DEBUG: (PRESS 'r' FOR CONSOLE OUTPUT)
   if (key === 'F') toggleFPS(); // DEBUG: (PRESS 'f' FOR FRAME RATE)
   if (key === ' ') togglePaused(); // DEBUG: (PRESS ' ' TO PAUSE)
-  if (key === 'C') console.log(JSON.stringify(pManager.compressionData));
+  if (key === 'C') {    
+    // write to the console
+    pManager.writeCData(pManager.focus());
+  }
 }
 
 function togglePaused() {
@@ -81,7 +84,7 @@ function togglePaused() {
     r.paused = !r.paused;
     state = r.paused;
   });
-  console.log('[UI] paused='+state);
+  console.log('[UI] paused=' + state);
 }
 
 
@@ -89,8 +92,8 @@ function loadTexts(callback) {
 
   var count = 0, total = TEXTS.length;
 
-  $.get("package.json", function(json) {
-      console.log('[INFO] Readers.version ['+json.version+']');
+  $.get("package.json", function (json) {
+    console.log('[INFO] Readers.version [' + json.version + ']');
   });
 
   TEXTS.forEach(function (text) {
@@ -120,7 +123,7 @@ function resetText(textName) {
   });
 
   Reader.findByType(['MesosticReader', 'MesosticJumper'])
-    .forEach(function(m) {
+    .forEach(function (m) {
       m.setMesostic(textObj.mesostic); // new mesostic
     });
 
@@ -155,12 +158,12 @@ function textFromName(textName) {
 function themeChanged() {
 
   var e1 = document.getElementById('styleSelect'),
-      e2 = document.getElementById('themeSelect');
+    e2 = document.getElementById('themeSelect');
 
   if (e1 === null || e2 === null) return;
 
   var styleName = e1.options[e1.selectedIndex].value,
-      themeName = e2.options[e2.selectedIndex].value;
+    themeName = e2.options[e2.selectedIndex].value;
 
   var dark = (themeName === "Dark"),
     style = STYLE[styleName],
@@ -184,7 +187,7 @@ function themeChanged() {
 }
 
 function changeReadersColorTheme(isDark) {
-  activeReaders().forEach(function(r) {
+  activeReaders().forEach(function (r) {
     r.activeFill = isDark ? r.defaultColorDark : r.defaultColorLight;
   });
 }
@@ -275,12 +278,12 @@ function colorToArray(obj, overrideAlpha) { // takes optional 2nd argument for a
 }
 
 function hexToRgb(hex) {
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    } : null;
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null;
 }
 
 function colorToObject(r, g, b, a) {

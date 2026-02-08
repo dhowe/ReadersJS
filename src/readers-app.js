@@ -1,8 +1,8 @@
 /////////////////////// GLOBALS /////////////////////////
 
-subclass = function (constructor, superConstructor) {
+function subclass(constructor, superConstructor) {
 
-  function surrogateConstructor() {}
+  function surrogateConstructor() { }
 
   surrogateConstructor.prototype = superConstructor.prototype;
 
@@ -12,32 +12,32 @@ subclass = function (constructor, superConstructor) {
   constructor.prototype = prototypeObject;
 }
 
-inNode = function () {
+function inNode() {
 
   return (typeof module != 'undefined');
 }
 
-info = function (msg) {
+function info(msg) {
   console.log("[INFO] " + msg);
 }
 
-warn = function (msg) {
+function warn(msg) {
   console.log("[WARN] " + msg);
 }
 
-err = function (msg, e) {
+function err(msg, e) {
 
   e = e || Error(msg);
   console.log("[ERR] " + msg);
   throw e;
 }
 
-is = function (obj, type) {
+function is(obj, type) {
 
   return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase() === type;
 }
 
-endsWith = function (str, ending) {
+function endsWith(str, ending) {
 
   if (typeof str !== 'string') return false;
   return new RegExp(ending + '$').test(str);
@@ -732,7 +732,7 @@ Grid.prototype = {
  * grids in the text. If either condition is false, will return
  * Integer.MAX_VALUE.
  */
-Grid.yDist = function(rt1, rt2) {
+Grid.yDist = function (rt1, rt2) {
 
   var grid1 = Grid.gridFor(rt1);
   var grid2 = Grid.gridFor(rt2);
@@ -868,24 +868,24 @@ Grid.updateAll = function () {
 
 Grid.direction = function (dirConst) {
   switch (dirConst) {
-  case Grid.DIRECTION.NW:
-    return "NW";
-  case Grid.DIRECTION.N:
-    return "N";
-  case Grid.DIRECTION.NE:
-    return "NE";
-  case Grid.DIRECTION.W:
-    return "W";
-  case Grid.DIRECTION.C:
-    return "C";
-  case Grid.DIRECTION.E:
-    return "E";
-  case Grid.DIRECTION.SW:
-    return "SW";
-  case Grid.DIRECTION.S:
-    return "S";
-  case Grid.DIRECTION.SE:
-    return "SE";
+    case Grid.DIRECTION.NW:
+      return "NW";
+    case Grid.DIRECTION.N:
+      return "N";
+    case Grid.DIRECTION.NE:
+      return "NE";
+    case Grid.DIRECTION.W:
+      return "W";
+    case Grid.DIRECTION.C:
+      return "C";
+    case Grid.DIRECTION.E:
+      return "E";
+    case Grid.DIRECTION.SW:
+      return "SW";
+    case Grid.DIRECTION.S:
+      return "S";
+    case Grid.DIRECTION.SE:
+      return "SE";
   }
 
   throw Error("Bad Direction: " + dirConst);
@@ -945,7 +945,7 @@ Reader.pauseAll = function (b) {
 Reader.findByType = function (types) {
 
   if (typeof types === 'string') { // string, not array
-    types = [ types ];
+    types = [types];
   }
   var result = [];
   for (var j = 0; j < types.length; j++) {
@@ -1092,13 +1092,25 @@ Reader.prototype = {
         let coords = Grid.coordsFor(this.current);
         let lineNum = coords.y;
         let rts = grid.cells[lineNum];
-        let words = rts.map(c => c.text()); 
+        let words = rts.map(c => c.text());
         let line = RiTa.untokenize(words);
-        let testData = this.pman.compressionData;
-        if (!testData[lineNum]) {
-          testData[lineNum] = { 
-            words:  [],
-            y: lineNum,
+
+        /////// store data for compression analysis
+        let cdata = this.pman.compressionData;
+
+        // New page: add grid.id if different from the last one
+        if (cdata.grids.length === 0 || cdata.grids[cdata.grids.length - 1] !== grid.id) {
+          cdata.grids.push(grid.id);
+          //console.log('PUSH grid id: ' + grid.id);
+        }
+
+        let allLines = cdata.lines;
+        let lineKey = grid.id + '.' + lineNum;
+        if (!(lineKey in allLines)) {
+          allLines[lineKey] = {
+            words: [],
+            line: lineNum,
+            page: grid.id,
             length: line.length
           };
         }
@@ -1106,27 +1118,47 @@ Reader.prototype = {
         let charIndex = RiTa.untokenize(lineUntil).length + (coords.x === 0 ? 0 : 1);
         let wordData = {
           word: this.current.text(),
-          x: this.current.x,
-          y: this.current.y,
-          charIndex
+          // x: this.current.x,
+          // y: this.current.y,
+          index: charIndex,
+          visitOrder: pManager.compressionData.wordCount++
         };
 
         // store this object for the yth line
-        let lineData = testData[lineNum];
-        lineData.words.push(wordData);
+        let lineData = allLines[lineKey];
+
+        // only add word if first time through or we're not on the first grid
+        if (grid.id > 0 || !cdata.grids.includes(1)) {
+          lineData.words.push(wordData);
+        }
+
         let currentState = new Array(lineData.length).fill('_');
         for (let j = 0; j < lineData.words.length; j++) {
           let w = lineData.words[j];
+          let prevChar = (w.index > 0) ? currentState[w.index - 1] : '';
+          // fill in single space before word if not first word
+          if (w.index > 0 && prevChar === '_') {
+            currentState[w.index - 1] = ' ';
+          }
           for (let i = 0; i < w.word.length; i++) {
-            currentState[w.charIndex+i] = w.word[i];
-
+            currentState[w.index + i] = w.word[i];
+            // add space after word if not at end of line
+            if (i === w.word.length - 1 && (w.index + i) < lineData.length) {
+              currentState[w.index + i + 1] = ' ';
+            }
           }
         }
         lineData.line = currentState.join('');
-        
-        // JSON
-        //console.log(JSON.stringify(testData,0,2));
-        
+
+        //console.log(grid.id + '.' + lineNum + ': ' + lineData.line); // LOG EACH LINE
+
+        // check if we've gone all the way around the grids
+        if (!pManager.compressionData.logged && grid.id === 0 && cdata.grids.includes(1)) {
+          // write to json file with timestamp
+          pManager.writeCData(this, true);
+          togglePaused();
+        }
+        ///////////////////////////////////////////////////////
 
         this.onExitCell(this.current);
         this.current = this.selectNext();
@@ -1171,7 +1203,7 @@ Reader.prototype = {
 
     setTimeout(function () {
       reader.step();
-    }, reader.stepTime);
+    }, 1)//reader.stepTime);
   },
 
   outputAsHTML: function (msg) {
@@ -1236,7 +1268,7 @@ Reader.prototype = {
     return h && h.length ? h[h.length - num] : null;
   },
 
-	selectNext: function () {
+  selectNext: function () {
 
     return Grid.nextCell(this.current);
   },
@@ -1282,7 +1314,20 @@ var PageManager = function (host, port) {
   // constructor
   this.socket = null;
   this.perigrams = {};
-  this.compressionData = [];
+  this.compressionData = {
+    completions: [],
+    lines: {},
+    layout: [],
+    grids: [],
+    original: 0, // []
+    started: Date.now(),
+    reader: 0,
+    passes: 0,
+    wordCount: 0,
+    logged: false
+  };
+  this.compressionCount = 0;
+  this.compressionDataLogged = false;
   this.defaultFill = colorToObject(0, 255, 0);
 
   // tmp-hack to force mode (TODO: fix me)
@@ -1302,6 +1347,23 @@ var PageManager = function (host, port) {
 
   //var msg = "PageManager.mode=" + Reader.modeName(this.mode);
   //info(this.notifyServer ? msg += " [http://" + this.host + ":" + this.port + "]" : msg);
+
+  this.writeCData = function (reader, writeFile = false) {
+    let { type } = reader;
+    this.compressionData.layout = Object.values(this.compressionData.lines).map(l => l.line.trim());
+    this.compressionData.reader = type;
+    this.compressionData.passes = 1;
+    if (writeFile) {
+      this.compressionData.logged = Date.now();
+      let filename = type + '.' + this.compressionData.started + '.json';
+      console.log(`Writing JSON to ${filename}`);
+      jsonToFile(this.compressionData, filename);
+    }
+    else {
+      console.log(`Writing JSON to console`);
+      console.log(this.compressionData);
+    }
+  }
 
   this.gridFill = function (c) {
 
@@ -1352,7 +1414,12 @@ var PageManager = function (host, port) {
     if (typeof txt === 'object') {
 
       this.perigrams[3] = Trigrams[txt.title.replace(/ /, '')];
-      //console.log('[PMAN] Stored ' + Object.keys(this.perigrams[3]).length + ' 3-grams');
+      if (!this.perigrams[3]) {
+        console.error('No trigram data for: "' + txt.title + '" in ' + Object.keys(Trigrams));
+        return;
+      }
+
+      console.log('[PMAN] Stored ' + Object.keys(this.perigrams[3]).length + ' 3-grams');
       txt = txt.contents;
     }
 
@@ -1391,6 +1458,8 @@ var PageManager = function (host, port) {
       pageBreak = false,
       lineBreak = false,
       firstLine = true;
+
+    var rawLines = [];
 
     var ascent = pfont._textAscent(RiText.defaults.fontSize),
       descent = pfont._textDescent(RiText.defaults.fontSize);
@@ -1475,6 +1544,7 @@ var PageManager = function (host, port) {
 
           // create a new grid from existing lines
           if (dbug) info("------ new grid(a) -------");
+          rawLines.push(...rlines.map(r => r.text()));
           this._createGrid(rlines);
           firstLine = true;
 
@@ -1502,16 +1572,19 @@ var PageManager = function (host, port) {
       if (dbug) info("add4: " + rt);
     }
 
+
     // create the last grid with the leftovers
+    rawLines.push(...rlines.map(r => r.text()));
     if (rlines.length) this._createGrid(rlines);
 
     if (Grid.instances.length < 1)
       throw Error("No enough text for multi-page layout");
 
+    //console.log('LAYOUT', rawLines);
+    this.compressionData.original = rawLines;
+
     this.verso = Grid.instances[0];
     this.recto = Grid.instances[1];
-
-    //Grid.dumpPages(); // print the layout to console(s)
 
     return this;
   };
@@ -1540,8 +1613,8 @@ var PageManager = function (host, port) {
 
     if (arguments.length < 2 || arguments.length > 3
       || typeof arguments[0] !== 'string') {
-        throw Error('invalid arg: ' + arguments.length +
-          ' ' + (typeof arguments[0]));
+      throw Error('invalid arg: ' + arguments.length +
+        ' ' + (typeof arguments[0]));
     }
 
     var key = '';
@@ -1549,7 +1622,7 @@ var PageManager = function (host, port) {
       if (!arguments[i]) continue;
       key += RiTa.trimPunctuation(arguments[i]) + ' ';
     }
-    return key.toLowerCase().trim().replace(/[’‘?]+/g,'');
+    return key.toLowerCase().trim().replace(/[’‘?]+/g, '');
   }
 
   this.isBigram = function (w1, w2, threshold) {
@@ -1560,7 +1633,7 @@ var PageManager = function (host, port) {
   this.bigramCount = function (w1, w2) {
 
     if (arguments.length !== 2)
-      throw Error("Invalid args"+arguments);
+      throw Error("Invalid args" + arguments);
 
     if (!this.perigrams[2])
       throw Error("No 2-grams loaded!");
@@ -1581,10 +1654,9 @@ var PageManager = function (host, port) {
   this.trigramCount = function (w1, w2, w3) {
 
     if (arguments.length !== 3)
-      throw Error("Invalid args"+arguments);
+      throw Error("Invalid args" + arguments);
 
-    if (!this.perigrams[3])
-      throw Error("No 3-grams loaded!");
+    if (!this.perigrams[3]) throw Error("No 3-grams loaded!");
 
     var key = makeKey(w1, w2, w3);
     var count = this.perigrams[3][key] || 0;
@@ -1634,6 +1706,7 @@ var PageManager = function (host, port) {
   this.nextPage = function (ensureFocusedReaderIsVisible) {
 
     var next = this.recto.getNext();
+
     this.verso = this.recto;
     this.recto = next;
 
@@ -1695,6 +1768,7 @@ var PageManager = function (host, port) {
     Grid.updateAll();
     this.verso && (this.verso.draw(0));
     this.recto && (this.recto.draw(1));
+
     return this;
   };
 
@@ -1872,6 +1946,15 @@ var Cache = {
 };
 
 ///////////////// GLOBALS (no node) ///////////////////
+
+function jsonToFile(json, filename, minify = false) { // assume no node
+  let dataStr = "data:text/json;charset=utf-8,"
+    + encodeURIComponent(minify ? JSON.stringify(json) : JSON.stringify(json, 0, 2));
+  let dlAnchorElem = document.createElement('a');
+  dlAnchorElem.setAttribute("href", dataStr);
+  dlAnchorElem.setAttribute("download", filename);
+  dlAnchorElem.click();
+}
 
 function toSafeName(name) {
   return name.replace(/ /g, '');
