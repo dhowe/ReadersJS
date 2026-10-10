@@ -62,7 +62,9 @@ function loadTrigrams(callback) {
       var time = Date.now() - timerStart - 2000; // WHY -2000 ?
       console.log('[UI] Loaded (' + time + 'ms)');
       for (var i = 1; i < TEXTS.length; i++) { // skip the first text
-        createScriptTag(TEXTS[i].trigrams, TEXTS[i].title);
+        // skip any already requested (e.g. via the ?text= url parameter)
+        if (textLoaded.indexOf(TEXTS[i].title) < 0 && !document.getElementById(TEXTS[i].title))
+          createScriptTag(TEXTS[i].trigrams, TEXTS[i].title);
       }
     }, 2000));
   });

@@ -366,6 +366,12 @@ function createInterface() {
     }
   });
 
+  applyUrlParams({
+    readerOnOffEvent: readerOnOffEvent,
+    focusChanged: focusChanged,
+    solo: solo
+  });
+
 } // end createInterface
 
 function focusJump(focused) {

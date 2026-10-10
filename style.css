@@ -492,3 +492,24 @@ ul.select li:not(.init):hover {
     transform: rotate(360deg);
   }
 }
+
+/* ?fullscreen mode (see src/url-params.js): only the readers window is shown */
+html.fullscreen-mode body {
+  min-width: 0;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+html.fullscreen-mode canvas {
+  margin: 0;
+  border: none;
+}
+html.fullscreen-mode #instructions,
+html.fullscreen-mode #options,
+html.fullscreen-mode .tag,
+html.fullscreen-mode #interface,
+html.fullscreen-mode #focusDisplayWrapper {
+  display: none !important;
+}
