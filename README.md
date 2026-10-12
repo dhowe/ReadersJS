@@ -21,7 +21,7 @@ index.html?text=The Image&theme=Light&readers=PerigramReader,MesosticJumper&focu
 text: any title in TEXTS (src/text-loader.js), so new texts are accepted automatically<br>
 style: Grey, Faint or Invisible<br>
 theme: Dark or Light<br>
-readers: comma-separated reader types to enable (all others are turned off)<br>
+readers: comma-separated reader types to enable (all others are turned off): PerigramReader, ObliquePerigramReader, SpawningSimpleReader, SpawningPerigramReader or MesosticJumper<br>
 focus: reader type to give focus (it is enabled if not listed in readers)<br>
 solo: a single reader type to run on its own<br>
 speed: Fluent, Steady, Slow, Slower, Slowest or Fast, for all readers and/or per reader, e.g. speed=Slow,MesosticJumper:Fast
