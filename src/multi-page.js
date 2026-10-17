@@ -9,7 +9,10 @@ function preload() {
 
 function setup() {
 
-  createCanvas(1280, 720);
+  // fixed 1280x720 coordinate space; style.css scales it to fit the window
+  var cnv = createCanvas(1280, 720);
+  pixelDensity(stageDensity());
+  addSwipePaging(cnv.elt);
 
   RiText.defaultFont(font, 24);
   RiText.defaults.paragraphLeading = 10;
@@ -73,6 +76,49 @@ function keyPressed() {
   if (key === 'R') dumpMem(); // DEBUG: (PRESS 'r' FOR CONSOLE OUTPUT)
   if (key === 'F') toggleFPS(); // DEBUG: (PRESS 'f' FOR FRAME RATE)
   if (key === ' ') togglePaused(); // DEBUG: (PRESS ' ' TO PAUSE)
+}
+
+// displayed size of the canvas relative to its 1280x720 logical size
+function stageScale() {
+  var r = document.querySelector('canvas').getBoundingClientRect();
+  return r.width ? r.width / width : 1;
+}
+
+// keep the canvas crisp: device pixel ratio x displayed scale, rounded up to
+// the nearest 0.5 and clamped to 1-3
+function stageDensity() {
+  var d = (window.devicePixelRatio || 1) * stageScale();
+  return Math.max(1, Math.min(3, Math.ceil(d * 2) / 2));
+}
+
+var resizeTimer;
+function windowResized() {
+  clearTimeout(resizeTimer);
+  // changing density reallocates the canvas, so wait for resizing to settle
+  resizeTimer = setTimeout(function () {
+    var d = stageDensity();
+    if (d !== pixelDensity()) pixelDensity(d);
+  }, 200);
+}
+
+// horizontal swipes turn pages on touch screens (as the arrow keys do)
+function addSwipePaging(ele) {
+
+  var startX, startY, MIN_SWIPE = 50;
+
+  ele.addEventListener('touchstart', function (e) {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+
+  ele.addEventListener('touchend', function (e) {
+    if (startX === undefined || !pManager) return;
+    var dx = e.changedTouches[0].clientX - startX,
+      dy = e.changedTouches[0].clientY - startY;
+    startX = undefined;
+    if (Math.abs(dx) < MIN_SWIPE || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    dx < 0 ? pManager.nextPage(1) : pManager.lastPage(1);
+  }, { passive: true });
 }
 
 function togglePaused() {

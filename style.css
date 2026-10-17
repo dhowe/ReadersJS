@@ -1,8 +1,26 @@
+/* Responsive layout: the readers canvas keeps its fixed 1280x720 coordinate
+   space (all layout/reader code works in those units) and is scaled by CSS to
+   fit the window, preserving the 16:9 aspect ratio. See README, "Responsive
+   display". */
+:root {
+  --gutter: 50px;       /* space left/right of the canvas */
+  --canvas-top: 130px;  /* space above the canvas (options button, instructions) */
+  --canvas-bottom: 20px;
+  --canvas-w: min(1280px,
+    calc(100vw - 2 * var(--gutter)),
+    calc((100vh - var(--canvas-top) - var(--canvas-bottom)) * 16 / 9));
+}
+@supports (height: 100dvh) { /* mobile browsers: exclude the collapsing toolbar */
+  :root {
+    --canvas-w: min(1280px,
+      calc(100vw - 2 * var(--gutter)),
+      calc((100dvh - var(--canvas-top) - var(--canvas-bottom)) * 16 / 9));
+  }
+}
 html {
   font-family: 'Proxima Nova Rgular', sans-serif;
 }
 body {
-  min-width: 1300px;
   background-color: black;
   color: #DDD;
   overflow: hidden;
@@ -23,12 +41,26 @@ body.light #focusDisplay {
   color: #AAA;
 }
 canvas {
-  margin: 50px 50px 0;
+  display: block;
+  box-sizing: border-box;
+  margin: calc(var(--canvas-top) - 80px) var(--gutter) 0; /* 80px: #instructions */
   border: 1px solid #333;
+  /* override the fixed pixel size p5 sets inline */
+  width: var(--canvas-w) !important;
+  height: auto !important;
+  aspect-ratio: 16 / 9;
+  touch-action: pan-y; /* horizontal swipes turn pages (see multi-page.js) */
+  -webkit-user-select: none;
+  user-select: none;
 }
 #instructions {
-  margin-left: 120px;
-  margin-top: 60px;
+  box-sizing: border-box;
+  height: 20px;
+  line-height: 20px;
+  margin: 60px 20px 0 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 #options {
   position: absolute;
@@ -81,6 +113,9 @@ canvas {
   width: 420px;
   border: 1px solid #555;
   display: none;
+  z-index: 90; /* above the focus display, below the options button */
+  max-height: calc(100vh - 20px);
+  overflow-y: auto;
 }
 #focusDisplayWrapper {
   position: absolute;
@@ -88,7 +123,7 @@ canvas {
   top: 0;
   overflow: hidden;
   right: 0px;
-  width: 260px;
+  width: min(260px, 40vw);
   height: 100%;
 }
 #focusDisplay {
@@ -143,9 +178,11 @@ canvas {
 @media only screen and (min-width: 1800px) {
   #focusDisplayWrapper{
    position:fixed;
-   left:1380px;
+   left: calc(var(--gutter) * 2 + var(--canvas-w)); /* beside the canvas */
+   right: auto;
+   width: 260px;
   }
-  }
+}
 .select {
     overflow: hidden;
     display: inline-block;
@@ -468,7 +505,8 @@ ul.select li:not(.init):hover {
   width: 40px;
   height: 40px;
   position: absolute;
-  margin: 300px auto 0;
+  margin: -40px auto 0;
+  top: 50%;
   left: 0;
   right: 0;
   animation: spin 2s linear infinite;
@@ -476,7 +514,8 @@ ul.select li:not(.init):hover {
 }
 #overlay p {
   position: absolute;
-  margin: 370px auto 0;
+  margin: 30px auto 0;
+  top: 50%;
   width: 200px;
   height: 20px;
   line-height:24px;
@@ -495,9 +534,9 @@ ul.select li:not(.init):hover {
 
 /* ?fullscreen mode (see src/url-params.js): only the readers window is shown */
 html.fullscreen-mode body {
-  min-width: 0;
   margin: 0;
   height: 100vh;
+  height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -505,6 +544,13 @@ html.fullscreen-mode body {
 html.fullscreen-mode canvas {
   margin: 0;
   border: none;
+  /* fill the window (up to the screen size), letterboxed to 16:9 */
+  width: min(100vw, calc(100vh * 16 / 9)) !important;
+}
+@supports (height: 100dvh) {
+  html.fullscreen-mode canvas {
+    width: min(100vw, calc(100dvh * 16 / 9)) !important;
+  }
 }
 html.fullscreen-mode #instructions,
 html.fullscreen-mode #options,
@@ -512,4 +558,102 @@ html.fullscreen-mode .tag,
 html.fullscreen-mode #interface,
 html.fullscreen-mode #focusDisplayWrapper {
   display: none !important;
+}
+
+/* Narrower windows: the focus display starts collapsed (see multi-page-ui.js;
+   click its tag to open) and the interface fills the window width */
+@media only screen and (max-width: 1100px) {
+  :root {
+    --gutter: 20px;
+  }
+  #instructions {
+    margin-right: calc(min(260px, 40vw) + 10px); /* clear of the focus display tag */
+  }
+  #focusDisplay {
+    background-color: rgba(0, 0, 0, .85);
+  }
+  .light #focusDisplay {
+    background-color: rgba(230, 230, 230, .9);
+  }
+}
+
+/* Small windows and phones */
+@media only screen and (max-width: 640px) {
+  :root {
+    --gutter: 8px;
+    --canvas-top: 70px;
+  }
+  #options {
+    left: 6px;
+    top: 6px;
+    width: 56px;
+    height: 56px;
+    line-height: 40px;
+    font-size: 11px;
+  }
+  #options span {
+    left: 9px;
+    top: 8px;
+  }
+  #instructions {
+    height: 32px; /* two lines */
+    margin: 22px calc(min(260px, 40vw) + 10px) 0 72px;
+    font-size: 12px;
+    line-height: 16px;
+    white-space: normal;
+  }
+  canvas {
+    margin-top: 16px; /* --canvas-top less the #instructions block (22 + 32) */
+  }
+  #interface {
+    top: 0;
+    left: 0;
+    right: 0;
+    width: auto;
+    box-sizing: border-box;
+    padding: 70px 12px 16px;
+    max-height: 100vh;
+  }
+  button {
+    width: 100%;
+  }
+  .item select {
+    width: calc(100% - 70px);
+  }
+  .item select.half, .item .select.half {
+    width: 130px;
+  }
+  #focusDisplayTag {
+    font-size: 14px;
+    padding: 6px 10px;
+  }
+}
+
+/* Short, wide windows (e.g. phones in landscape): reclaim vertical space */
+@media only screen and (max-height: 500px) {
+  :root {
+    --canvas-top: 60px;
+    --canvas-bottom: 8px;
+  }
+  #options {
+    top: 6px;
+    left: 6px;
+    width: 48px;
+    height: 48px;
+    line-height: 34px;
+    font-size: 10px;
+  }
+  #options span {
+    left: 7px;
+    top: 7px;
+  }
+  #instructions {
+    margin-top: 16px;
+    margin-left: 64px;
+    height: 20px;
+    white-space: nowrap;
+  }
+  canvas {
+    margin-top: 24px; /* --canvas-top less the #instructions block (16 + 20) */
+  }
 }

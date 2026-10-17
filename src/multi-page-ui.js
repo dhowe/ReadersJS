@@ -414,6 +414,12 @@ $(window).focus(function() {
 
 $(document).ready(function () {
 
+  // on narrow windows the focus display would cover the readers, so start collapsed
+  if (window.matchMedia && window.matchMedia("(max-width: 1100px)").matches) {
+    $("#focusDisplay").hide();
+    $("#status").html(" + ");
+  }
+
   $("#focusDisplayTag").click(function () {
     var tag = $("#focusDisplay:visible").length === 0 ? " - " : " + ";
     $("#focusDisplay").toggle("slide");
