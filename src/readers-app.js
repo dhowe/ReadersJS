@@ -1133,12 +1133,8 @@ Reader.prototype = {
           this.history.splice(0, 1);
         }
 
-        // if focused-reader and moving to a new grid, do page-turn
-        if (this.hasFocus() && grid != Grid.gridFor(this.current)) {
-
-          // info('\n'+this.type+'.pageTurn()\n');
-          this.pman.nextPage();
-        }
+        if (this.hasFocus())
+          this.pman.followFocusedReader(grid, Grid.gridFor(this.current));
       }
 
       msg = this.textForServer();
@@ -1630,6 +1626,18 @@ var PageManager = function (host, port) {
     return this;
   };
 
+  this.followFocusedReader = function (previousGrid, nextGrid) {
+
+    if (previousGrid === this.recto
+      && nextGrid !== this.verso
+      && nextGrid !== this.recto) {
+      this.verso = nextGrid;
+      this.recto = nextGrid.getNext();
+    }
+
+    return this;
+  };
+
   this.makeFocusedReaderVisible = function () {
 
     var reader = PageManager.getInstance().focus();
@@ -1737,11 +1745,8 @@ var PageManager = function (host, port) {
       if (data.focused) {
 
         pman.focused = this;
-        if (lastGrid != grid) {
-
-          //info("Listener.nextPage()");
-          pman.nextPage();
-        }
+        if (lastGrid != grid)
+          pman.followFocusedReader(lastGrid, grid);
       }
     });
   };
