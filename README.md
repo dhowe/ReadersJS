@@ -59,3 +59,34 @@ What changes with the window (see `style.css`, where the sizes are CSS variables
 **Limitations.** The text is drawn on the canvas, so it scales with it: on a phone in portrait the readers are very small, and landscape is much better. A true reflow (e.g. a single narrow page for portrait) would mean re-running `pManager.layout()` with new dimensions and repositioning the readers (as `resetText()` in `src/multi-page.js` does), and has not been attempted. Unlike `overboard` and `translation`, the canvas is not pinned to the whole viewport, because the surrounding interface shares the window with it.
 
 **Testing.** Checked in headless Chrome at roughly 1900x700, 1400x900, 1000x700, 667x375 and 390x800 (the last two in an iframe), with the options menu open and closed. The pixel-density change was checked in `?fullscreen` at 1900x1013 (density 1.5, 1920x1080 backing store, no errors); headless Chrome would not load the page at a device pixel ratio of 2, so hi-DPI screens are untested. Real-device testing, especially of swipe paging, iOS Safari (toolbar/`dvh` behaviour) and a window resize while the readers are running, is still welcome.
+
+<br>
+
+## Reading time
+
+How long a reader stays on a word is its estimated reading time, from the `timeToRead.js` estimator in the [scoringthespeltair](https://github.com/observable2/scoringthespeltair) library (shared with our other "spel" projects). Each step, a reader waits `wordTime(word) + whitespaceTime(" ")` milliseconds, divided by a **factor** set by its speed (see `Reader.stepTimeFor()` in `src/readers-app.js`):
+
+| Speed | Fluent | Steady | Slow | Slower | Slowest | Fast |
+|---|---|---|---|---|---|---|
+| factor (`0.4 / speed`) | 1 | 0.5 | 0.33 | 0.25 | 0.2 | 2 |
+
+At factor 1 the estimator's own pace is used unchanged. This replaces the earlier rule (`speed` x 1000 ms, scaled up 10% per letter after the first); there is no fixed-time option any more.
+
+**Why this was safe to switch to.** Fluent was the reference, so the change was checked against it: over the three texts (2,202 words) the old Fluent step averaged 537 ms and the estimator at factor 1 averages 492 ms (0.92x; 0.97x and 0.98x on the two poems), and they correlate at r = 0.98 word by word. The pace is therefore much the same; the difference is in the detail: short words are quicker (1-2 letters: 202 ms vs 432), long words slower (10+ letters: 1249 ms vs 812), and punctuated words get a pause (740 ms vs 612), which the old rule did not do.
+
+Notes:
+
+* `whitespaceTime(" ")` is 0 with the library's current defaults (a single space is already inside the per-letter cost), so today the step is the word time alone. It is in the formula so that any future tuning in the library takes effect here.
+* A word that gets no time from the estimator (e.g. a bare `<p/>` token) waits `Reader.MIN_STEP_MS` (50 ms) so it can't spin the timer.
+* The estimator is an ES module, so it is loaded with a `<script type="module">` (`src/reading-time.js`, which sets `window.ReadingTime`) and **needs the page to be served over http** (as the texts already do). If it is missing, a warning is logged and readers fall back to `speed` x 1000 ms.
+* The per-reader fade times are derived from the step time, so they follow the estimate. Fade delays that use `speed` directly (e.g. `PerigramReader`) are unchanged.
+
+### Updating the vendored library
+
+The library is **copied into this project** (`lib/scoringthespeltair/timetoread.js` and `markup.js`), not installed, so a change in the library never reaches the readers by itself. `lib/versions.txt` records which library commit the copy came from. To take in new development:
+
+1. In the library's own repo, commit the change (the sync script warns if `timetoread.js` or `markup.js` has uncommitted edits, because the recorded commit would then not match the copy).
+2. Here, run `scripts/sync-scoringthespeltair.sh` (it defaults to the copy under `John_adxd26fall`; pass another clone's path, or set `SCORINGTHESPELTAIR`, to use a different one). It copies the two files and updates the commit line in `lib/versions.txt`.
+3. Look at `git diff lib/` (what changed in the estimator), reload `index.html` and check the readers' pace, then commit the new copy with the library's commit hash in the message.
+
+Never edit the files in `lib/scoringthespeltair/` here: the next sync would overwrite the edit. Fix them in the library and sync. If the library adds a file that `timetoread.js` imports, add it to `FILES` in the script. If the library changes the names or arguments of `wordTime` / `whitespaceTime`, update `src/reading-time.js` and `Reader.stepTimeFor()`. If the *factors* change meaning (e.g. the default pace is recalibrated), the speed presets move with it, so re-run a comparison like the one above and adjust `Reader.READING_SPEED`.

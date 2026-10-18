@@ -896,7 +896,29 @@ Grid.direction = function (dirConst) {
 Reader.SERVER = 3, Reader.CLIENT = 2, Reader.APP = 1; // modes
 Reader.HISTORY_SIZE = 10, Reader.NETWORK_PAUSE = 5000;
 Reader.WAIT_FOR_NETWORK = false, Reader.PORT = 8088;
-Reader.VARY_SPEED_BY_LETTER_COUNT = true; // flag for this enhancement
+
+// Step times come from the reading-time estimator in lib/scoringthespeltair
+// (window.ReadingTime, see src/reading-time.js). A reader's speed (see SPEED in
+// multi-page-ui.js) divides the estimate: at READING_SPEED the estimate is used
+// unchanged (factor 1), at twice that speed it is halved, and so on.
+Reader.READING_SPEED = 0.4; // = SPEED.Fluent
+Reader.MIN_STEP_MS = 50; // a word the estimator gives (almost) no time to must not spin the timer
+
+// ms to wait after showing 'token', for a reader moving at 'speed'
+Reader.stepTimeFor = function (token, speed) {
+
+  var rt = window.ReadingTime;
+  if (!rt) {
+    if (!Reader._warnedNoEstimator) {
+      Reader._warnedNoEstimator = true;
+      console.warn('[Reader] window.ReadingTime missing (needs a web server, see README); using speed * 1000');
+    }
+    return speed * 1000;
+  }
+  var factor = Reader.READING_SPEED / speed; // Fluent 1, Steady .5, Fast 2
+  var ms = rt.wordTime(token, factor) + rt.whitespaceTime(' ', factor); // word plus one space
+  return Math.max(Reader.MIN_STEP_MS, ms);
+};
 
 // punctuation not included. "’" (right curly quote is part of the character set
 Reader.CLOSED_CLASS_WORDS = ["the", "and", "a", "of", "in", "i", "you", "is", "to", "that", "it", "for", "on", "have", "with", "this", "be", "not", "are", "as", "was", "but", "or", "from", "my", "at", "if", "they", "your", "all", "he", "by", "one", "me", "what", "so", "can", "will", "do", "an", "about", "we", "just", "would", "there", "no", "like", "out", "his", "has", "up", "more", "who", "when", "don’t", "some", "had", "them", "any", "their", "it’s", "only", "which", "i’m", "been", "other", "were", "how", "then", "now", "her", "than", "she", "well", "also", "us", "very", "because", "am", "here", "could", "even", "him", "into", "our", "much", "too", "did", "should", "over", "want", "these", "may", "where", "most", "many", "those", "does", "why", "please", "off", "going", "its", "i’ve", "down", "that’s", "can’t", "you’re", "didn’t", "another", "around", "must", "few", "doesn’t", "every", "yes", "each", "maybe", "i’ll", "away", "doing", "oh", "else", "isn’t", "he’s", "there’s", "hi", "won’t", "ok", "they’re", "yeah", "mine", "we’re", "what’s", "shall", "she’s", "hello", "okay", "here’s", "less"];
@@ -1119,13 +1141,8 @@ Reader.prototype = {
         this.outputAsHTML(msg);
       }
 
-      reader.stepTime = this.speed * 1000; // to milliseconds
-
-      if (Reader.VARY_SPEED_BY_LETTER_COUNT) {
-        if (!this.current) throw Error(this.type + '/' + this.hidden);
-        var letters = this.current.text().length - 1;
-        reader.stepTime = Math.trunc(reader.stepTime * (1 + letters * .1));
-      }
+      if (!this.current) throw Error(this.type + '/' + this.hidden);
+      reader.stepTime = Reader.stepTimeFor(this.current.text(), this.speed); // milliseconds
 
       this.onEnterCell(this.current);
       this.steps++;
