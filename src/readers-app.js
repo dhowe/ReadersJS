@@ -1036,6 +1036,14 @@ function Reader(g, cx, cy, speed) { // constructor
 
 Reader.prototype = {
 
+  // where this reader starts on a page (or returns to when the text changes):
+  // the cell {x: word, y: line} of grid g; readers with a particular starting
+  // point override this (see ObliquePerigramReader)
+  startCell: function (g) {
+
+    return { x: 0, y: 0 }; // top left
+  },
+
   onEnterCell: function (curr) {
 
     //console.log(this.type+'.onEnterCell('+curr+')');

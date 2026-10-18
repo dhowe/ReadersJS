@@ -284,6 +284,9 @@ select, .smallButton label {
   height: 22px;
   margin: 30px 0;
 }
+.reader[data-url-only] { /* readers available only through the URL (SimpleReader) */
+  display: none !important;
+}
 .reader.disabled {
   opacity:.3;
   color:#AAA !important;

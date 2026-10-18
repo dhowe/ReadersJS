@@ -8,9 +8,14 @@
 //               texts are accepted automatically
 //   style       a key of STYLE (see src/multi-page-ui.js): Grey, Faint, Invisible
 //   theme       Dark or Light
-//   readers     comma-separated reader types to enable (all others are turned off)
+//   readers     comma-separated reader types to enable (all others are turned off);
+//               SimpleReader is off by default and has no menu row, so this (or
+//               focus/solo) is the only way to turn it on
 //   focus       the reader type that has focus (enabled if 'readers' omits it)
 //   solo        a single reader type to run on its own
+//   fontsize    font size in px for every text (6-120), overriding a text's own
+//   leading     line spacing in px for every text (6-240), overriding a text's own
+//               (without it, leading follows the font size)
 //   speed       a key of SPEED for all readers (e.g. Slow), and/or per reader
 //               as Type:Speed pairs, e.g. speed=Fast,MesosticJumper:Slowest
 //
@@ -32,6 +37,15 @@ function parseUrlParams(search) {
 
   ['text', 'style', 'theme', 'focus', 'solo'].forEach(function (key) {
     if (params.get(key)) result[key] = params.get(key).trim();
+  });
+
+  [['fontSize', 6, 120], ['leading', 6, 240]].forEach(function (spec) {
+    var key = spec[0], raw = params.get(key.toLowerCase()) || params.get(key);
+    if (raw === null) return;
+    var n = Number(raw);
+    if (raw.trim() !== '' && isFinite(n) && n >= spec[1] && n <= spec[2]) result[key] = n;
+    else console.warn('[URL] Ignoring ' + key.toLowerCase() + '="' + raw + '", expected a number from ' +
+      spec[1] + ' to ' + spec[2]);
   });
 
   ['readers', 'speed'].forEach(function (key) {

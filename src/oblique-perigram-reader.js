@@ -36,11 +36,23 @@ function ObliquePerigramReader(g, rx, ry, speed) {
   this.currentKey = '';
   this.phrase = '';
   this.activeFill = this.defaultColorDark;
+  this.startsOnVerso = true; // see resetText() in multi-page.js
 
   // factors
   this.fadeInFactor = .8;
   this.fadeOutFactor = .9;
   this.delayFactor = 1;
+}
+
+// starts two words in, three quarters of the way down the page
+ObliquePerigramReader.START_WORD = 2;
+ObliquePerigramReader.START_DOWN = .75;
+
+ObliquePerigramReader.prototype.startCell = function (g) {
+
+  var y = Math.min(g.numLines() - 1, Math.floor(g.numLines() * ObliquePerigramReader.START_DOWN)),
+    line = g.lineAt(y);
+  return { x: Math.min(ObliquePerigramReader.START_WORD, line.length - 1), y: y };
 }
 
 ObliquePerigramReader.prototype.onEnterCell = function (curr) {

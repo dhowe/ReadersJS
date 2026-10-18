@@ -2,6 +2,8 @@ p5.disableFriendlyErrors = true; // opt
 
 var pManager, font, bgColor, showFocus, fps = false;
 
+var DEFAULT_FONT_SIZE = 24; // px; leading defaults to this x RiText.defaults.leadingFactor (1.2)
+
 function preload() {
 
   font = loadFont('fonts/Baskerville.ttf');
@@ -14,7 +16,7 @@ function setup() {
   pixelDensity(stageDensity());
   addSwipePaging(cnv.elt);
 
-  RiText.defaultFont(font, 24);
+  RiText.defaultFont(font, DEFAULT_FONT_SIZE);
   RiText.defaults.paragraphLeading = 10;
   RiText.defaults.paragraphIndent = 0;
 
@@ -23,15 +25,16 @@ function setup() {
     // do the layout
     pManager = PageManager.getInstance(Reader.APP);
 
-    pManager.layout(TEXTS[0], 25, 40, 580, 650);
+    layoutText(TEXTS[0]);
     pManager.gridFill(colorToObject(255, 255, 255, 40));
 
     // add some readers
     new PerigramReader(pManager.recto, SPEED.Fluent);
-    new ObliquePerigramReader(pManager.verso);
+    startPosition(new ObliquePerigramReader(pManager.verso), pManager.verso);
     new SpawningSimpleReader(pManager.recto);
     new SpawningPerigramReader(pManager.verso);
     new MesosticJumper(pManager.verso);
+    new SimpleReader(pManager.verso, 0, 0); // top left of the verso; off, not in the menu: turned on only by the URL
 
     // pick one to get focus
     pManager.focus('SpawningSimpleReader');//randomReader());
@@ -150,19 +153,46 @@ function loadTexts(callback) {
 
 ///////////////////////////////////////////////////////////////////////
 
+// font size and leading (both px) for a text: the ?fontsize and ?leading URL
+// parameters (see src/url-params.js), else the text's own fontSize and leading
+// (see TEXTS in src/text-loader.js), else the defaults. A missing leading is
+// left undefined, so layout() derives it from the font size.
+function typesetting(textObj) {
+
+  var url = typeof URL_PARAMS !== 'undefined' ? URL_PARAMS : {};
+  return {
+    fontSize: url.fontSize || textObj.fontSize || DEFAULT_FONT_SIZE,
+    leading: url.leading || textObj.leading
+  };
+}
+
+function layoutText(textObj) {
+
+  var t = typesetting(textObj);
+  RiText.defaultFont(font, t.fontSize); // sets both the measuring and drawing size
+  pManager.layout(textObj, 25, 40, 580, 650, t.leading);
+}
+
+// puts a reader at its own starting cell (see Reader.startCell) on grid g
+function startPosition(reader, g) {
+
+  var cell = reader.startCell(g);
+  reader.position(g, cell.x, cell.y);
+}
+
 function resetText(textName) {
 
   Reader.pauseAll(true);
   Reader.findByType('OnewayPerigramReader').forEach(Reader.dispose);
 
   var textObj = textFromName(textName);
-  pManager.layout(textObj, 25, 40, 580, 650);
+  layoutText(textObj);
 
   Reader.instances.forEach(function (r) {
     r.history = []; // reset state
     // focused reader on verso, others distributed across pages
-    var idx = (r.hasFocus()) ? 0 : (r.id % Grid.instances.length);
-    r.position(Grid.instances[idx], 0, 0);
+    var idx = (r.hasFocus() || r.startsOnVerso) ? 0 : (r.id % Grid.instances.length);
+    startPosition(r, Grid.instances[idx]);
   });
 
   Reader.findByType(['MesosticReader', 'MesosticJumper'])
@@ -230,7 +260,11 @@ function themeChanged() {
 }
 
 function changeReadersColorTheme(isDark) {
-  activeReaders().forEach(function(r) {
+  // all readers, not just the active ones: a reader turned on later (a URL-only
+  // SimpleReader) must already have the colour for the current theme
+  Reader.instances.filter(function (r) {
+    return r.type !== 'OnewayPerigramReader';
+  }).forEach(function(r) {
     r.activeFill = isDark ? r.defaultColorDark : r.defaultColorLight;
   });
 }

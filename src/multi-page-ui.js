@@ -33,6 +33,7 @@ function createInterface() {
     rb.class("reader");
     rb.elt.children[1].setAttribute("title", "enable/disable");
     rb.id(reader.type);
+    reader.urlOnly && rb.attribute("data-url-only", "true"); // hidden by style.css
     rb.parent("interface");
 
     var text = createP(reader.name());
