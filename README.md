@@ -38,6 +38,23 @@ The canvas is centered at its normal size; browsers require a user gesture, so t
 
 <br>
 
+## Readers and their default speeds
+
+Each reader has its own speed, which sets how long it stays on each word (see [Reading time](#reading-time) for how a speed becomes a time). Speeds are the presets in `SPEED` (`src/multi-page-ui.js`): Fast 0.2, Fluent 0.4, Steady 0.8, Slow 1.2, Slower 1.6, Slowest 2.0. The larger the number, the slower the reader. A reader's reading-time factor is `0.4 / speed`.
+
+| Reader | Default speed | Factor | Where it is set |
+|---|---|---|---|
+| PerigramReader | Fluent (0.4) | 1 | passed in `setup()` (`src/multi-page.js`) and its own default |
+| ObliquePerigramReader | Steady (0.8) | 0.5 | its own default |
+| SpawningSimpleReader | Fluent (0.4) | 1 | its own default |
+| SpawningPerigramReader | Fluent (0.4) | 1 | its own default |
+| MesosticJumper | Steady (0.8) | 0.5 | no default of its own, so it takes the base `Reader` default |
+| OnewayPerigramReader | Fast (0.2) | 2 | passed by the spawning readers, which create it for a short run |
+
+These are starting values only. Change a reader's speed with its dropdown in the options menu, with the `speed` URL parameter (e.g. `speed=Slow,MesosticJumper:Fast`), or in code with the constructor's last argument or `reader.speed` (any number is accepted, and it is read on every step).
+
+<br>
+
 ## Responsive display
 
 The display now adapts to the size of the browser window (desktop, tablet and phone), without changing how the readers behave.
