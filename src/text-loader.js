@@ -1,5 +1,15 @@
+// Each text may also set 'fontSize' and 'leading' (both px, e.g. fontSize: 20,
+// leading: 26), used when the text is laid out; see typesetting() in
+// src/multi-page.js. Without them: fontSize 24, leading fontSize x 1.2. The
+// ?fontsize and ?leading URL parameters override these for every text.
 var TEXTS = [{
   title: 'Misspelt Landings',
+  // the largest size that sets the whole text on one opening (verso and recto:
+  // 26 + 25 lines) at about the usual 1.2 leading, leaving one line spare on the
+  // recto in case another browser measures the text slightly wider. A larger
+  // size, or leading above 25.7, leaves the recto exactly full or needs a third page.
+  fontSize: 21.4,
+  leading: 25.6,
   file: 'data/misspeltLandings.txt',
   trigrams: 'data/misspeltLandings-trigrams.js',
   mesostic: 'reaching out falling through circling over landing on turning within spelling as'
