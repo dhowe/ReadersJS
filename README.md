@@ -110,4 +110,4 @@ The library is **copied into this project** (`lib/scoringthespeltair/timetoread.
 2. Here, run `scripts/sync-scoringthespeltair.sh` (it defaults to the copy under `John_adxd26fall`; pass another clone's path, or set `SCORINGTHESPELTAIR`, to use a different one). It copies the two files and updates the commit line in `lib/versions.txt`.
 3. Check `git diff lib/`, reload `index.html` and check the readers' pace, then commit the new copy.
 
-Never edit the files in `lib/scoringthespeltair/` here - fix them in the library and sync. If the library adds a file that `timetoread.js` imports, add it to `FILES` in the script. If the library changes the names or arguments of `wordTime` / `whitespaceTime`, update `src/reading-time.js` and `Reader.stepTimeFor()`. If the *factors* change meaning (e.g. the default pace is recalibrated), the speed presets move with it, so re-run a comparison like the one above and adjust `Reader.READING_SPEED`.
+Never edit the files in `lib/scoringthespeltair/` here - fix them in the library and sync.
