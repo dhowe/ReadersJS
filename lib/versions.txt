@@ -2,3 +2,4 @@ rita: v1.1.60
 p5js: v0.5.8 March 25, 2017
 socket.io:
 jquery:
+scoringthespeltair: v0.1.0 commit 5130c3f (timetoread.js, markup.js)

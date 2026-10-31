@@ -12,8 +12,8 @@ function PerigramReader(g, rx, ry, speed) {
   this.consoleString = '';
   this.downWeighting = .6;
   this.upWeighting = .12;
-  this.defaultColorDark = hexToRgb("#FA0007"); // red
-  this.defaultColorLight = hexToRgb("#C711F24");
+  this.defaultColorDark = hexToRgb("#FF4136"); // red
+  this.defaultColorLight = hexToRgb("#CC342B"); // darker, for the light theme
 
   if (!speed) this.speed = SPEED.Fluent; // default speed for PerigramReaders
 

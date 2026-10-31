@@ -284,6 +284,9 @@ select, .smallButton label {
   height: 22px;
   margin: 30px 0;
 }
+.reader[data-url-only] { /* readers available only through the URL (SimpleReader) */
+  display: none !important;
+}
 .reader.disabled {
   opacity:.3;
   color:#AAA !important;
@@ -357,7 +360,7 @@ select, .smallButton label {
   background-color: #0095FF;
 }
 .reader:not(.disabled)#PerigramReader input:checked + label:before{
-  background-color: #FA0007;
+  background-color: #FF4136;
 }
 .reader:not(.disabled)#ObliquePerigramReader input:checked + label:before{
   background-color: #FF41B6;
@@ -376,7 +379,7 @@ select, .smallButton label {
   border-color: #0095FF;
 }
 .reader#PerigramReader input+ label:hover:before {
-  border-color: #FA0007;
+  border-color: #FF4136;
 }
 .reader#ObliquePerigramReader input+ label:hover:before {
   border-color: #FF41B6;
@@ -395,7 +398,7 @@ select, .smallButton label {
   box-shadow: 0px 0px 15px 5px #0095FF;
 }
 .reader.focused#PerigramReader input:checked+ label:before {
-  box-shadow: 0px 0px 15px 5px #FA0007;
+  box-shadow: 0px 0px 15px 5px #FF4136;
 }
 .reader.focused#ObliquePerigramReader input:checked+ label:before {
   box-shadow: 0px 0px 15px 5px #FF41B6;
