@@ -28,7 +28,7 @@ To configure the readers window from the URL, add query parameters, e.g.
 * fontsize: font size in px (6 to 120) for every text, e.g. fontsize=20<br>
 * leading: line spacing in px (6 to 240) for every text, e.g. leading=26 (see [Typesetting](#typesetting))
 
-Names are case-insensitive and ignore spaces, hyphens and underscores; unknown values are ignored with a console warning (see src/url-params.js)
+<sup>* Name are case-insensitive and ignore spaces, hyphens and underscores; unknown values are ignored with a console warning (see src/url-params.js)</sup>
 
 <br>
 
