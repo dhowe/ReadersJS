@@ -92,15 +92,15 @@ How long a reader stays on a word is its estimated reading time, from the `timeT
 |---|---|---|---|---|---|---|
 | factor (`0.4 / speed`) | 1 | 0.5 | 0.33 | 0.25 | 0.2 | 2 |
 
-At factor 1 the estimator's own pace is used unchanged. This replaces the earlier rule (`speed` x 1000 ms, scaled up 10% per letter after the first); there is no fixed-time option any more.
+At factor 1 the estimator's own pace is used unchanged. 
 
 Notes:
-* `whitespaceTime(" ")` is 0 with the library's current defaults (a single space is already inside the per-letter cost), so `step` is the word time alone. 
+* `whitespaceTime(" ")` is 0 with the library's current defaults, so `step` is the word time alone. 
 * A word that gets no time from the estimator (e.g. a bare `<p/>` token) waits `Reader.MIN_STEP_MS` (50 ms).
-* The estimator is an ES module, so it is loaded with a `<script type="module">` (`src/reading-time.js`, which sets `window.ReadingTime`) and **needs the page to be served over http** (as the texts already do). If it is missing, a warning is logged and readers fall back to `speed` x 1000 ms.
-* The per-reader fade times are derived from the step time, so they follow the estimate. Fade delays using`speed` directly (e.g. `PerigramReader`) are unchanged.
+* The estimator is an ES module loaded with a `<script type="module">` (`src/reading-time.js`, which sets `window.ReadingTime`) and **needs the page to be served over http** (as the texts already do). If its missing, a warning is logged and readers fall back to `speed` x 1000 ms.
+* The per-reader fade times are derived from the step time following the estimate. Fade delays using `speed` directly (e.g. `PerigramReader`) are unchanged.
 
-### Updating the vendored library
+### Updating the "timetoread" library
 
 The library is **copied into this project** (`lib/scoringthespeltair/timetoread.js` and `markup.js`) rather than  installed. `lib/versions.txt` records which commit the lib came from. To take in new development:
 
