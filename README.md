@@ -1,6 +1,8 @@
 # ReadersJS
 
-<img width="897" height="255" alt="image" src="https://github.com/user-attachments/assets/9fb48e67-29b4-4a6e-bb36-bb414bebb625" />
+<img width="750" alt="image" src="https://github.com/user-attachments/assets/d62bc7b6-90d1-438a-9d0e-9f61a43f335d" />
+
+<br>
 
 To Install:
 
