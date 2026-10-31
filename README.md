@@ -21,7 +21,7 @@ To configure the readers window from the URL, add query parameters, e.g.
 * text: any title in TEXTS (src/text-loader.js), so new texts are accepted automatically<br>
 * style: Grey, Faint or Invisible<br>
 * theme: Dark or Light<br>
-* readers: comma-separated reader types to enable (all others are turned off): PerigramReader, ObliquePerigramReader, SpawningSimpleReader, SpawningPerigramReader, MesosticJumper or SimpleReader (which is off by default and not in the menu, see [Readers and their default speeds](#readers-and-their-default-speeds))<br>
+* readers: comma-separated reader types to enable: PerigramReader, ObliquePerigramReader, SpawningSimpleReader, SpawningPerigramReader, MesosticJumper or SimpleReader (which is off by default and not in the menu, see [Readers and their default speeds](#readers-and-their-default-speeds))<br>
 * focus: reader type to give focus (it is enabled if not listed in readers)<br>
 * solo: a single reader type to run on its own<br>
 * speed: Fluent, Steady, Slow, Slower, Slowest or Fast, for all readers and/or per reader, e.g. speed=Slow,MesosticJumper:Fast<br>
