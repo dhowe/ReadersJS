@@ -34,9 +34,9 @@ Names are case-insensitive and ignore spaces, hyphens and underscores; unknown v
 
 To show only the readers window (no interface), add the fullscreen parameter, e.g.
 
-index.html?fullscreen&text=The Image
+```index.html?fullscreen&text=The Image```
 
-The canvas is centered at its normal size; browsers require a user gesture, so true full screen begins on the first click or keypress
+The canvas is centered at its normal size; browsers require a user gesture, so full screen begins on the first click or keypress
 
 <br>
 
