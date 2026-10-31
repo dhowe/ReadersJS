@@ -4,29 +4,29 @@
 
 To Install:
 
-$ npm install
+```$ npm install```
 
 <br>
 
 To Run:
 
-open index.html in a browser (using a local server is advisable)
+```open index.html in a browser (using a local server is advisable)```
 
 <br>
 
 To configure the readers window from the URL, add query parameters, e.g.
 
-index.html?text=The Image&theme=Light&readers=PerigramReader,MesosticJumper&focus=MesosticJumper
+```index.html?text=The Image&theme=Light&readers=PerigramReader,MesosticJumper&focus=MesosticJumper```
 
-text: any title in TEXTS (src/text-loader.js), so new texts are accepted automatically<br>
-style: Grey, Faint or Invisible<br>
-theme: Dark or Light<br>
-readers: comma-separated reader types to enable (all others are turned off): PerigramReader, ObliquePerigramReader, SpawningSimpleReader, SpawningPerigramReader, MesosticJumper or SimpleReader (which is off by default and not in the menu, see [Readers and their default speeds](#readers-and-their-default-speeds))<br>
-focus: reader type to give focus (it is enabled if not listed in readers)<br>
-solo: a single reader type to run on its own<br>
-speed: Fluent, Steady, Slow, Slower, Slowest or Fast, for all readers and/or per reader, e.g. speed=Slow,MesosticJumper:Fast<br>
-fontsize: font size in px (6 to 120) for every text, e.g. fontsize=20<br>
-leading: line spacing in px (6 to 240) for every text, e.g. leading=26 (see [Typesetting](#typesetting))
+* text: any title in TEXTS (src/text-loader.js), so new texts are accepted automatically<br>
+* style: Grey, Faint or Invisible<br>
+* theme: Dark or Light<br>
+* readers: comma-separated reader types to enable (all others are turned off): PerigramReader, ObliquePerigramReader, SpawningSimpleReader, SpawningPerigramReader, MesosticJumper or SimpleReader (which is off by default and not in the menu, see [Readers and their default speeds](#readers-and-their-default-speeds))<br>
+* focus: reader type to give focus (it is enabled if not listed in readers)<br>
+* solo: a single reader type to run on its own<br>
+* speed: Fluent, Steady, Slow, Slower, Slowest or Fast, for all readers and/or per reader, e.g. speed=Slow,MesosticJumper:Fast<br>
+* fontsize: font size in px (6 to 120) for every text, e.g. fontsize=20<br>
+* leading: line spacing in px (6 to 240) for every text, e.g. leading=26 (see [Typesetting](#typesetting))
 
 Names are case-insensitive and ignore spaces, hyphens and underscores; unknown values are ignored with a console warning (see src/url-params.js)
 
